@@ -8,9 +8,11 @@ EXPECTED_SHA256 = "3d22ddb0afa51e4f3a56257911aadee99832bcb14bd44a4835d1d63806877
 NEEDLE = "batch.fb.close()\n"
 REPLACEMENT = "batch.fb.close()\n            torch.cuda.empty_cache()\n"
 
-candidates = list(Path("/usr/local/lib").glob(
-    "python*/site-packages/fastsafetensors/parallel_loader.py"
-))
+candidates = []
+for package_dir in ("site-packages", "dist-packages"):
+    candidates.extend(Path("/usr/local/lib").glob(
+        f"python*/{package_dir}/fastsafetensors/parallel_loader.py"
+    ))
 if len(candidates) != 1:
     raise SystemExit(f"expected one parallel_loader.py, found {len(candidates)}")
 
