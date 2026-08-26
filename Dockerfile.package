@@ -1,0 +1,20 @@
+ARG RUNTIME_IMAGE=ghcr.io/drowzeys/vllm-node-tf5-glm52-b12x@sha256:e006935eb4f8266705f213c369de1eac8de7d20417254c5f234601a2fd56d481
+FROM ${RUNTIME_IMAGE}
+
+ARG VCS_REF=unknown
+LABEL org.opencontainers.image.title="DGX Spark four-ring GLM-5.2 INT4 runtime" \
+      org.opencontainers.image.description="Pinned tested vLLM/B12X runtime with NCCL Mesh and bounded loader memory release" \
+      org.opencontainers.image.source="https://github.com/yunwei37/dgx-spark-4-ring-no-switch" \
+      org.opencontainers.image.revision="${VCS_REF}" \
+      org.opencontainers.image.licenses="MIT" \
+      io.yunwei37.nccl.sha256="dc3c6856ac86160d94391be28f6ac89f9837c13e841902efe8d2460d82740d91" \
+      io.yunwei37.mesh.sha256="2d0e5745322870936e0bdee9c64aba101d7d634efff9b83ff631b079680257b2"
+
+COPY runtime/ /opt/nccl-mesh/
+COPY images/runtime/apply_fastsafetensors_cache_release.py /tmp/
+RUN cd /opt/nccl-mesh \
+    && sha256sum -c SHA256SUMS \
+    && python3 /tmp/apply_fastsafetensors_cache_release.py \
+    && rm /tmp/apply_fastsafetensors_cache_release.py
+
+ENV LD_LIBRARY_PATH=/opt/nccl-mesh/lib:${LD_LIBRARY_PATH}

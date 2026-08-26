@@ -17,6 +17,7 @@ required = (
     "LICENSE",
     "THIRD_PARTY_NOTICES.md",
     "Dockerfile",
+    "Dockerfile.package",
     "profiles/glm52-int4-int8mix.sh",
     "scripts/launch-ring.sh",
     "benchmarks/glm52-int4-int8mix-2026-08-24.json",
@@ -66,6 +67,9 @@ if re.search(r"(?:^|[:=])latest(?:\s|$)", dockerfile, re.MULTILINE):
     fail("Dockerfile must not use latest")
 if dockerfile.count("@sha256:") < 2:
     fail("both Dockerfile bases must be digest-pinned")
+package_dockerfile = (ROOT / "Dockerfile.package").read_text(encoding="utf-8")
+if "@sha256:" not in package_dockerfile or "sha256sum -c SHA256SUMS" not in package_dockerfile:
+    fail("package Dockerfile must pin its base and verify the tested runtime")
 if "EXPECTED_SHA256" not in (ROOT / "images/runtime/apply_fastsafetensors_cache_release.py").read_text(encoding="utf-8"):
     fail("loader patch must retain its source hash guard")
 
