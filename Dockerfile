@@ -1,4 +1,5 @@
 ARG BUILD_IMAGE=ghcr.io/anemll/dspark-vllm-gx10@sha256:a83948492cf13df455170fb42885f5ef4db54fefe0feff0f841ecbff464ac9d8
+ARG RUNTIME_IMAGE=ghcr.io/drowzeys/vllm-node-tf5-glm52-b12x@sha256:e006935eb4f8266705f213c369de1eac8de7d20417254c5f234601a2fd56d481
 FROM ${BUILD_IMAGE} AS mesh-builder
 
 ARG NCCL_COMMIT=b91894bd5b190c874d98a017f93f5daa515b65d0
@@ -20,7 +21,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && ln -s libnccl.so.2 /opt/nccl-mesh/lib/libnccl.so \
     && ln -s libnccl-net.so /opt/nccl-mesh/lib/libnccl-net-mesh.so
 
-ARG RUNTIME_IMAGE=ghcr.io/drowzeys/vllm-node-tf5-glm52-b12x@sha256:e006935eb4f8266705f213c369de1eac8de7d20417254c5f234601a2fd56d481
 FROM ${RUNTIME_IMAGE}
 
 ARG VCS_REF=unknown
