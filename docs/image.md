@@ -13,13 +13,20 @@ the libraries into the image. This avoids compiling on inference nodes. Both
 paths apply the loader change only when the upstream source file matches the
 tested SHA-256.
 
-Publication status: pending
+Publication status: pending (`write:packages` authorization required)
 
 Published digest: pending
 
-Repository validation: pending
+Repository validation: passed
 
-Image build: pending
+Image build: passed on ARM64 at source revision `db05308`
+
+Local image ID: `sha256:d58701574065dc23b5bf246fc98c974ca5fbd40e0f16ff4972db4eb05e244746`
+
+Uncompressed image size: 19,456,486,051 bytes
+
+Static package checks: passed (vLLM and fastsafetensors versions, both runtime
+library hashes, and exactly one loader cache-release insertion)
 
 Inference smoke with this assembled image: pending
 
