@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="390" viewBox="0 0 900 390" role="img" aria-labelledby="title desc">
+  <title id="title">Measured GLM-5.2 decode throughput</title>
+  <desc id="desc">Horizontal bars compare NVFP4, INT4 base, INT4 MTP mixed range, and INT4 MTP fixed throughput.</desc>
+  <rect width="900" height="390" fill="#0b1020"/>
+  <text x="40" y="42" fill="#f8fafc" font-family="system-ui,sans-serif" font-size="25" font-weight="700">GLM-5.2 decode throughput on four DGX Sparks</text>
+  <text x="40" y="68" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="14">Measured tokens/s; different checkpoints and workloads are not directly equivalent</text>
+  <g font-family="system-ui,sans-serif" font-size="15" fill="#e2e8f0">
+    <text x="40" y="126">NVFP4 PP4, 32K</text><rect x="245" y="105" width="88" height="28" rx="4" fill="#a78bfa"/><text x="342" y="126">4.40</text>
+    <text x="40" y="186">INT4 TP4 base</text><rect x="245" y="165" width="260" height="28" rx="4" fill="#38bdf8"/><text x="514" y="186">12.99</text>
+    <text x="40" y="246">INT4 MTP mixed</text><rect x="245" y="225" width="474" height="28" rx="4" fill="#2dd4bf"/><rect x="572" y="225" width="147" height="28" rx="4" fill="#14b8a6"/><text x="728" y="246">16.37-23.71</text>
+    <text x="40" y="306">INT4 MTP fixed</text><rect x="245" y="285" width="668" height="28" rx="4" fill="#22c55e"/><text x="835" y="337">33.42</text>
+  </g>
+  <line x1="245" y1="340" x2="845" y2="340" stroke="#475569"/>
+  <g fill="#94a3b8" font-family="system-ui,sans-serif" font-size="12">
+    <text x="241" y="360">0</text><text x="438" y="360">10</text><text x="638" y="360">20</text><text x="838" y="360">30</text>
+  </g>
+</svg>

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-08-25",
+  "outcome": "passed-restored",
+  "hardware": {"nodes": 4, "platform": "NVIDIA DGX Spark", "interconnect": "direct ConnectX ring without a switch"},
+  "checkpoint": {"repository": "0xSero/GLM-5.2-504B-Nvidia", "revision": "cd89350bb18dd7d0c10e45d0a8df29c506e2844d", "size_gb": 317.99, "copies": 1},
+  "runtime": {"image": "ghcr.io/aeon-7/aeon-vllm-ultimate@sha256:2fb855ffd6fbf4330cf9f4653c09d3e6584d197acba8e9e93a032da36bb4559f", "vllm": "0.27.1+aeon.sm121a.dspark", "parallelism": "PP4/TP1", "collective": "Mesh Ring", "kv_cache": "FP8", "max_model_len": 65536, "max_num_seqs": 1, "max_num_batched_tokens": 2048, "gpu_memory_utilization": 0.75},
+  "passed_32005": {"context_tokens": 32005, "load_seconds": 891.98, "api_ready_approx_seconds": 1080, "rank0_memory_gib": 70.79, "first_compile_decode_tokens_per_second": 2.010852, "stable_decode_tokens_per_second": [4.402409, 4.404439], "ttft_seconds": 144.7369, "prefill_tokens_per_second": 221.13, "agent_tool_test": "passed"},
+  "failed_60469": {"context_tokens": 60469, "result": "unsafe-memory-pressure", "observed": ["management-plane latency", "one rank reboot"], "counted_as_pass": false},
+  "limitations": ["MTP was unsupported with pipeline parallelism in this runtime.", "The 60K attempt is a safety boundary, not a supported result.", "Production service was restored after the bounded test."]
+}

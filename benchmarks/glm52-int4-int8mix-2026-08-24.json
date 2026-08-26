@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-08-24",
+  "outcome": "passed-restored",
+  "hardware": {"nodes": 4, "platform": "NVIDIA DGX Spark", "interconnect": "direct ConnectX ring without a switch"},
+  "checkpoint": {"repository": "QuantTrio/GLM-5.2-Int4-Int8Mix", "revision": "1d3bcfe5ec549ecd000fd80b37f191183842e983", "indexed_bytes": 405459090304, "copies": 1, "layout": "384 model shards plus 16 MTP shards"},
+  "runtime": {"image": "ghcr.io/drowzeys/vllm-node-tf5-glm52-b12x@sha256:e006935eb4f8266705f213c369de1eac8de7d20417254c5f234601a2fd56d481", "vllm": "0.23.1rc1.dev190+gab6660699.d20260705", "fastsafetensors": "0.3.2", "b12x": "0.23.0", "pytorch": "2.11.0+cu130", "nccl": "2.29.7", "parallelism": "TP4", "collective": "Mesh Ring"},
+  "base": {"load_seconds": 589.25, "memory_gib_per_rank": 94.38, "decode_tokens_per_second": [13.1787, 13.1122, 12.6716], "decode_mean_tokens_per_second": 12.99},
+  "mtp4": {"load_seconds": 1183.05, "memory_gib_per_rank": 96.92, "fixed_decode_tokens_per_second": [33.6142, 32.3423, 34.2976], "fixed_decode_mean_tokens_per_second": 33.42, "accepted_draft_tokens": 413, "proposed_draft_tokens": 420, "mixed_decode_tokens_per_second": [17.7790, 16.3667, 23.7124], "mixed_acceptance_approx_percent": 43, "available_memory_gib_per_rank": "3.3-5.0"},
+  "loader": {"rank_local_read_mib_per_second": [699.38, 686.04, 744.18, 839.47], "completed_loader_approx_mib_per_second_per_rank": 174, "source_sha256": "3d22ddb0afa51e4f3a56257911aadee99832bcb14bd44a4835d1d63806877709", "change": "torch.cuda.empty_cache after each completed file batch"},
+  "notes": ["Default loader path took approximately two hours in the earlier run.", "Global CUDA-cache disable decoded at approximately 1.88 tok/s and was not retained.", "Production service was restored after the bounded test."]
+}
