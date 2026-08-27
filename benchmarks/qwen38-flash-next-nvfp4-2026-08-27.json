@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-08-27",
+  "outcome": "passed-active-experiment",
+  "hardware": {
+    "nodes": 4,
+    "platform": "NVIDIA DGX Spark",
+    "gpu_architecture": "SM121",
+    "interconnect": "direct ConnectX ring without a switch"
+  },
+  "checkpoint": {
+    "repository": "RadixArk/Qwen3.8-Flash-Next-NVFP4",
+    "revision": "7b719225",
+    "copies_during_test": 4
+  },
+  "runtime": {
+    "image": "lmsysorg/sglang@sha256:12d3392bdc8be8d35e9a95f191df6aef99c5114bdbefd41bfdc7e760e6d25ec1",
+    "parallelism": "TP4",
+    "collective": "NCCL 2.29.7 Mesh Ring",
+    "context_length": 262144,
+    "quantization": "modelopt_fp4",
+    "fp4_gemm_backend": "flashinfer_cutlass",
+    "attention_backend": "fa4",
+    "page_size": 64,
+    "chunked_prefill_size": 4096,
+    "mem_fraction_static": 0.8,
+    "max_running_requests": 36,
+    "mtp": {
+      "algorithm": "EAGLE",
+      "steps": 1,
+      "topk": 1,
+      "draft_tokens": 2
+    }
+  },
+  "compatibility_fixes": [
+    {
+      "component": "SGLang QSA sparse decode resolver",
+      "source_sha256": "c959835d05d0f395ad7eae4330cf264af9f6f7c1bff3d45a39bb953d2536f5f2",
+      "patched_sha256": "a6b003ed21b3be8ba763e8627aee39baee3d84184f5bf0fc650a1a6b853119d3",
+      "change": "permit the available TRT-LLM sparse decode kernel on SM120/SM121"
+    },
+    {
+      "component": "SGLang ModelOpt gated-MoE TP padding",
+      "source_sha256": "66749a8bd32307c5d4f59aa7f59c41dc8e3bfddd2da8a3d987b426ed3af52539",
+      "patched_sha256": "3e7d9d8aeac847099b7839da8cda8c4ba3a71f765e205f2e9e40fea91f86a1f7"
+    }
+  ],
+  "startup": {
+    "target_weight_load_seconds": 266.3,
+    "mtp_weight_load_seconds": 38.71,
+    "engine_startup_seconds": 460.44,
+    "tokenizer_ready_seconds": 465.25,
+    "kv_capacity_tokens": 1669824,
+    "available_memory_after_cuda_graph_gib": 24.91
+  },
+  "native_max_context": {
+    "prompt_tokens": 261888,
+    "output_budget_tokens": 256,
+    "window_tokens": 262144,
+    "marker_token_offset": 130932,
+    "marker_recovered": true,
+    "server_prompt_tokens_matched": true,
+    "ttft_seconds": 173.943642482016,
+    "prefill_tokens_per_second": 1505.5910998706179,
+    "e2e_seconds": 174.59079267899506,
+    "completion_tokens": 23,
+    "mtp_accept_rate": 0.8333333333333334,
+    "sampled_minimum_host_memavailable_gib": 15.36
+  },
+  "full_depth_forced_decode": {
+    "prompt_tokens": 261888,
+    "cached_tokens": 258048,
+    "ignore_eos": true,
+    "completion_tokens": 254,
+    "ttft_seconds": 3.891162918996997,
+    "decode_seconds_after_first_event": 9.553785525989952,
+    "decode_tokens_per_second": 26.586320083177796,
+    "mtp_accept_rate": 0.28426395939086296,
+    "marker_recovered": true,
+    "counted_as_service_quality": false
+  },
+  "measurement_boundary": [
+    "The retrieval marker was placed near the middle, not at the prompt tail.",
+    "The memory minimum is from bounded synchronous samples, not a continuous monitor.",
+    "The forced full-depth decode isolates throughput after cached prefill; ignore_eos makes it a stress measurement rather than a response-quality result.",
+    "The experiment remained active when this step record was committed; service restoration is not yet claimed."
+  ]
+}

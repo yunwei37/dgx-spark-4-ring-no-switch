@@ -31,3 +31,33 @@ Machine-readable inputs are in:
 
 - [`glm52-int4-int8mix-2026-08-24.json`](../benchmarks/glm52-int4-int8mix-2026-08-24.json)
 - [`glm52-nvfp4-2026-08-25.json`](../benchmarks/glm52-nvfp4-2026-08-25.json)
+
+## Qwen3.8 Flash Next NVFP4
+
+The exact `RadixArk/Qwen3.8-Flash-Next-NVFP4` revision ran TP=4 with native MTP
+and the full 262,144-token window. A 261,888-token prompt placed a unique marker
+at token offset 130,932 and reserved 256 tokens for generation. The server
+reported all 261,888 input tokens and recovered the exact marker.
+
+TTFT was 173.94 seconds, equivalent to 1,505.59 prompt tokens/s; end-to-end time
+was 174.59 seconds. MTP accepted 83.33% of proposed draft tokens. Engine startup
+was 460.44 seconds and the API/tokenizer path was ready in 465.25 seconds. The
+lowest bounded host `MemAvailable` sample was 15.36 GiB. This is a synchronous
+sample rather than continuous telemetry.
+
+A second request reused 258,048 cached prompt tokens and forced generation past
+the natural stop boundary to isolate full-depth decode. It produced 254 tokens
+at 26.59 tok/s after the first event; MTP acceptance was 28.43%. Because
+`ignore_eos` was set, this is a decode stress result rather than a response
+quality result. It also shows that the short-context 47.98 tok/s measurement
+must not be presented as full-depth throughput.
+
+The immutable SGLang image needed source-hash-guarded, test-local compatibility
+fixes for gated-MoE TP padding and for the QSA sparse-decode architecture gate.
+The latter lets SM121 use the already-present TRT-LLM sparse decode kernel rather
+than the broken FlashAttention-4 CuTe fallback. No host daemon, cache-drop loop,
+swap setting, route, or management-network change was added.
+
+Machine-readable input:
+
+- [`qwen38-flash-next-nvfp4-2026-08-27.json`](../benchmarks/qwen38-flash-next-nvfp4-2026-08-27.json)

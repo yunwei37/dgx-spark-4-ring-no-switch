@@ -1,9 +1,9 @@
 # Four DGX Sparks, one direct ring, no switch
 
-Reproducible GLM-5.2 inference on four NVIDIA DGX Spark systems connected as a
-direct ConnectX ring. This repository publishes only configurations and results
-that were exercised on the four-node ring. It does not ship model weights or
-modify host management networking.
+Reproducible GLM and Qwen inference on four NVIDIA DGX Spark systems connected
+as a direct ConnectX ring. This repository publishes only configurations and
+results that were exercised on the four-node ring. It does not ship model
+weights or modify host management networking.
 
 ![Measured GLM-5.2 decode throughput](docs/assets/glm52-decode-throughput.svg)
 
@@ -14,11 +14,20 @@ modify host management networking.
 | `QuantTrio/GLM-5.2-Int4-Int8Mix` | TP=4 | 8,192 | 12.99 tok/s | passed and restored |
 | same checkpoint, MTP=4 | TP=4 | 8,192 | 33.42 tok/s fixed workload | passed; low memory reserve |
 | `0xSero/GLM-5.2-504B-Nvidia` | PP=4 | 32,005 | 4.40 tok/s | passed and restored |
+| `RadixArk/Qwen3.8-Flash-Next-NVFP4` + MTP | TP=4 | 262,144 native window | 1,505.59 prefill tok/s | exact mid-context retrieval passed; experiment active |
 
 The INT4 MTP mixed-prompt runs measured 16.37-23.71 tok/s. The NVFP4 60,469
 token attempt was unsafe: unified-memory pressure affected the management plane
 and one rank had to reboot. That failure is retained as a limit, not reported as
-a successful 60K result. Exact records are under [`benchmarks/`](benchmarks/).
+a successful 60K result. Qwen3.8 Flash Next exercised its full 262,144-token
+native window with 261,888 prompt tokens plus a 256-token output budget. Exact
+records are under [`benchmarks/`](benchmarks/).
+
+The exact-token retrieval client is
+[`scripts/max_context_probe.py`](scripts/max_context_probe.py). The two
+source-hash-guarded SGLang compatibility patches used by the Qwen run are under
+[`images/runtime/`](images/runtime/); they are test-scoped patches for the
+recorded immutable image, not host modifications.
 
 ## Topology
 

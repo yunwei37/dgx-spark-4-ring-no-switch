@@ -20,8 +20,12 @@ required = (
     "Dockerfile.package",
     "profiles/glm52-int4-int8mix.sh",
     "scripts/launch-ring.sh",
+    "scripts/max_context_probe.py",
+    "images/runtime/apply_sglang_nvfp4_gated_tp.py",
+    "images/runtime/apply_sglang_qwen_sm121.py",
     "benchmarks/glm52-int4-int8mix-2026-08-24.json",
     "benchmarks/glm52-nvfp4-2026-08-25.json",
+    "benchmarks/qwen38-flash-next-nvfp4-2026-08-27.json",
     "docs/architecture.md",
     "docs/benchmarks.md",
     "docs/configuration-decisions.md",
@@ -35,13 +39,17 @@ for relative in required:
         fail(f"missing {relative}")
 
 benchmark_files = sorted((ROOT / "benchmarks").glob("*.json"))
-if len(benchmark_files) != 2:
-    fail("first release must contain exactly the two tested benchmark records")
+if len(benchmark_files) < 3:
+    fail("repository must retain all published benchmark records")
 for path in benchmark_files:
     data = json.loads(path.read_text(encoding="utf-8"))
     if data.get("schema_version") != 1:
         fail(f"{path.name}: schema_version must be 1")
-    if data.get("outcome") not in {"passed-restored", "failed-restored"}:
+    if data.get("outcome") not in {
+        "passed-restored",
+        "failed-restored",
+        "passed-active-experiment",
+    }:
         fail(f"{path.name}: unsupported outcome")
 
 private_patterns = {
@@ -72,6 +80,12 @@ if "@sha256:" not in package_dockerfile or "sha256sum -c SHA256SUMS" not in pack
     fail("package Dockerfile must pin its base and verify the tested runtime")
 if "EXPECTED_SHA256" not in (ROOT / "images/runtime/apply_fastsafetensors_cache_release.py").read_text(encoding="utf-8"):
     fail("loader patch must retain its source hash guard")
+for patch_name in (
+    "apply_sglang_nvfp4_gated_tp.py",
+    "apply_sglang_qwen_sm121.py",
+):
+    if "hashlib.sha256" not in (ROOT / "images/runtime" / patch_name).read_text(encoding="utf-8"):
+        fail(f"{patch_name} must retain its source hash guard")
 
 readme = (ROOT / "README.md").read_text(encoding="utf-8")
 if "60,469" not in readme or "unsafe" not in readme:
