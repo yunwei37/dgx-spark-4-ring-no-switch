@@ -13,6 +13,8 @@ are retained here.
 | FP8 DeepSeek MLA KV cache | Present in the successful measured profile | Same bounded run |
 | per-batch `torch.cuda.empty_cache()` during load | Prevented stale batch allocations without disabling caching globally | Successful load; global cache disable fell to about 1.88 tok/s |
 | MTP=4, optional | Material speedup on the fixed workload but low reserve | 33.42 tok/s and 3.3-5.0 GiB free/rank |
+| Qwen MTP 1 step / 2 draft tokens | Full-window retrieval and natural long output both passed | 48.81 tok/s, 86.86% acceptance |
+| Qwen MTP 3 steps / 4 draft tokens rejected | Higher apparent speed was accompanied by deterministic output degeneration | 63.67 tok/s, but marker recovery failed twice |
 
 Swap, periodic drop-cache loops, OOM daemons, floating autotuning parameters,
 host firewall changes, and topology reconcilers are not retained. The available

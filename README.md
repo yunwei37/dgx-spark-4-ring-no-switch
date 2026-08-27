@@ -29,6 +29,12 @@ source-hash-guarded SGLang compatibility patches used by the Qwen run are under
 [`images/runtime/`](images/runtime/); they are test-scoped patches for the
 recorded immutable image, not host modifications.
 
+The matched Qwen full-depth natural-output run decoded at 48.81 tok/s with
+86.86% MTP acceptance. A 3-step/4-draft candidate appeared faster at 63.67
+tok/s but deterministically degenerated to repeated punctuation and failed
+retrieval twice, so the reusable profile keeps the passing 1-step/2-draft
+configuration.
+
 ## Topology
 
 ```text
@@ -83,6 +89,11 @@ plugin and the one measured loader memory-lifetime fix. Publication digest and
 verification status are recorded in [`docs/image.md`](docs/image.md). Until that
 file says `inference smoke: passed`, the old benchmark data proves the component
 recipe, not the newly assembled package.
+
+The Qwen SGLang package is built by `Dockerfile.sglang-qwen38`; the exact
+four-rank arguments are in `profiles/qwen38-flash-next-nvfp4.sh` and the bounded
+Docker launcher is `scripts/launch-sglang-ring.sh`. The image contains the
+runtime and compatibility fixes, never the model weights.
 
 ## Documentation
 

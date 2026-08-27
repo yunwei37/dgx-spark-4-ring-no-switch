@@ -92,10 +92,27 @@
     "mtp_accept_rate": 0.8686131386861314,
     "ignore_eos": false
   },
+  "mtp_3_step_4_draft_candidate": {
+    "status": "failed-quality-regression",
+    "change_from_baseline": "only speculative steps 1 to 3 and draft tokens 2 to 4",
+    "cold_prompt_tokens": 261886,
+    "cold_ttft_seconds": 136.83571964301518,
+    "cold_prefill_tokens_per_second": 1913.8716168791534,
+    "cached_prompt_tokens": 261824,
+    "completion_tokens": 254,
+    "cached_ttft_seconds": 0.6654569760139566,
+    "cached_decode_tokens_per_second": 63.67044107537798,
+    "mtp_accept_rate": 1.0,
+    "marker_recovered": false,
+    "quality_failure": "both cold and cached trials degenerated to one repeated punctuation token",
+    "selected_for_profile": false
+  },
+  "selected_profile": "mtp-1-step-2-draft",
   "measurement_boundary": [
     "The retrieval marker was placed near the middle, not at the prompt tail.",
     "The memory minimum is from bounded synchronous samples, not a continuous monitor.",
     "The forced full-depth decode isolates throughput after cached prefill; ignore_eos makes it a stress measurement rather than a response-quality result.",
+    "The 3-step/4-draft candidate was faster but failed exact retrieval twice with degenerate output, so it is retained only as failed evidence.",
     "The experiment remained active when this step record was committed; service restoration is not yet claimed."
   ]
 }

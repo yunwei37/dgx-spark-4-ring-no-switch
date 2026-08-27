@@ -58,6 +58,12 @@ the marker. MTP acceptance was 86.86%. This request reused 261,824 prompt tokens
 to isolate decode at the full context depth; it is the decode baseline for the
 subsequent 3-step/4-draft A/B, not a second prefill result.
 
+The matched 3-step/4-draft candidate reached 63.67 tok/s with a 100% reported
+acceptance rate, but both the cold and cached trials produced degenerate repeated
+punctuation and failed to recover the marker. It is a quality failure, not a
+throughput win. The published profile therefore retains 1-step/2-draft, whose
+48.81 tok/s result recovered the marker and produced the requested response.
+
 The immutable SGLang image needed source-hash-guarded, test-local compatibility
 fixes for gated-MoE TP padding and for the QSA sparse-decode architecture gate.
 The latter lets SM121 use the already-present TRT-LLM sparse decode kernel rather

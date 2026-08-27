@@ -1,0 +1,45 @@
+ARG BUILD_IMAGE=ghcr.io/anemll/dspark-vllm-gx10@sha256:a83948492cf13df455170fb42885f5ef4db54fefe0feff0f841ecbff464ac9d8
+ARG RUNTIME_IMAGE=lmsysorg/sglang@sha256:12d3392bdc8be8d35e9a95f191df6aef99c5114bdbefd41bfdc7e760e6d25ec1
+FROM ${BUILD_IMAGE} AS mesh-builder
+
+ARG NCCL_COMMIT=b91894bd5b190c874d98a017f93f5daa515b65d0
+ARG MESH_COMMIT=19924dcc7c571d6e260953724d394ae50bad82cf
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      build-essential ca-certificates git libibverbs-dev pkg-config \
+    && rm -rf /var/lib/apt/lists/* \
+    && git clone https://github.com/NVIDIA/nccl.git /src/nccl \
+    && git -C /src/nccl checkout "${NCCL_COMMIT}" \
+    && make -C /src/nccl -j"$(nproc)" src.build CUDA_HOME=/usr/local/cuda \
+    && git clone https://github.com/autoscriptlabs/nccl-mesh-plugin.git /src/mesh \
+    && git -C /src/mesh checkout "${MESH_COMMIT}" \
+    && make -C /src/mesh -j"$(nproc)" \
+    && mkdir -p /opt/nccl-mesh/lib \
+    && install -m 0755 /src/nccl/build/lib/libnccl.so.2.29.7 /opt/nccl-mesh/lib/ \
+    && install -m 0755 /src/mesh/libnccl-net.so /opt/nccl-mesh/lib/ \
+    && ln -s libnccl.so.2.29.7 /opt/nccl-mesh/lib/libnccl.so.2 \
+    && ln -s libnccl.so.2 /opt/nccl-mesh/lib/libnccl.so \
+    && ln -s libnccl-net.so /opt/nccl-mesh/lib/libnccl-net-mesh.so
+
+FROM ${RUNTIME_IMAGE}
+
+ARG VCS_REF=unknown
+LABEL org.opencontainers.image.title="DGX Spark four-ring Qwen3.8 Flash Next NVFP4 runtime" \
+      org.opencontainers.image.description="Pinned SGLang runtime with NCCL Mesh and source-hash-guarded SM121/NVFP4 compatibility fixes" \
+      org.opencontainers.image.source="https://github.com/yunwei37/dgx-spark-4-ring-no-switch" \
+      org.opencontainers.image.revision="${VCS_REF}" \
+      org.opencontainers.image.licenses="MIT"
+
+COPY --from=mesh-builder /opt/nccl-mesh /opt/nccl-mesh
+COPY images/runtime/apply_sglang_nvfp4_gated_tp.py /tmp/
+COPY images/runtime/apply_sglang_qwen_sm121.py /tmp/
+RUN python3 /tmp/apply_sglang_nvfp4_gated_tp.py \
+    && python3 /tmp/apply_sglang_qwen_sm121.py \
+    && python3 -m py_compile \
+      /sgl-workspace/sglang/python/sglang/srt/layers/quantization/modelopt_quant.py \
+      /sgl-workspace/sglang/python/sglang/srt/layers/attention/qwen_sparse_attn_backend.py \
+      /sgl-workspace/sglang/python/sglang/srt/layers/attention/attention_registry.py \
+      /sgl-workspace/sglang/python/sglang/kernels/ops/attention/rotary_triton.py \
+    && rm /tmp/apply_sglang_nvfp4_gated_tp.py /tmp/apply_sglang_qwen_sm121.py
+
+ENV LD_LIBRARY_PATH=/opt/nccl-mesh/lib:/usr/local/cuda/lib64:/usr/local/lib/python3.12/dist-packages/nvidia/nccl/lib

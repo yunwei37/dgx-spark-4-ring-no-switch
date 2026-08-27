@@ -19,3 +19,9 @@ The tested NVFP4 result used
 `ghcr.io/aeon-7/aeon-vllm-ultimate@sha256:2fb855ffd6fbf4330cf9f4653c09d3e6584d197acba8e9e93a032da36bb4559f`.
 It is referenced for reproducibility but is not copied into this repository's
 first published image.
+
+The Qwen3.8 Flash Next NVFP4 package uses
+`lmsysorg/sglang@sha256:12d3392bdc8be8d35e9a95f191df6aef99c5114bdbefd41bfdc7e760e6d25ec1`
+as its immutable runtime base and applies only the source-hash-guarded
+compatibility changes published in this repository. Review the base image and
+SGLang upstream license notices before redistribution.

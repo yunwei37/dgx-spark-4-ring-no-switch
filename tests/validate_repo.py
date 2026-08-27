@@ -18,8 +18,11 @@ required = (
     "THIRD_PARTY_NOTICES.md",
     "Dockerfile",
     "Dockerfile.package",
+    "Dockerfile.sglang-qwen38",
     "profiles/glm52-int4-int8mix.sh",
+    "profiles/qwen38-flash-next-nvfp4.sh",
     "scripts/launch-ring.sh",
+    "scripts/launch-sglang-ring.sh",
     "scripts/max_context_probe.py",
     "images/runtime/apply_sglang_nvfp4_gated_tp.py",
     "images/runtime/apply_sglang_qwen_sm121.py",
@@ -78,6 +81,15 @@ if dockerfile.count("@sha256:") < 2:
 package_dockerfile = (ROOT / "Dockerfile.package").read_text(encoding="utf-8")
 if "@sha256:" not in package_dockerfile or "sha256sum -c SHA256SUMS" not in package_dockerfile:
     fail("package Dockerfile must pin its base and verify the tested runtime")
+qwen_dockerfile = (ROOT / "Dockerfile.sglang-qwen38").read_text(encoding="utf-8")
+if qwen_dockerfile.count("@sha256:") < 2:
+    fail("Qwen Dockerfile must pin both build and runtime bases")
+for patch_name in (
+    "apply_sglang_nvfp4_gated_tp.py",
+    "apply_sglang_qwen_sm121.py",
+):
+    if patch_name not in qwen_dockerfile:
+        fail(f"Qwen Dockerfile must apply {patch_name}")
 if "EXPECTED_SHA256" not in (ROOT / "images/runtime/apply_fastsafetensors_cache_release.py").read_text(encoding="utf-8"):
     fail("loader patch must retain its source hash guard")
 for patch_name in (
