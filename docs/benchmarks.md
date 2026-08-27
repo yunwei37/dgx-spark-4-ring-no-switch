@@ -52,6 +52,12 @@ at 26.59 tok/s after the first event; MTP acceptance was 28.43%. Because
 quality result. It also shows that the short-context 47.98 tok/s measurement
 must not be presented as full-depth throughput.
 
+For the matched natural-long-output workload, the same 1-step/2-draft MTP
+profile generated 256 tokens at 48.81 tok/s after the first event and recovered
+the marker. MTP acceptance was 86.86%. This request reused 261,824 prompt tokens
+to isolate decode at the full context depth; it is the decode baseline for the
+subsequent 3-step/4-draft A/B, not a second prefill result.
+
 The immutable SGLang image needed source-hash-guarded, test-local compatibility
 fixes for gated-MoE TP padding and for the QSA sparse-decode architecture gate.
 The latter lets SM121 use the already-present TRT-LLM sparse decode kernel rather

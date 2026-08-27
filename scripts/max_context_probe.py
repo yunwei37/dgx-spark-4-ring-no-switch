@@ -17,7 +17,9 @@ def repeated(tokens: list[int], length: int) -> list[int]:
     return (tokens * ((length + len(tokens) - 1) // len(tokens)))[:length]
 
 
-def build_prompt(tokenizer, target_tokens: int, marker: str) -> tuple[list[int], int]:
+def build_prompt(
+    tokenizer, target_tokens: int, marker: str, long_response: bool
+) -> tuple[list[int], int]:
     prefix = tokenizer.encode(
         "Read the complete archival record. Retain the exact retrieval key and "
         "answer the final question with only that key.\n",
@@ -32,10 +34,14 @@ def build_prompt(tokenizer, target_tokens: int, marker: str) -> tuple[list[int],
         f"\nIMPORTANT RECORD: The exact retrieval key is {marker}.\n",
         add_special_tokens=False,
     )
-    question = tokenizer.encode(
-        "\nQuestion: What is the exact retrieval key? Answer only the key.\nAnswer:",
-        add_special_tokens=False,
+    question_text = (
+        "\nQuestion: Begin with the exact retrieval key, then write a detailed "
+        "technical explanation of at least 220 tokens about how to preserve and "
+        "verify that key in an archival system.\nAnswer:"
+        if long_response
+        else "\nQuestion: What is the exact retrieval key? Answer only the key.\nAnswer:"
     )
+    question = tokenizer.encode(question_text, add_special_tokens=False)
     fixed = len(prefix) + len(needle) + len(question)
     if fixed >= target_tokens:
         raise ValueError(f"target_tokens={target_tokens} is too small for the probe")
@@ -57,11 +63,12 @@ def main() -> None:
     parser.add_argument("--marker", required=True)
     parser.add_argument("--timeout", type=int, default=3600)
     parser.add_argument("--ignore-eos", action="store_true")
+    parser.add_argument("--long-response", action="store_true")
     args = parser.parse_args()
 
     tokenizer = AutoTokenizer.from_pretrained(args.model, local_files_only=True)
     input_ids, marker_offset = build_prompt(
-        tokenizer, args.prompt_tokens, args.marker
+        tokenizer, args.prompt_tokens, args.marker, args.long_response
     )
     payload = {
         "input_ids": input_ids,

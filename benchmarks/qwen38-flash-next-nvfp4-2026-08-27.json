@@ -79,6 +79,19 @@
     "marker_recovered": true,
     "counted_as_service_quality": false
   },
+  "full_depth_natural_long_decode": {
+    "profile": "mtp-1-step-2-draft",
+    "prompt_tokens": 261886,
+    "cached_tokens": 261824,
+    "completion_tokens": 256,
+    "marker_token_offset": 130921,
+    "marker_recovered": true,
+    "ttft_seconds": 1.0862303850008175,
+    "decode_seconds_after_first_event": 5.244398262002505,
+    "decode_tokens_per_second": 48.813989176758234,
+    "mtp_accept_rate": 0.8686131386861314,
+    "ignore_eos": false
+  },
   "measurement_boundary": [
     "The retrieval marker was placed near the middle, not at the prompt tail.",
     "The memory minimum is from bounded synchronous samples, not a continuous monitor.",
