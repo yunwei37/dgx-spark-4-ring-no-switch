@@ -33,3 +33,17 @@ Inference smoke with this assembled image: pending
 Until the last item passes, benchmark numbers in this repository describe the
 tested components at their original immutable image digests. They do not prove
 that this newly assembled package serves the model correctly.
+
+## Qwen3.8 Flash Next NVFP4 package
+
+`Dockerfile.sglang-qwen38` defaults to reproducibly building NCCL and the Mesh
+plugin from the pinned source commits. A builder may instead set `MESH_IMAGE`
+to an already verified image containing `/opt/nccl-mesh`; this skips redundant
+package-index access and compilation without changing the copied runtime files.
+The SGLang runtime base remains pinned by digest, and both compatibility patches
+refuse an unknown source hash.
+
+Target image:
+`ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:qwen38-flash-next-nvfp4-20260827`
+
+Publication and same-hardware smoke status: pending.
