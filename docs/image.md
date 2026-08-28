@@ -46,4 +46,21 @@ refuse an unknown source hash.
 Target image:
 `ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:qwen38-flash-next-nvfp4-20260827`
 
-Publication and same-hardware smoke status: pending.
+Source revision: `100984d5e44a181ebac3e312a5dc807c5b1606bf`
+
+Local ARM64 build: passed
+
+Local image ID: `sha256:c13c7345095ad010c0b11e68e36707ea9cb109427171e2ebb92d4b7cf5cd50c0`
+
+Uncompressed image size: 30,409,004,170 bytes
+
+Static package checks: passed (both NCCL Mesh runtime hashes, all four patched
+source hashes, Python compilation, architecture, revision label)
+
+GHCR publication: blocked. Authentication succeeded, but the current GitHub CLI
+token lacks the registry's required `write:packages` scope. The temporary Docker
+credential directory was deleted after the refused push.
+
+Same-hardware full-image inference smoke: pending. The exact base image, patches,
+Mesh runtime and selected profile have each passed in the active four-rank run;
+this does not substitute for launching all four ranks from the assembled image.
