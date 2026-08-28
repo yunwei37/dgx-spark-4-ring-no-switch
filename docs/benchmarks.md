@@ -73,3 +73,23 @@ swap setting, route, or management-network change was added.
 Machine-readable input:
 
 - [`qwen38-flash-next-nvfp4-2026-08-27.json`](../benchmarks/qwen38-flash-next-nvfp4-2026-08-27.json)
+
+## SeaweedFS ConnectX storage baseline
+
+With rank 2 offline, the remaining three-node storage path wrote a temporary
+4 GiB file through the existing CSI/FUSE mount in 3.135 seconds. Simultaneous
+first reads from ranks 1 and 3 completed in 2.581 and 2.558 seconds,
+or about 1.55 and 1.56 GiB/s. The mount used direct volume-server `publicUrl`
+addresses on the OSPF-routed ConnectX network, `cacheCapacityMB=0`, and no host
+cache drop, writeback cache, storage replica, or tuning daemon.
+
+Both readers consumed all 4,294,967,296 bytes. Their BusyBox wrappers then
+exited non-zero because BusyBox `date` did not supply the requested nanosecond
+field; the `dd` measurements themselves completed successfully. The file and
+all disposable Pods were removed. This is a degraded three-node storage result,
+not a four-node inference pass, but it shows that raw SeaweedFS/FUSE bandwidth
+was several times higher than the measured model-loader throughput.
+
+Machine-readable input:
+
+- [`seaweedfs-connectx-2026-08-28.json`](../benchmarks/seaweedfs-connectx-2026-08-28.json)

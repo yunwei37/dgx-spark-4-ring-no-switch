@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "outcome": "passed-restored",
+  "date_utc": "2026-08-28",
+  "scope": "degraded three-node SeaweedFS ConnectX data path",
+  "cluster_state": {
+    "ready_storage_nodes": [
+      "rank0",
+      "rank1",
+      "rank3"
+    ],
+    "offline_storage_nodes": [
+      "rank2"
+    ],
+    "four_node_result": false
+  },
+  "storage": {
+    "server_version": "4.44",
+    "csi_driver_version": "1.4.29",
+    "mount_embedded_version": "4.42",
+    "pvc_storage_class": "seaweedfs-models",
+    "replication": "000",
+    "volume_server_access": "publicUrl",
+    "cache_capacity_mb": 0,
+    "transport": "OSPF-routed ConnectX storage /32 addresses"
+  },
+  "file": {
+    "bytes": 4294967296,
+    "temporary": true,
+    "removed_after_test": true
+  },
+  "write": {
+    "node": "rank0",
+    "seconds": 3.135259,
+    "bytes_per_second": 1369892343
+  },
+  "simultaneous_first_reads": [
+    {
+      "node": "rank1",
+      "seconds": 2.581184,
+      "bytes_per_second": 1663952394,
+      "complete_bytes": 4294967296
+    },
+    {
+      "node": "rank3",
+      "seconds": 2.558219,
+      "bytes_per_second": 1678889609,
+      "complete_bytes": 4294967296
+    }
+  ],
+  "test_constraints": {
+    "host_cache_drop": false,
+    "writeback_cache_added": false,
+    "host_or_network_tuning_added": false,
+    "persistent_test_entity_added": false
+  },
+  "wrapper_status": {
+    "io_passed": true,
+    "pod_phase": "Error",
+    "reason": "BusyBox date did not provide nanoseconds, causing a post-read divide-by-zero in the reporting wrapper"
+  },
+  "cleanup": {
+    "temporary_file_removed": true,
+    "disposable_pods_removed": true
+  }
+}
