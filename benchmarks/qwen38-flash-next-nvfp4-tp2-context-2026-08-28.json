@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-08-28",
+  "outcome": "passed-bounded-experiment",
+  "checkpoint": {
+    "repository": "RadixArk/Qwen3.8-Flash-Next-NVFP4",
+    "revision": "7b719225242aacd3dbd3f9407468c2ee9a9d2594"
+  },
+  "hardware": {
+    "nodes": 2,
+    "platform": "NVIDIA DGX Spark",
+    "interconnect": "direct ConnectX links within the four-node ring"
+  },
+  "runtime": {
+    "image": "ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:qwen38-flash-next-nvfp4-20260827",
+    "image_id": "sha256:c13c7345095ad010c0b11e68e36707ea9cb109427171e2ebb92d4b7cf5cd50c0",
+    "sglang_version": "0.0.0.dev1+gd91c3682b",
+    "profile": "profiles/qwen38-flash-next-nvfp4.sh",
+    "parallelism": "TP2/EP2",
+    "collective": "NCCL 2.29.7 Mesh Ring",
+    "context_length": 262144,
+    "quantization": "modelopt_fp4",
+    "fp4_gemm_backend": "flashinfer_cutlass",
+    "attention_backend": "fa4",
+    "mem_fraction_static": 0.8,
+    "mtp": {
+      "algorithm": "EAGLE",
+      "steps": 1,
+      "topk": 1,
+      "draft_tokens": 2
+    }
+  },
+  "startup": {
+    "rank0_target_weight_load_seconds": 1221.11,
+    "rank1_target_weight_load_seconds": 1235.79,
+    "rank0_mtp_weight_load_seconds": 839.12,
+    "rank1_mtp_weight_load_seconds": 842.44,
+    "engine_load_weight_seconds": 2060.23179063297,
+    "tokenizer_ready_seconds": 2140.59,
+    "token_capacity": 374016,
+    "effective_max_running_requests": 11,
+    "available_memory_after_startup_gib": 20.03
+  },
+  "native_max_context_cold": {
+    "prompt_tokens": 261888,
+    "output_budget_tokens": 256,
+    "window_tokens": 262144,
+    "marker_token_offset": 130920,
+    "marker_recovered": true,
+    "ttft_seconds": 116.42499750000206,
+    "prefill_tokens_per_second": 2249.4138340006866,
+    "completion_tokens": 254,
+    "decode_tokens_per_second": 31.223338388276762,
+    "mtp_accept_rate": 0.8405797101449275,
+    "sampled_minimum_memavailable_gib": {
+      "rank0": 18.37,
+      "rank1": 19.52
+    }
+  },
+  "native_max_context_warm": {
+    "prompt_tokens": 261888,
+    "cached_tokens": 258048,
+    "marker_recovered": true,
+    "ttft_seconds": 2.6741996000018844,
+    "completion_tokens": 254,
+    "decode_tokens_per_second": 38.58022816165468,
+    "mtp_accept_rate": 0.8201438848920863
+  },
+  "throughput": {
+    "single_512_tokens_per_second": 37.59961502106677,
+    "four_concurrent_2048_tokens_aggregate_per_second": 99.66150175313487
+  },
+  "response_format": {
+    "default": "thinking text appears in content",
+    "request_local_fix": "chat_template_kwargs.enable_thinking=false",
+    "clean_output_verified": true
+  },
+  "cleanup": {
+    "temporary_pods_deleted": true,
+    "all_four_spark_nodes_ready_after_test": true,
+    "persistent_host_or_network_changes": false
+  },
+  "measurement_boundary": [
+    "The full-context marker was placed near the middle and recovered exactly.",
+    "The memory minimum is from bounded synchronous samples, not continuous telemetry.",
+    "The 35-minute cold start passed correctness but is not an optimized startup result.",
+    "The target and MTP loader passes each scanned all 206 checkpoint shards; selective MTP tensor loading is the next loader A/B."
+  ]
+}

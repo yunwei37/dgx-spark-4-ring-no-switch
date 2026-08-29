@@ -15,6 +15,7 @@ weights or modify host management networking.
 | same checkpoint, MTP=4 | TP=4 | 8,192 | 33.42 tok/s fixed workload | passed; low memory reserve |
 | `0xSero/GLM-5.2-504B-Nvidia` | PP=4 | 32,005 | 4.40 tok/s | passed and restored |
 | `RadixArk/Qwen3.8-Flash-Next-NVFP4` + MTP | TP=4 | 262,144 native window | 1,505.59 prefill tok/s | exact mid-context retrieval passed; experiment active |
+| same checkpoint, MTP | TP=2/EP=2 | 262,144 native window | 37.60 tok/s single; 99.66 tok/s at 4 requests | exact mid-context retrieval passed and cleaned up |
 
 The INT4 MTP mixed-prompt runs measured 16.37-23.71 tok/s. The NVFP4 60,469
 token attempt was unsafe: unified-memory pressure affected the management plane
@@ -28,6 +29,11 @@ The exact-token retrieval client is
 source-hash-guarded SGLang compatibility patches used by the Qwen run are under
 [`images/runtime/`](images/runtime/); they are test-scoped patches for the
 recorded immutable image, not host modifications.
+
+The bounded Qwen TP2 native-window run recovered its mid-prompt marker with
+2,249.41 prefill tok/s, 31.22 tok/s cold full-context decode, and 38.58 tok/s
+after a 258,048-token cache hit. Its 35-minute cold start remains an explicit
+loader bottleneck, not a production-ready startup result.
 
 The matched Qwen full-depth natural-output run decoded at 48.81 tok/s with
 86.86% MTP acceptance. A 3-step/4-draft candidate appeared faster at 63.67

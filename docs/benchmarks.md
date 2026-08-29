@@ -70,9 +70,23 @@ The latter lets SM121 use the already-present TRT-LLM sparse decode kernel rathe
 than the broken FlashAttention-4 CuTe fallback. No host daemon, cache-drop loop,
 swap setting, route, or management-network change was added.
 
-Machine-readable input:
+A bounded TP2/EP2 rerun also exercised the full native window. Its 261,888-token
+prompt plus 256-token output budget recovered the exact mid-prompt marker. Cold
+TTFT was 116.42 seconds at 2,249.41 prefill tok/s and 31.22 decode tok/s. The
+immediate cache-hit run reused 258,048 tokens, reached 2.67-second TTFT, and
+decoded at 38.58 tok/s. A separate 512-token single request reached 37.60 tok/s;
+four concurrent 512-token requests reached 99.66 tok/s aggregate.
+
+This TP2 correctness pass took 2,140.59 seconds to become tokenizer-ready. Both
+the target and native MTP passes scanned all 206 checkpoint shards, so the run
+is not an optimized cold-start result. Request-local
+`chat_template_kwargs.enable_thinking=false` returned clean output without a
+server response-rewriting patch.
+
+Machine-readable inputs:
 
 - [`qwen38-flash-next-nvfp4-2026-08-27.json`](../benchmarks/qwen38-flash-next-nvfp4-2026-08-27.json)
+- [`qwen38-flash-next-nvfp4-tp2-context-2026-08-28.json`](../benchmarks/qwen38-flash-next-nvfp4-tp2-context-2026-08-28.json)
 
 ## SeaweedFS ConnectX storage baseline
 
