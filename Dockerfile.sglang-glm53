@@ -39,11 +39,10 @@ COPY images/runtime/apply_sglang_fastsafetensors_local_device.py /tmp/
 RUN python3 /tmp/apply_fastsafetensors_033_batch_release.py \
     && python3 /tmp/apply_sglang_fastsafetensors_local_device.py \
     && python3 -m py_compile \
-      /usr/local/lib/python3.12/dist-packages/fastsafetensors/parallel_loader.py \
+      "$(python3 -c 'import fastsafetensors.parallel_loader as loader; print(loader.__file__)')" \
       /sgl-workspace/sglang/python/sglang/srt/model_loader/weight_utils.py \
     && test "$(python3 -c 'import importlib.metadata; print(importlib.metadata.version("fastsafetensors"))')" = "0.3.3" \
     && rm /tmp/apply_fastsafetensors_033_batch_release.py \
           /tmp/apply_sglang_fastsafetensors_local_device.py
 
 ENV LD_LIBRARY_PATH=/opt/nccl-mesh/lib:/usr/local/cuda/lib64:/usr/local/lib/python3.12/dist-packages/nvidia/nccl/lib
-
