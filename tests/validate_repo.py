@@ -19,6 +19,7 @@ required = (
     "Dockerfile",
     "Dockerfile.package",
     "Dockerfile.sglang-qwen38",
+    "Dockerfile.sglang-glm53",
     "profiles/glm52-int4-int8mix.sh",
     "profiles/qwen38-flash-next-nvfp4.sh",
     "scripts/launch-ring.sh",
@@ -26,6 +27,8 @@ required = (
     "scripts/max_context_probe.py",
     "images/runtime/apply_sglang_nvfp4_gated_tp.py",
     "images/runtime/apply_sglang_qwen_sm121.py",
+    "images/runtime/apply_fastsafetensors_033_batch_release.py",
+    "images/runtime/apply_sglang_fastsafetensors_local_device.py",
     "benchmarks/glm52-int4-int8mix-2026-08-24.json",
     "benchmarks/glm52-nvfp4-2026-08-25.json",
     "benchmarks/qwen38-flash-next-nvfp4-2026-08-27.json",
@@ -52,6 +55,7 @@ for path in benchmark_files:
         "passed-restored",
         "failed-restored",
         "passed-active-experiment",
+        "passed-bounded-experiment",
     }:
         fail(f"{path.name}: unsupported outcome")
 
@@ -97,6 +101,21 @@ for patch_name in (
     "apply_sglang_qwen_sm121.py",
 ):
     if "hashlib.sha256" not in (ROOT / "images/runtime" / patch_name).read_text(encoding="utf-8"):
+        fail(f"{patch_name} must retain its source hash guard")
+
+glm53_dockerfile = (ROOT / "Dockerfile.sglang-glm53").read_text(encoding="utf-8")
+if glm53_dockerfile.count("@sha256:") < 2:
+    fail("GLM-5.3 Dockerfile must pin both build and runtime bases")
+if "fastsafetensors==0.3.3" not in glm53_dockerfile:
+    fail("GLM-5.3 Dockerfile must pin fastsafetensors 0.3.3")
+for patch_name in (
+    "apply_fastsafetensors_033_batch_release.py",
+    "apply_sglang_fastsafetensors_local_device.py",
+):
+    if patch_name not in glm53_dockerfile:
+        fail(f"GLM-5.3 Dockerfile must apply {patch_name}")
+    patch_text = (ROOT / "images/runtime" / patch_name).read_text(encoding="utf-8")
+    if "hashlib.sha256" not in patch_text or "EXPECTED_SHA256" not in patch_text:
         fail(f"{patch_name} must retain its source hash guard")
 
 readme = (ROOT / "README.md").read_text(encoding="utf-8")

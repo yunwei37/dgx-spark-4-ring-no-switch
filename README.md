@@ -101,6 +101,11 @@ four-rank arguments are in `profiles/qwen38-flash-next-nvfp4.sh` and the bounded
 Docker launcher is `scripts/launch-sglang-ring.sh`. The image contains the
 runtime and compatibility fixes, never the model weights.
 
+`Dockerfile.sglang-glm53` packages the exact SGLang digest used by the formal
+GLM-5.3 NVFP4 loader experiment, `fastsafetensors 0.3.3`, NCCL Mesh, and the two
+source-hash-guarded loader fixes. Its build, publication and four-rank inference
+smoke remain pending and are not reported as successful benchmark evidence.
+
 ## Documentation
 
 - [`docs/architecture.md`](docs/architecture.md) explains the ring boundary.

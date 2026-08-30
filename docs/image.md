@@ -64,3 +64,29 @@ credential directory was deleted after the refused push.
 Same-hardware full-image inference smoke: pending. The exact base image, patches,
 Mesh runtime and selected profile have each passed in the active four-rank run;
 this does not substitute for launching all four ranks from the assembled image.
+
+## Formal GLM-5.3 NVFP4 package
+
+`Dockerfile.sglang-glm53` pins the exact SGLang runtime and Mesh build bases by
+digest. It installs the already exercised `fastsafetensors 0.3.3` release and
+applies two exact-source-hash guards: process-local CUDA device selection and
+allocator release only after a completed file batch closes. These are image
+changes only; the recipe installs no host daemon, timer, cache-drop loop, swap,
+or recovery service.
+
+Target image:
+`ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:glm53-nvfp4-loader-20260829`
+
+Repository validation: passed
+
+ARM64 image build: pending
+
+GHCR publication and digest: pending
+
+Four-rank full-checkpoint inference smoke: pending
+
+The earlier four-rank run proved NCCL Mesh startup and reached ModelOpt FP4
+loading, but exhausted unified memory before serving a request. It does not
+validate this assembled image. Publication and serving results must remain
+pending until the full image is built and a request completes without a node,
+SSH, kubelet, or storage regression.
