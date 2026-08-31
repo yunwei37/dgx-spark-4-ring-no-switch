@@ -1,0 +1,10 @@
+ARG RUNTIME_IMAGE=ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:int4-int8mix-20260824
+FROM ${RUNTIME_IMAGE}
+
+LABEL org.opencontainers.image.title="Experimental GLM-5.3 INT4/INT8 runtime" \
+      org.opencontainers.image.source="https://github.com/yunwei37/dgx-spark-4-ring-no-switch" \
+      io.yunwei37.experimental="true"
+
+COPY images/runtime/apply_glm53_router_fp32.py /tmp/
+RUN python3 /tmp/apply_glm53_router_fp32.py \
+    && rm /tmp/apply_glm53_router_fp32.py

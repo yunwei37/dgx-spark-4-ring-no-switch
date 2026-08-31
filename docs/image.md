@@ -198,3 +198,41 @@ were retained. Corrected formal GLM-5.3 inference remains unmeasured, with zero
 successful requests. The 16 GiB reservation belongs to separate work and was
 not altered to make the experiment fit. A confirmed exclusive-memory window is
 still required; do not present these experimental images as a working service.
+
+## Formal GLM-5.3 INT4/INT8 router candidate
+
+The old package ignores `moe_router_dtype=float32`. The four-rank synthetic GPU
+preflight proved that FP32 parameter/output selection matches the reference;
+the full-checkpoint correctness and memory gates remain outstanding.
+`images/runtime/apply_glm53_router_fp32.py` adds exactly those two constructor
+kwargs when the checkpoint requests float32, preserving unspecified behavior.
+It changes neither quantization nor the model's layers/experts/IndexShare.
+
+On2026-08-31 the corrected module was assembled into an experimental ARM64 OCI
+image on a managed non-Spark container, then imported and inspected on all four
+inference nodes. All25base layers stayed unchanged. No compiler, host source
+tree, driver or daemon was installed. Candidate identity:
+
+```text
+local tag: ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:glm53-intmix-router-d6cf87377e53
+config: sha256:71ef93e62e5ad7f76821f25632e2df9c3840f1bcb1df1ad268b8618a40031ab2
+manifest: sha256:65cfb227b40f92709bed00d49bb502772ad6948ba31dbaf3b09fbbb3b6c41a3d
+patched source: d6cf87377e530c878b7f4a12b1517c08ba4213f320caa337b5e9c1462db4e24e
+GHCR publication: pending
+full-checkpoint inference smoke: not run
+```
+
+The51,200-byte OCI increment reused already cached base layers; its0.2–0.3s
+imports are **not** full-image installation timings. The14,489-byte compressed
+layer contains only the corrected module. Source compile and AST kwargs checks
+passed; the build-time patch script also patched a real temporary source file
+to the expected hash and refused mismatched input without changing it. The
+temporary directory was removed. These checks are not runtime/GPU inference.
+
+`Dockerfile.vllm-glm53-intmix` is the conventional build recipe using the exact
+locally assembled base tag from `Dockerfile.package`. This particular image
+was built by OCI assembly, not by executing that Dockerfile, so recipe execution
+is not yet verified. The existing base and candidate tags are not presently
+claimed pullable from GHCR. There is no startup-time patch/install step in the
+assembled candidate. Do not publish it as a working GLM service before the
+complete checkpoint, capacity, correctness and throughput gates pass.
