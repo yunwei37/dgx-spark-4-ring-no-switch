@@ -445,3 +445,61 @@ streaming iterator. With mmap this retains tensor/mapping references, not
 necessarily resident copies of every byte; with a different loader the peak
 could differ. Neither safety nor speed is demonstrated. The actual test
 manifests do not set this flag, and it was not enabled as a memory fix.
+
+### Full balanced PP4 constructor, unsafe loading (14:09 UTC)
+
+Formal NVFP4, all78layers and256experts, native TP1/EP1/PP4 with21/19/19/19
+layers completed the real constructor on all four ranks. It did **not**
+complete loading or inference. The allocation-prefix result above was not a
+full-model memory-safety guarantee.
+
+| PP stage | Actual Torch GiB | Available host GiB after constructor | Constructor seconds |
+| --- | ---: | ---: | ---: |
+| 0 | 102.378854 | 6.170124 | 6.716 |
+| 1 | 103.826798 | 5.996544 | 6.609 |
+| 2 | 103.826798 | 6.310062 | 7.278 |
+| 3 | 105.581813 | 4.095444 | 7.198 |
+
+![Measured complete-constructor allocation and remaining host memory](assets/glm53-full-constructor.svg)
+
+These are measured allocation/availability samples, not decode performance.
+Torch limits were105Gi on stage0 and107.5Gi elsewhere, with a3Gi initial
+native-UMA reserve and CPU-world admission. The20 mock admission cases passed.
+Stage0 requests/limits105Gi fit the existing scheduling remainder without
+stopping another workspace. The other stages requested110Gi. Native CUTLASS,
+CPU safetensors format,2K token/context cap,256prefill,one request; no eager,
+CPU offload, additional quantization or host tuning.
+
+By14:10:30Z three observed hosts had only~1.92/~1.89/~0.61Gi available and
+the fourth lost SSH/Lease. All four logged driver allocation failures.
+Test Pod deletion and original-service Git restoration followed immediately.
+As of14:23Z three hosts recovered without reboot; one host/test container and
+full original-service recovery remained pending. **0 successful requests**;
+this is an unsafe load with restoration pending, not a passing PP4 profile.
+The separate mixed-quantization full-checksum process also failed on a volume
+made unavailable by the node outage; it is no longer progressing.
+
+The exact tested loader (SHA0765d917447dc0b658d7d91c538a876e6d138a60589b0455f764be7be1006ca2)
+contains upstream DEFAULT_NUM_THREADS=8 and enable_multithread_load=True.
+Thus selecting safetensors did **not** select the assumed serial iterator.
+The [default branch selection](https://github.com/sgl-project/sglang/blob/f609d677b/python/sglang/srt/model_loader/loader.py)
+and [buffered iterator](https://github.com/sgl-project/sglang/blob/f609d677b/python/sglang/srt/model_loader/weight_utils.py)
+retain a multi-file window; its CPU peak must be included in the memory budget.
+This is a confirmed configuration-assumption error and plausible contribution,
+not a measured RSS decomposition. A native serial-loader candidate remains
+untested; do not repeat this unchanged recipe or lower the safety reserve.
+
+The [test-only wrapper](../tests/glm53_pp4_bounded_constructor.py) and
+[assembly recipe](../tests/Dockerfile.glm53-balanced-pp4) retain the failed
+attempt for diagnosis. Tested preassembled local image config
+50f0a22855874f100a6bce5042a5ba9173154f4ebd66480e83e8ebcae4ea5cd4,
+manifest dbefc8ec64c94cb5d317a96137b2e331bd0ada8202c85380027b330d0d0bd071.
+The215040-byte incremental OCI was assembled on a non-GPU development node,
+then imported; this does not claim a published GHCR image or a tested
+standalone Dockerfile build. No model bytes, prompts or credentials are shipped.
+
+At14:32Z the test-only image tag was removed and absence verified on the three
+recovered hosts. The failed verifier Job/container and transient assembly
+rootfs were cleaned; downloaded checkpoints and original service images remain.
+The inaccessible host's test container/tag and full service restoration are
+still pending. Do not treat partial cleanup as successful rollback.
