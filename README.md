@@ -35,6 +35,10 @@ The bounded Qwen TP2 native-window run recovered its mid-prompt marker with
 after a 258,048-token cache hit. Its 35-minute cold start remains an explicit
 loader bottleneck, not a production-ready startup result.
 
+The [MTP file-selection investigation](docs/blog/2026-08-31-qwen-mtp-file-selection.md)
+has verified the complete checkpoint and a zero-weight-copy draft view. Its
+preflight is published separately from the still-unverified GPU loading candidate.
+
 The matched Qwen full-depth natural-output run decoded at 48.81 tok/s with
 86.86% MTP acceptance. A 3-step/4-draft candidate appeared faster at 63.67
 tok/s but deterministically degenerated to repeated punctuation and failed
