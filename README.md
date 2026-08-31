@@ -22,11 +22,12 @@ weights or modify host management networking.
 | same Flash FP8, MTP=5 | TP=4/EP=4 | 78,000 input retrieval passed | 25.57 tok/s forced 512-token decode | bounded pass; less KV capacity, not formal GLM-5.3 |
 
 Formal **GLM-5.3 (not Flash)** remains the first priority and has **zero**
-successful local inference requests. The August31 full native NVFP4 test with
-serial pread and synchronous loading completed construction but exhausted
-memory during initial reads on all four ranks; it was stopped and the original
-service restored. [Full failure data and graph](docs/loader-memory-results.md)
-are published; constructor savings are not inference.
+successful local inference requests. August31 native NVFP4 loading failed
+during initial reads. A follow-up pre-read ownership/sliced-vocabulary patch
+saved about1.74GiB RSS in a byte-identical GPU component but loaded more slowly;
+the actual full-model follow-up still hit the host-memory floor on its final
+pipeline rank. [Failure data and graphs](docs/loader-memory-results.md) are
+published; constructor or component savings are not inference.
 The requested INT4/INT8 checkpoint finished full upstream
 checksum/index/size verification on August31; its temporary verifier was removed.
 It has not completed local inference;

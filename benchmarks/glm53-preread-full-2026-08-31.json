@@ -1,0 +1,763 @@
+{
+  "schema_version": 1,
+  "outcome": "failed-restored",
+  "model": "LibertAIDAI/GLM-5.3-NVFP4",
+  "model_revision": "653d98214a487d78c1b2a37167b56764b6240080",
+  "date": "2026-08-31",
+  "scope": "Full78-layer target NVFP4, PP4 21/19/19/19, no MTP",
+  "image": "sha256:e516315dcb068d329e66e0dbb5928a246e408db75cec80c154da5848a50d5bae",
+  "successful_inference_requests": 0,
+  "full_load_pass": false,
+  "ranks": [
+    {
+      "rank": 0,
+      "preflight_pass": true,
+      "constructor": [
+        {
+          "allocated_bytes": 109928457728,
+          "checkpoint_loaded": false,
+          "constructor_returned": true,
+          "elapsed_seconds": 6.851990843999374,
+          "host_available_bytes": 6676795392,
+          "peak_bytes": 109928457728,
+          "pp_rank": 0,
+          "reserved_bytes": 109934804992
+        }
+      ],
+      "memory": [
+        {
+          "elapsed": 0.000048816000344231725,
+          "available": 123963293696,
+          "minimum": 123963293696,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 5.03009583200037,
+          "available": 123542536192,
+          "minimum": 123542536192,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 10.050882718001958,
+          "available": 123402932224,
+          "minimum": 123402932224,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 15.066776323998056,
+          "available": 123275284480,
+          "minimum": 123257286656,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 20.093703345002723,
+          "available": 122553569280,
+          "minimum": 122553569280,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 25.149066493002465,
+          "available": 121539145728,
+          "minimum": 121539145728,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 30.165827432996593,
+          "available": 120147202048,
+          "minimum": 120147202048,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 35.190737083001295,
+          "available": 119896756224,
+          "minimum": 119881687040,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 40.211225357998046,
+          "available": 119931965440,
+          "minimum": 119881687040,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 45.23812549399736,
+          "available": 120001298432,
+          "minimum": 119881687040,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 50.26823520100152,
+          "available": 120089952256,
+          "minimum": 119881687040,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 55.296420011996815,
+          "available": 120160247808,
+          "minimum": 119881687040,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 60.32255628200073,
+          "available": 120197390336,
+          "minimum": 119881687040,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 65.34988146500109,
+          "available": 120205062144,
+          "minimum": 119881687040,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 70.36876805400243,
+          "available": 119253364736,
+          "minimum": 119253364736,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 75.39562968900282,
+          "available": 13703598080,
+          "minimum": 13703598080,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 80.4135826970014,
+          "available": 5135589376,
+          "minimum": 4756172800,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 85.42986226699577,
+          "available": 5851230208,
+          "minimum": 4756172800,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 90.45012379199761,
+          "available": 4895760384,
+          "minimum": 4272115712,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 95.47339845699753,
+          "available": 5687365632,
+          "minimum": 4099903488,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 100.49382792200049,
+          "available": 5745840128,
+          "minimum": 4099903488,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 105.52765219499997,
+          "available": 4444033024,
+          "minimum": 4099903488,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 110.55913499699818,
+          "available": 4708139008,
+          "minimum": 4099903488,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 115.58206568499736,
+          "available": 5544099840,
+          "minimum": 4099903488,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 120.6084652080026,
+          "available": 5754408960,
+          "minimum": 4099903488,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 125.62927516199852,
+          "available": 4923883520,
+          "minimum": 4099903488,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 130.64962030100287,
+          "available": 5015879680,
+          "minimum": 4099903488,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 135.6697237940025,
+          "available": 5964320768,
+          "minimum": 4099903488,
+          "floor": 3221225472,
+          "reason": null
+        }
+      ],
+      "stop": [],
+      "full_load_marker": false,
+      "tail": []
+    },
+    {
+      "rank": 1,
+      "preflight_pass": true,
+      "constructor": [
+        {
+          "allocated_bytes": 111483175424,
+          "checkpoint_loaded": false,
+          "constructor_returned": true,
+          "elapsed_seconds": 7.353984439003398,
+          "host_available_bytes": 6464364544,
+          "peak_bytes": 111483175424,
+          "pp_rank": 1,
+          "reserved_bytes": 111486697472
+        }
+      ],
+      "memory": [
+        {
+          "elapsed": 0.00010304000170435756,
+          "available": 123984044032,
+          "minimum": 123984044032,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 5.0662725799993495,
+          "available": 123494854656,
+          "minimum": 123493130240,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 10.081624067999655,
+          "available": 123369414656,
+          "minimum": 123368787968,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 15.097437338001328,
+          "available": 123209547776,
+          "minimum": 123209547776,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 20.148555438005133,
+          "available": 122447249408,
+          "minimum": 122447249408,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 25.180898876002175,
+          "available": 122151964672,
+          "minimum": 122150563840,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 30.209331028003362,
+          "available": 122153095168,
+          "minimum": 122150563840,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 35.23067264600104,
+          "available": 122190151680,
+          "minimum": 122150563840,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 40.25984682000126,
+          "available": 121770913792,
+          "minimum": 121769422848,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 45.27619569400122,
+          "available": 120596189184,
+          "minimum": 120596189184,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 50.29426710400003,
+          "available": 8666083328,
+          "minimum": 8666083328,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 55.31007595000119,
+          "available": 6590939136,
+          "minimum": 6086111232,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 60.32676790400001,
+          "available": 6123876352,
+          "minimum": 6074048512,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 65.34536497000227,
+          "available": 6406275072,
+          "minimum": 6051749888,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 70.3650325530034,
+          "available": 6021574656,
+          "minimum": 6021574656,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 75.38552262099984,
+          "available": 6405619712,
+          "minimum": 5930553344,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 80.40709797200543,
+          "available": 6480732160,
+          "minimum": 5918023680,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 85.43327396400127,
+          "available": 6489014272,
+          "minimum": 5915873280,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 90.45301787300559,
+          "available": 6271078400,
+          "minimum": 5803106304,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 95.47113337900373,
+          "available": 6364856320,
+          "minimum": 5767360512,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 100.48990063100064,
+          "available": 6403428352,
+          "minimum": 5767360512,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 105.50622437299899,
+          "available": 6531100672,
+          "minimum": 5767360512,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 110.52214936200471,
+          "available": 5827223552,
+          "minimum": 5767360512,
+          "floor": 3221225472,
+          "reason": null
+        }
+      ],
+      "stop": [],
+      "full_load_marker": false,
+      "tail": []
+    },
+    {
+      "rank": 2,
+      "preflight_pass": true,
+      "constructor": [
+        {
+          "allocated_bytes": 111483175424,
+          "checkpoint_loaded": false,
+          "constructor_returned": true,
+          "elapsed_seconds": 5.728203149999899,
+          "host_available_bytes": 6327824384,
+          "peak_bytes": 111483175424,
+          "pp_rank": 2,
+          "reserved_bytes": 111486697472
+        }
+      ],
+      "memory": [
+        {
+          "elapsed": 0.000048080000851769,
+          "available": 123748540416,
+          "minimum": 123748540416,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 5.042758233001223,
+          "available": 123156819968,
+          "minimum": 123156819968,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 10.06003634499939,
+          "available": 122751344640,
+          "minimum": 122751344640,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 15.0795854540047,
+          "available": 122158067712,
+          "minimum": 122158067712,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 20.104733469001076,
+          "available": 122027032576,
+          "minimum": 122026160128,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 25.1263531279983,
+          "available": 122031075328,
+          "minimum": 122025226240,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 30.144472945001326,
+          "available": 121555464192,
+          "minimum": 121554821120,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 35.16812752700207,
+          "available": 121304764416,
+          "minimum": 121298833408,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 40.19817985199916,
+          "available": 121327738880,
+          "minimum": 121298833408,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 45.22560126900498,
+          "available": 121355526144,
+          "minimum": 121298833408,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 50.25473051000154,
+          "available": 121364402176,
+          "minimum": 121298833408,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 55.27998268800002,
+          "available": 121366863872,
+          "minimum": 121298833408,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 60.30917432300339,
+          "available": 121366319104,
+          "minimum": 121298833408,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 65.33806772000389,
+          "available": 121369313280,
+          "minimum": 121298833408,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 70.36236659299902,
+          "available": 120393854976,
+          "minimum": 120393854976,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 75.38655667100102,
+          "available": 15457857536,
+          "minimum": 15457857536,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 80.40802638199966,
+          "available": 6037520384,
+          "minimum": 5855891456,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 85.42688209599874,
+          "available": 6497669120,
+          "minimum": 5855891456,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 90.45345141800499,
+          "available": 6364844032,
+          "minimum": 5855891456,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 95.47494147899852,
+          "available": 6415060992,
+          "minimum": 5855891456,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 100.50015518700093,
+          "available": 6196801536,
+          "minimum": 5855891456,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 105.5182982260012,
+          "available": 6080335872,
+          "minimum": 5756440576,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 110.54083545900357,
+          "available": 6316539904,
+          "minimum": 5756440576,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 115.56351012200321,
+          "available": 6284480512,
+          "minimum": 5756440576,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 120.58263744800206,
+          "available": 6375784448,
+          "minimum": 5756440576,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 125.6048951690027,
+          "available": 6351134720,
+          "minimum": 5756440576,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 130.62669593000464,
+          "available": 6183317504,
+          "minimum": 5756440576,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 135.64911041199957,
+          "available": 6283800576,
+          "minimum": 5756440576,
+          "floor": 3221225472,
+          "reason": null
+        }
+      ],
+      "stop": [],
+      "full_load_marker": false,
+      "tail": []
+    },
+    {
+      "rank": 3,
+      "preflight_pass": true,
+      "constructor": [
+        {
+          "allocated_bytes": 113367608832,
+          "checkpoint_loaded": false,
+          "constructor_returned": true,
+          "elapsed_seconds": 7.862061221996555,
+          "host_available_bytes": 4812554240,
+          "peak_bytes": 113367608832,
+          "pp_rank": 3,
+          "reserved_bytes": 113374134272
+        }
+      ],
+      "memory": [
+        {
+          "elapsed": 0.00004979199729859829,
+          "available": 123910037504,
+          "minimum": 123910037504,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 5.017917758996191,
+          "available": 123452739584,
+          "minimum": 123451678720,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 10.044808396000008,
+          "available": 123322839040,
+          "minimum": 123322839040,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 15.071883644995978,
+          "available": 123157368832,
+          "minimum": 123156811776,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 20.093161717995827,
+          "available": 122519908352,
+          "minimum": 122519908352,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 25.126309594001214,
+          "available": 122078765056,
+          "minimum": 122077089792,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 30.157853447999514,
+          "available": 122085736448,
+          "minimum": 122077089792,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 35.190371277996746,
+          "available": 122077016064,
+          "minimum": 122077016064,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 40.21648133599956,
+          "available": 122089906176,
+          "minimum": 122071982080,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 45.24035669699515,
+          "available": 122099515392,
+          "minimum": 122071982080,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 50.28131892999954,
+          "available": 121658470400,
+          "minimum": 121657229312,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 55.3126880169948,
+          "available": 120429436928,
+          "minimum": 120429436928,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 60.34037067299505,
+          "available": 7325962240,
+          "minimum": 7325962240,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 64.95793805799622,
+          "available": 3185352704,
+          "minimum": 3185352704,
+          "floor": 3221225472,
+          "reason": "host_available_below_3GiB"
+        }
+      ],
+      "stop": [
+        {
+          "reason": "host_available_below_3GiB",
+          "child_exit": -15,
+          "elapsed": 65.27334977399732,
+          "host_available_min": 3185352704
+        }
+      ],
+      "full_load_marker": false,
+      "tail": []
+    }
+  ],
+  "driver_allocation_warning_counts_by_logical_rank": [
+    54,
+    6,
+    65,
+    31
+  ],
+  "linux_oom": 0,
+  "xid": 0
+}

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="360" viewBox="0 0 880 360">
+<rect width="880" height="360" fill="#f8fafc"/>
+<g font-family="sans-serif" fill="#0f172a">
+<text x="24" y="30" font-size="20">Formal GLM-5.3: component-only ABBA, not inference</text>
+<text x="24" y="55" font-size="13">One real MoE layer + vocabulary. Identical parameter SHA; cache state not controlled.</text>
+<text x="180" y="88" font-size="14">Sampled host-process peak RSS (GiB)</text>
+<text x="545" y="88" font-size="14">Native load + postprocess (seconds)</text>
+<text x="24" y="133" font-size="14">1. baseline</text><rect x="180" y="114" width="233.17" height="28" fill="#64748b"/><text x="423.1710968017578" y="133" font-size="13">5.30</text><rect x="545" y="114" width="60.06" height="28" fill="#64748b"/><text x="615.0558229187984" y="133" font-size="13">26.11</text>
+<text x="24" y="181" font-size="14">2. chunked</text><rect x="180" y="162" width="156.56" height="28" fill="#0f766e"/><text x="346.55999755859375" y="181" font-size="13">3.56</text><rect x="545" y="162" width="232.06" height="28" fill="#0f766e"/><text x="787.0606842594018" y="181" font-size="13">100.90</text>
+<text x="24" y="229" font-size="14">3. chunked</text><rect x="180" y="210" width="156.20" height="28" fill="#0f766e"/><text x="346.2036590576172" y="229" font-size="13">3.55</text><rect x="545" y="210" width="234.61" height="28" fill="#0f766e"/><text x="789.6122019784088" y="229" font-size="13">102.01</text>
+<text x="24" y="277" font-size="14">4. baseline</text><rect x="180" y="258" width="232.77" height="28" fill="#64748b"/><text x="422.7724609375" y="277" font-size="13">5.29</text><rect x="545" y="258" width="16.26" height="28" fill="#64748b"/><text x="571.2565429266076" y="277" font-size="13">7.07</text>
+<text x="24" y="332" font-size="14">~1.74 GiB less RSS, but slower. GPU peak unchanged. Not a performance pass.</text></g></svg>
+

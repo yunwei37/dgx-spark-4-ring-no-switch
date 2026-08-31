@@ -945,3 +945,89 @@ service startup logged78/44/67/75 driver allocation warnings, no Linux OOM/Xid;
 after verified Ready through16:59:15UTC all matching counts were0. This is not
 long-term stability. **Passed-restored diagnostic; formal GLM-5.3 still has
 0successful inference requests.**
+
+### Pre-read ownership and sliced vocabulary GPU ABBA
+
+August31,20:07-20:13UTC: the real native layer3/all256experts plus embedding,
+head and norm was loaded four times, baseline/chunked/chunked/baseline.
+This is explicitly a component test: other layers are placeholders, no API
+inference is performed. Both paths use the same synchronous native consumer.
+The candidate skips unowned PP tensors before materialization and stages each
+1,903,165,440-byte BF16 vocabulary matrix in57slices of at most32MiB.
+
+![GPU component RSS and load timing](assets/glm53-preread-gpu.svg)
+
+| Run | Mode | Load RSS peak GiB | Load + postprocess seconds |
+| --- | --- | ---: | ---: |
+| 1 | baseline | 5.30 | 26.11 |
+| 2 | chunked | 3.56 | 100.90 |
+| 3 | chunked | 3.55 | 102.01 |
+| 4 | baseline | 5.29 | 7.07 |
+
+All runs loaded3,089selected tensors and produced32parameters totaling
+9,650,883,608bytes, with identical full parameter SHA256
+`d9f706e49f8e58529b9a6ad5bcb06f5a09463b28bd86643823371da92c103f47`.
+CUDA peak allocation stayed11,234,558,464bytes. Host available memory stayed
+above104GB; no new driver allocation failure, LinuxOOM or Xid in this run.
+Sampling can miss short peaks; counters overlap and must not be summed.
+
+Conclusion: about1.74GiB lower process RSS, **not a performance improvement**.
+Cache/shared-storage conditions were not controlled or flushed; the two
+baseline times differ. Do not extrapolate component timing into full cold start.
+The repeated chunked slowdown requires profiling reads versus copies before
+retaining this optimization. Parameter equality is necessary, not sufficient
+for full-model correctness, capacity or useful serving performance.
+
+The diagnostic parent exited0 after its expected stop marker; child failures
+were intentional component termination, not serving crashes. The exact Pod
+was removed. [Four raw results](../benchmarks/glm53-preread-gpu-2026-08-31.json)
+preserve input digests, memory samples and native timings. A separate bounded
+full-model follow-up uses unchanged caps/floor; no full inference result is
+implied by this component result.
+
+#### Full-model follow-up: still a capacity failure
+
+The candidate was then actually built on a non-GPU development node and
+imported on all four Sparks. Image manifest:
+`sha256:e516315dcb068d329e66e0dbb5928a246e408db75cec80c154da5848a50d5bae`.
+The399,360-byte OCI delta reused existing parent content, not a full image
+download. This is not a subsecond fresh-install claim or a published image.
+All282shards passed header/tail/total-size checks; this was not a new checksum
+pass. Full78layers/256experts, PP4 partitions21/19/19/19, original Torch caps
+and3GiB sampled floor were unchanged. No eager, crop, offload or host tuning.
+
+| Logical rank | Constructor Torch bytes | Host bytes after constructor | Sampled minimum before capture |
+| --- | ---: | ---: | ---: |
+| 0 | 109928457728 | 6676795392 | 4099903488 |
+| 1 | 111483175424 | 6464364544 | 5767360512 |
+| 2 | 111483175424 | 6327824384 | 5756440576 |
+| 3 | 113367608832 | 4812554240 | 3185352704 |
+
+Rank3 stopped at20:24:12UTC, childSIGTERM/parent75, below the same3GiB floor.
+The other ranks were still loading when logs were captured and were then
+stopped normally as one failed collective attempt. No full-load marker,
+serving readiness or inference was reached. Driver allocation warnings were
+54/6/65/31 by logical rank; LinuxOOM and Xid were0. Empty GPU processes and
+real management service recovery were verified afterward. Absence of LinuxOOM
+does not make driver allocation failures safe or successful.
+
+The component saving did not prove full fit. These logs do not isolate the
+remaining allocation to a particular tensor or prove which slicing/fallback
+branch ran on the final rank. The next hypothesis needs exact full-reader
+branch/shape/dtype and allocation attribution; it must not merely lower the
+floor or repeat this image unchanged. An uninstrumented alternate startup
+path also remains in the source, so source presence is not execution proof.
+
+The [sanitized full-run samples](../benchmarks/glm53-preread-full-2026-08-31.json)
+retain this boundary. All four test Pods and their candidate image tags were
+removed; the original service restore was pushed as`fbbbab9`. The formal
+target still has **zero successful requests**; throughput is unmeasured.
+
+Restoration verified20:32-20:33UTC: original four Pods Ready/0restart,
+backend health200 and correct authenticated generation200; missing/invalid
+401. An independent external client also passed401/401/correct200. Original
+boots, real SSH/services/GPU, all node Leases and four storage registrations
+passed. Candidate image IDs were removed, not just their tags; no new cores.
+Original-service startup emitted42/24/24/80driver allocation warnings by
+physical Spark1/2/3/4, no LinuxOOM/Xid. Post-Ready observations through20:33:25
+had0matching warnings; no long-term stability claim. **Failed-restored**.

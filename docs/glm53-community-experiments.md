@@ -147,8 +147,10 @@ still require four nodes for resident-weight testing.
 
 ## Consequences for our next experiments
 
-1. Keep the requested actual NVFP4-weight test open. Our CPU-only pre-read
-   ownership/sliced-vocabulary candidate is not GPU-tested and is not a pass.
+1. Keep the requested actual NVFP4-weight test open. Our subsequent August31
+   GPU component ABBA proved byte equality and about1.74GiB lower host RSS,
+   but sliced vocabulary loading was slower. This is not full inference or a
+   performance pass; see [the measured component](loader-memory-results.md#pre-read-ownership-and-sliced-vocabulary-gpu-abba).
 2. Use the already verified full INT4/INT8 checkpoint as the community-backed
    comparison: validate the matching image/overlays, first correct base
    inference, then MTP, then DFlash2 if its extra artifacts justify the test.
