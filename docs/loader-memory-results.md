@@ -44,3 +44,46 @@ that their actual iterator releases allocator cache. Do not transfer the
 GLM-5.2 loader result to this different runtime or blame SeaweedFS for a
 constructor allocation failure. Direct-iterator buffer lifetime and final
 full-model memory headroom remain separate validation items.
+
+## Formal GLM-5.3 INT4/INT8: file staging is separate from model size
+
+The fixed `Tech2wild/GLM-5.3-Int4-Int8Mix` revision
+`206507bbb047d8223964a0414cd83230c59428f9` has282 safetensors files totaling
+405,241,870,672bytes. Its immutable index SHA256 is
+`c935795467984516f24a64d2dc2ce07bed74a8f83ada76950f28b847786eeddf`.
+Read-only index/header inspection identified three pure-MTP files271–273,
+totaling8,045,089,968bytes. Files270 and274 contain both MTP and target tensors;
+later files contain target layers8/9. Dropping the final twelve files would
+drop target weights, not merely MTP. A279-file target view is only a candidate,
+not a measured optimization or an altered checkpoint.
+
+In the pinned vLLM package, fastsafetensors0.3.2 actually calls ParallelLoader.
+Its native queue0 overlaps two source-file batches; each rank stages one file
+per batch. The largest first file is4.648GiB and contains two BF16 vocabulary
+tensors, each1.772GiB. The native iterator broadcasts complete tensors before
+the model weight loader slices them for tensor parallelism. Cache-disabled
+broadcasts do not accumulate all tensors, but their live allocation and
+postload Marlin repacking still require headroom beyond static model storage.
+
+Calculated maximum source-file staging by TP rank, full282-file sorted list:
+
+| Rank | One file, GiB | Two consecutive assigned files, GiB |
+| --- | ---: | ---: |
+| 0 | 4.648 | 6.044 |
+| 1 | 2.127 | 3.616 |
+| 2 | 2.498 | 3.883 |
+| 3 | 2.498 | 3.785 |
+
+These are byte-layout calculations, **not measured allocation peaks**. They
+exclude broadcast tensors, final weights, per-layer repacking, communication,
+KV and runtime. The94.65GiB/rank constructor result therefore does not prove
+a safe full load. Native serial queue=-1 and an exact pure-MTP file view are
+possible bounded candidates; neither has yet passed a full-model startup or
+performance comparison. No host cache dropping or persistent tuning is added.
+Formal NVFP4 remains separately unresolved and has zero successful requests.
+
+The pinned loader applies `ignore_patterns` when downloading, not when globbing
+an existing local model directory. That CLI flag alone would not implement the
+proposed selection on a mounted snapshot. Preserve the complete snapshot for
+verification; a future selection must use an explicit disposable file view,
+not remove checkpoint files. No selection was applied during this inspection.

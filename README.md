@@ -14,9 +14,9 @@ weights or modify host management networking.
 | `QuantTrio/GLM-5.2-Int4-Int8Mix` | TP=4 | 8,192 | 12.99 tok/s | passed and restored |
 | same checkpoint, MTP=4 | TP=4 | 8,192 | 33.42 tok/s fixed workload | passed; low memory reserve |
 | `0xSero/GLM-5.2-504B-Nvidia` | PP=4 | 32,005 | 4.40 tok/s | passed and restored |
-| `RadixArk/Qwen3.8-Flash-Next-NVFP4` + MTP | TP=4 | 262,144 native window | 1,505.59 prefill tok/s | exact mid-context retrieval passed; experiment active |
+| `RadixArk/Qwen3.8-Flash-Next-NVFP4` + MTP | TP=4 | 262,144 native window | 48.81 tok/s short cached natural output | exact mid-context retrieval passed; separate decode workload, restored |
 | same checkpoint, MTP | TP=2/EP=2 | 262,144 native window | 37.60 tok/s single; 99.66 tok/s at 4 requests | exact mid-context retrieval passed and cleaned up |
-| same full checkpoint, MTP file view | TP=2/EP=2 | 262,144 native window | 40.20 tok/s single; 102.19 tok/s at 4 requests | strict final-key retrieval passed; bounded trial |
+| same full checkpoint, MTP file view | TP=2/EP=2 | 262,144 native window | 40.20 tok/s single; 102.19 tok/s at 4 requests | strict final-key retrieval passed and restored |
 | `Qwen/Qwen3.8-Flash-Next` BF16 | TP=4/EP=4 | 32,768 cold input passed; 32,769 failed | 25.87 tok/s short request | long-context correctness failure, not full-window success |
 | `zai-org/GLM-5.3-Flash` FP8 | TP=4/EP=4 | 240,000 input retrieval passed | 20.16 tok/s single | bounded inference passed |
 | same Flash FP8, MTP=5 | TP=4/EP=4 | 78,000 input retrieval passed | 25.57 tok/s forced 512-token decode | bounded pass; less KV capacity, not formal GLM-5.3 |
