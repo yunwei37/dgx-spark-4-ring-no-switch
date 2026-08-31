@@ -141,3 +141,7 @@ queries the real process group's membership before entering FakeTensor and
 reuses that measured result for the same group. It does not assume co-location
 or change the serving image. This diagnostic failure is retained separately
 from the actual model-memory failure.
+The first adjustment referenced the caller module instead of the function's
+definition in `parallel_state`; that second diagnostic also exited before
+model allocation. Source inspection confirmed the caller uses a local import,
+and the wrapper now patches the defining module only within its scoped test.

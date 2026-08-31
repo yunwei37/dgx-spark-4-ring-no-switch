@@ -10,7 +10,6 @@ def _initialize_model(*args, **kwargs):
     from unittest.mock import patch
     from torch._subclasses.fake_tensor import FakeTensor, FakeTensorMode
     from sglang.srt.distributed import parallel_state
-    from sglang.srt.distributed.device_communicators import triton_symm_mem_ag
 
     # Any unexpected real Torch allocation is bounded independently of SSH.
     # NCCL setup already happened; FakeTensor handles model tensors below.
@@ -18,13 +17,13 @@ def _initialize_model(*args, **kwargs):
     # This host-membership collective needs real CPU data, not fake .tolist().
     # Query the actual group first, then reuse that exact result only here.
     group = parallel_state.get_tp_group().cpu_group
-    membership = triton_symm_mem_ag.in_the_same_node_as(group, source_rank=0)
+    membership = parallel_state.in_the_same_node_as(group, source_rank=0)
 
     def measured_membership(process_group, source_rank=0):
         assert process_group is group and source_rank == 0
         return membership
 
-    with patch.object(triton_symm_mem_ag, "in_the_same_node_as", measured_membership), FakeTensorMode(allow_non_fake_inputs=True):
+    with patch.object(parallel_state, "in_the_same_node_as", measured_membership), FakeTensorMode(allow_non_fake_inputs=True):
         model = _shape_audit_original_initialize_model(*args, **kwargs)
         grouped = collections.Counter()
         storages = {}
