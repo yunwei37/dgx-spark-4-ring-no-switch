@@ -133,3 +133,11 @@ the real model constructor runs under PyTorch FakeTensor and then deliberately
 exits before weight loading. Its 5% Torch allocator cap is test-local protection,
 not a serving parameter or host policy. Any unsupported fake operation is a
 diagnostic failure; it must not fall through to allocating the full model.
+
+The first shape-audit run failed safely at the logits processor's CPU host
+membership query (`FakeTensor.tolist` needs real values). No full weights were
+allocated or loaded, and GPU processes exited normally. The diagnostic now
+queries the real process group's membership before entering FakeTensor and
+reuses that measured result for the same group. It does not assume co-location
+or change the serving image. This diagnostic failure is retained separately
+from the actual model-memory failure.
