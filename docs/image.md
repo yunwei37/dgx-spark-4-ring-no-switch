@@ -168,3 +168,20 @@ it uses the upstream safetensors mmap loader, eight NCCL channels, an initial
 8K context/token budget and 512-token chunked prefill. This is a capacity
 bring-up, not a one-variable throughput A/B or the final maximum-context
 profile. No host configuration or persistent monitoring process is installed.
+
+The bounded image built successfully with config ID
+`sha256:06f5229f99788c293318427968224574455230f63d2f45711ff6461da7665c85`
+and was imported on all four nodes. A native allocator sanity test rejected a
+2 GiB request under a 1 GiB budget without allocating any memory. The real TP4
+Job then encountered a scheduling conflict: an unrelated workspace's 16 GiB
+reservation left one rank Pending. The other three stopped before constructor
+allocation; all test Pods were removed. This is **resource-blocked**, not a new
+loader OOM, not corrected inference success. The unrelated workspace was not
+stopped or resized.
+
+A native PP4 capacity-only follow-up distributed all 78 layers as 22/19/18/19,
+with BF16 shared experts retained. FakeTensor storage was 107.752329,
+103.757127, 98.313978 and 105.512142 GiB by pipeline stage. These numbers did
+not establish safe runtime margin alongside the other reservation. No real PP
+weights were loaded. This pinned runtime also excludes speculative decoding
+with PP, so the diagnostic is not a replacement for the requested TP4 result.
