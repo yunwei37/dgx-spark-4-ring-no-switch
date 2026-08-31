@@ -219,3 +219,26 @@ No host network, tunnel, CSI, offload, queue or memory policy was changed.
 The progressing downloader was not restarted. Spark-side bulk model loading
 uses the separate ConnectX volume-server path, so these download observations
 cannot replace a full-checkpoint loader profile or inference benchmark.
+
+### Full-checksum read phase
+
+The same attempt finished downloading at 11:18:32 UTC and began native HF cache
+verification. A 30.002-second sample at 11:32:53–11:33:23 UTC measured 1,721,778,544
+additional process-read bytes: 57.39 MB/s (54.73 MiB/s). The open checkpoint file
+advanced from 33 to 34 of 282. Process read counters are not a count of bytes
+already accepted by the checksum verifier, and verification had not passed.
+
+The verifier consumed 3.47 CPU-seconds, while the whole downloader/mount cgroup
+consumed 24.139 CPU-seconds (about 0.80 core) against its 2-CPU limit. There were no
+additional CPU-throttled periods. A following kernel stack sample waited in
+`folio_wait_bit_common` via `filemap_read` and `fuse_file_read_iter`. This
+supports a read-wait bottleneck in that window, not a CPU-limit bottleneck;
+it does not identify FUSE itself as the sole cause. The 2 GiB memory cgroup had
+696 additional limit hits, 0.141 seconds of memory pressure and zero OOM/kills.
+These observations do not justify increasing limits or changing host policy.
+
+No verifier was restarted or duplicated, and the original four-rank model
+service remained Ready with zero restarts. These control-node checksum reads
+use the ordinary network path, not the Spark ConnectX model-loading path;
+their speed is not inference or GPU-loader performance. Full verification
+remains required before publishing the checkpoint and starting the real test.
