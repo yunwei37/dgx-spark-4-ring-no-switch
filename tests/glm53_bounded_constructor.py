@@ -11,7 +11,9 @@ def _initialize_model(*args, **kwargs):
     budget = int(107.5 * 1024**3)
     reserve = 3 * 1024**3
     device = torch.cuda.current_device()
-    free, total = torch.cuda.mem_get_info(device)
+    cuda_free, total = torch.cuda.mem_get_info(device)
+    from sglang.srt.utils.common import get_available_gpu_memory
+    free = int(get_available_gpu_memory("cuda", device, empty_cache=False) * (1 << 30))
     allocated = torch.cuda.memory_allocated(device)
     if free < budget - allocated + reserve:
         raise RuntimeError(
@@ -21,6 +23,7 @@ def _initialize_model(*args, **kwargs):
     torch.cuda.set_per_process_memory_fraction(budget / total, device)
     print("GLM53_TORCH_BUDGET=" + json.dumps({
         "budget_bytes": budget, "free_before_bytes": free,
+        "cuda_free_before_bytes": cuda_free,
         "total_bytes": total, "allocated_before_bytes": allocated,
         "reserve_bytes": reserve,
         "scope": "Torch caching allocator only; excludes CPU and non-Torch allocations",

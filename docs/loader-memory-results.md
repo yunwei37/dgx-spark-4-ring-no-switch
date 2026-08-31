@@ -284,3 +284,31 @@ service remained Ready with zero restarts. These control-node checksum reads
 use the ordinary network path, not the Spark ConnectX model-loading path;
 their speed is not inference or GPU-loader performance. Full verification
 remains required before publishing the checkpoint and starting the real test.
+
+### Native mmap attempt and UMA admission bug, 12:39 UTC
+
+The full NVFP4 TP2/EP2/PP2 attempt used all78layers partitioned41/37 and the
+native safetensors CPU mmap iterator. All four ranks passed checkpoint
+index/size/header-tail reads and native TP/PP initialization, then the temporary
+bounded-loader wrapper rejected construction: CUDA free was97.57-98.23GiB,
+while SGLang's native available-memory log was110.36-111.97GiB. There was no
+model allocation, completed load or successful inference. Exit0/Completed
+despite child failure is not a passing test. Four test Pods were removed;
+the original four-rank service returned and authenticated generation passed
+at12:46Z. No host memory setting or foreign workload was changed.
+
+The pinned upstream helper already uses system MemAvailable for integrated
+GPUs rather than CUDA free. NVIDIA documents that CUDA free omits reclaimable
+memory on Spark in its [UMA reporting note](https://nvidia.custhelp.com/app/answers/detail/a_id/5728/~/unexpected-available-memory-reporting-on-dgx-spark).
+The test-only wrapper now reuses that helper with empty_cache=False and logs
+both readings. The107.5GiB Torch cap,3GiB reserve and Pod limits are unchanged.
+This repairs an admission measurement, not proof that the model safely fits.
+
+The correction and regression test executed inside a non-GPU managed container:
+112GiB native availability with98GiB CUDA free admits the constructor;109GiB
+and98GiB availability still reject it before allocation. The new preassembled
+candidate is glm53-bounded-uma-b79564bfa040, sourceSHA
+b79564bfa04098821a9a0d818ee24c1a9091fb2e974c957e521f3f6f7b2a448b,
+config3bfdfb60c06d5dd439a264e4ec3d4fc041ea29c12a4f6f19f3d5bca7107cce9b.
+Its215040-byte OCI increment reuses every base layer; all four imports/unpacks
+passed. No GHCR publication or corrected full-model runtime pass is claimed.
