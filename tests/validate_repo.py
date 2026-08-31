@@ -21,6 +21,7 @@ required = (
     "Dockerfile.sglang-qwen38",
     "Dockerfile.sglang-glm53",
     "Dockerfile.vllm-glm53-intmix-nvfp4",
+    "images/runtime/apply_glm53_router_fp32.py",
     "profiles/glm52-int4-int8mix.sh",
     "profiles/qwen38-flash-next-nvfp4.sh",
     "scripts/launch-ring.sh",
@@ -127,6 +128,7 @@ for required_text in (
     "@sha256:e006935eb4f8266705f213c369de1eac8de7d20417254c5f234601a2fd56d481",
     "34e81562984bda993e0c9ed01ed6900c17e4857b",
     "--checksum=sha256:7c8d22715693cfa7ddb428d761b6fac71935adcdf3a77c58c80768061d876a72",
+    "apply_glm53_router_fp32.py",
     "nvfp4_ds_mla",
 ):
     if required_text not in intmix_nvfp4_dockerfile:

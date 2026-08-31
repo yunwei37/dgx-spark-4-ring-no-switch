@@ -13,12 +13,14 @@ LABEL org.opencontainers.image.title="DGX Spark GLM-5.3 Int4/Int8Mix NVFP4-KV ru
 ADD --checksum=sha256:7c8d22715693cfa7ddb428d761b6fac71935adcdf3a77c58c80768061d876a72 \
     https://github.com/tonyd2wild/GLM-5.2-NVFP4-KV-4x-DGX-Spark-300kctx-42tok-s/archive/34e81562984bda993e0c9ed01ed6900c17e4857b.tar.gz \
     /tmp/nvfp4-port.tar.gz
+COPY images/runtime/apply_glm53_router_fp32.py /tmp/apply_glm53_router_fp32.py
 
 RUN set -eux; \
     mkdir -p /tmp/nvfp4-port; \
     tar -xzf /tmp/nvfp4-port.tar.gz -C /tmp/nvfp4-port --strip-components=1; \
     test "$(python3 -c 'import vllm; print(vllm.__version__)')" = \
       "0.23.1rc1.dev190+gab6660699.d20260705"; \
+    python3 /tmp/apply_glm53_router_fp32.py; \
     port=/tmp/nvfp4-port/port; \
     sp=/usr/local/lib/python3.12/dist-packages; \
     mla=${sp}/vllm/v1/attention/backends/mla; \
@@ -47,4 +49,5 @@ RUN set -eux; \
       ${sp}/b12x/attention/mla/*.py; \
     python3 -c 'import typing; from vllm.config.cache import CacheDType; assert "nvfp4_ds_mla" in typing.get_args(CacheDType)'; \
     python3 -c 'from vllm.v1.attention.backends.mla.flashmla_sparse import FlashMLASparseBackend as B; assert "nvfp4_ds_mla" in B.supported_kv_cache_dtypes'; \
-    rm -rf /tmp/nvfp4-port /tmp/nvfp4-port.tar.gz /tmp/nvfp4-overlay
+    rm -rf /tmp/nvfp4-port /tmp/nvfp4-port.tar.gz /tmp/nvfp4-overlay \
+      /tmp/apply_glm53_router_fp32.py
