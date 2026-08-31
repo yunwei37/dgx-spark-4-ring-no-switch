@@ -1,0 +1,560 @@
+{
+  "schema_version": 1,
+  "model": "LibertAIDAI/GLM-5.3-NVFP4",
+  "revision": "653d98214a487d78c1b2a37167b56764b6240080",
+  "image_digest": "sha256:73f9294b78e38d8cc297bfed16daec8ac192b126a2d1fb9055e259a632c68f00",
+  "outcome": "passed-restored",
+  "restoration": {
+    "outcome": "passed-restored diagnostic only",
+    "ready_utc": "2026-08-31T16:08:54Z",
+    "deleted_utc": "2026-08-31T16:02:42Z",
+    "ready_ranks": 4,
+    "restarts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "backend": {
+      "health": 200,
+      "valid": 200,
+      "correct": true,
+      "missing": 401,
+      "invalid": 401
+    },
+    "public": {
+      "utc": "2026-08-31T16:09:40Z",
+      "valid": 200,
+      "correct": true,
+      "missing": 401,
+      "invalid": 401
+    },
+    "storage_owners": 4,
+    "kernel": {
+      "probe_driver_errors": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "startup_driver_warnings": [
+        105,
+        23,
+        53,
+        61
+      ],
+      "linux_oom": 0,
+      "xid": 0,
+      "after_ready_driver_errors": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "observation_end": "2026-08-31T16:09:56Z"
+    },
+    "limitation": "Not a complete model load, full-byte verification, inference or long-term stability result."
+  },
+  "scope": "One real first-shard tensor, native CPU safetensors and CUDA in-place copy; not a full model",
+  "events": [
+    {
+      "phase": "entry",
+      "seconds": 0.00022985500254435465,
+      "utc": "2026-08-31T16:01:31.045675+00:00",
+      "MemAvailable": 123895939072,
+      "Normal_free_pages": 27587731,
+      "process": {
+        "VmRSS": 15560704,
+        "RssAnon": 6189056,
+        "RssFile": 9371648,
+        "VmLck": 0,
+        "VmPin": 0
+      }
+    },
+    {
+      "phase": "torch_import",
+      "seconds": 2.1992374990004464,
+      "utc": "2026-08-31T16:01:33.244683+00:00",
+      "MemAvailable": 123599470592,
+      "Normal_free_pages": 27435668,
+      "process": {
+        "VmRSS": 524165120,
+        "RssAnon": 293539840,
+        "RssFile": 230625280,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "torch_version": "2.13.0+cu130"
+    },
+    {
+      "phase": "safetensors_import",
+      "seconds": 2.2027391480005463,
+      "utc": "2026-08-31T16:01:33.248182+00:00",
+      "MemAvailable": 123599470592,
+      "Normal_free_pages": 27435557,
+      "process": {
+        "VmRSS": 524861440,
+        "RssAnon": 293580800,
+        "RssFile": 231280640,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "safetensors_version": "0.8.0"
+    },
+    {
+      "phase": "header",
+      "seconds": 2.2718419160009944,
+      "utc": "2026-08-31T16:01:33.317287+00:00",
+      "MemAvailable": 123598180352,
+      "Normal_free_pages": 27435050,
+      "process": {
+        "VmRSS": 524877824,
+        "RssAnon": 293597184,
+        "RssFile": 231280640,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "file": "model-00001-of-00282.safetensors",
+      "file_bytes": 5342821448,
+      "name": "lm_head.weight",
+      "tensor_bytes": 1903165440,
+      "dtype": "BF16",
+      "shape": [
+        154880,
+        6144
+      ]
+    },
+    {
+      "phase": "safe_open",
+      "seconds": 2.2818805600036285,
+      "utc": "2026-08-31T16:01:33.327326+00:00",
+      "MemAvailable": 123594199040,
+      "Normal_free_pages": 27433574,
+      "process": {
+        "VmRSS": 524894208,
+        "RssAnon": 293613568,
+        "RssFile": 231280640,
+        "VmLck": 0,
+        "VmPin": 0
+      }
+    },
+    {
+      "phase": "get_tensor",
+      "seconds": 2.2921744840059546,
+      "utc": "2026-08-31T16:01:33.337619+00:00",
+      "MemAvailable": 123590488064,
+      "Normal_free_pages": 27431742,
+      "process": {
+        "VmRSS": 527536128,
+        "RssAnon": 293851136,
+        "RssFile": 233684992,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "tensor_mapping": {
+        "bytes": 5342822400,
+        "permissions": "rw-p",
+        "file": "model-00001-of-00282.safetensors"
+      }
+    },
+    {
+      "phase": "cuda_init",
+      "seconds": 2.6377147900057025,
+      "utc": "2026-08-31T16:01:33.683160+00:00",
+      "MemAvailable": 123295498240,
+      "Normal_free_pages": 27357091,
+      "process": {
+        "VmRSS": 624730112,
+        "RssAnon": 311582720,
+        "RssFile": 268910592,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "cuda": {
+        "allocated": 0,
+        "reserved": 0,
+        "peak": 0
+      },
+      "host_allocator": {
+        "active_bytes.allocated": 0,
+        "active_bytes.current": 0,
+        "active_bytes.freed": 0,
+        "active_bytes.peak": 0,
+        "active_requests.allocated": 0,
+        "active_requests.current": 0,
+        "active_requests.freed": 0,
+        "active_requests.peak": 0,
+        "allocated_bytes.allocated": 0,
+        "allocated_bytes.current": 0,
+        "allocated_bytes.freed": 0,
+        "allocated_bytes.peak": 0,
+        "allocations.allocated": 0,
+        "allocations.current": 0,
+        "allocations.freed": 0,
+        "allocations.peak": 0,
+        "host_alloc_time.avg": 0,
+        "host_alloc_time.count": 0,
+        "host_alloc_time.max": 0,
+        "host_alloc_time.min": 0,
+        "host_alloc_time.total": 0,
+        "host_free_time.avg": 0,
+        "host_free_time.count": 0,
+        "host_free_time.max": 0,
+        "host_free_time.min": 0,
+        "host_free_time.total": 0,
+        "num_host_alloc": 0,
+        "num_host_free": 0
+      }
+    },
+    {
+      "phase": "destination_allocated",
+      "seconds": 2.7238224090033327,
+      "utc": "2026-08-31T16:01:33.769267+00:00",
+      "MemAvailable": 121367937024,
+      "Normal_free_pages": 26886383,
+      "process": {
+        "VmRSS": 625291264,
+        "RssAnon": 311619584,
+        "RssFile": 269434880,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "cuda": {
+        "allocated": 1904214016,
+        "reserved": 1904214016,
+        "peak": 1904214016
+      },
+      "host_allocator": {
+        "active_bytes.allocated": 0,
+        "active_bytes.current": 0,
+        "active_bytes.freed": 0,
+        "active_bytes.peak": 0,
+        "active_requests.allocated": 0,
+        "active_requests.current": 0,
+        "active_requests.freed": 0,
+        "active_requests.peak": 0,
+        "allocated_bytes.allocated": 0,
+        "allocated_bytes.current": 0,
+        "allocated_bytes.freed": 0,
+        "allocated_bytes.peak": 0,
+        "allocations.allocated": 0,
+        "allocations.current": 0,
+        "allocations.freed": 0,
+        "allocations.peak": 0,
+        "host_alloc_time.avg": 0,
+        "host_alloc_time.count": 0,
+        "host_alloc_time.max": 0,
+        "host_alloc_time.min": 0,
+        "host_alloc_time.total": 0,
+        "host_free_time.avg": 0,
+        "host_free_time.count": 0,
+        "host_free_time.max": 0,
+        "host_free_time.min": 0,
+        "host_free_time.total": 0,
+        "num_host_alloc": 0,
+        "num_host_free": 0
+      }
+    },
+    {
+      "phase": "inplace_copy",
+      "seconds": 4.500563763001992,
+      "utc": "2026-08-31T16:01:35.546008+00:00",
+      "MemAvailable": 119205281792,
+      "Normal_free_pages": 25893427,
+      "process": {
+        "VmRSS": 2528641024,
+        "RssAnon": 2214813696,
+        "RssFile": 269590528,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "cuda": {
+        "allocated": 1904214016,
+        "reserved": 1904214016,
+        "peak": 1904214016
+      },
+      "host_allocator": {
+        "active_bytes.allocated": 0,
+        "active_bytes.current": 0,
+        "active_bytes.freed": 0,
+        "active_bytes.peak": 0,
+        "active_requests.allocated": 0,
+        "active_requests.current": 0,
+        "active_requests.freed": 0,
+        "active_requests.peak": 0,
+        "allocated_bytes.allocated": 0,
+        "allocated_bytes.current": 0,
+        "allocated_bytes.freed": 0,
+        "allocated_bytes.peak": 0,
+        "allocations.allocated": 0,
+        "allocations.current": 0,
+        "allocations.freed": 0,
+        "allocations.peak": 0,
+        "host_alloc_time.avg": 0,
+        "host_alloc_time.count": 0,
+        "host_alloc_time.max": 0,
+        "host_alloc_time.min": 0,
+        "host_alloc_time.total": 0,
+        "host_free_time.avg": 0,
+        "host_free_time.count": 0,
+        "host_free_time.max": 0,
+        "host_free_time.min": 0,
+        "host_free_time.total": 0,
+        "num_host_alloc": 0,
+        "num_host_free": 0
+      }
+    },
+    {
+      "phase": "edges_equal",
+      "seconds": 4.504133991002163,
+      "utc": "2026-08-31T16:01:35.549577+00:00",
+      "MemAvailable": 119201226752,
+      "Normal_free_pages": 25892227,
+      "process": {
+        "VmRSS": 2531512320,
+        "RssAnon": 2216964096,
+        "RssFile": 270311424,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "edge_sha256": "653b0ad1d66679f914ce423742e77f79570e6965c088da24db157bde28559b49",
+      "cuda": {
+        "allocated": 1904214016,
+        "reserved": 1904214016,
+        "peak": 1904214016
+      },
+      "host_allocator": {
+        "active_bytes.allocated": 0,
+        "active_bytes.current": 0,
+        "active_bytes.freed": 0,
+        "active_bytes.peak": 0,
+        "active_requests.allocated": 0,
+        "active_requests.current": 0,
+        "active_requests.freed": 0,
+        "active_requests.peak": 0,
+        "allocated_bytes.allocated": 0,
+        "allocated_bytes.current": 0,
+        "allocated_bytes.freed": 0,
+        "allocated_bytes.peak": 0,
+        "allocations.allocated": 0,
+        "allocations.current": 0,
+        "allocations.freed": 0,
+        "allocations.peak": 0,
+        "host_alloc_time.avg": 0,
+        "host_alloc_time.count": 0,
+        "host_alloc_time.max": 0,
+        "host_alloc_time.min": 0,
+        "host_alloc_time.total": 0,
+        "host_free_time.avg": 0,
+        "host_free_time.count": 0,
+        "host_free_time.max": 0,
+        "host_free_time.min": 0,
+        "host_free_time.total": 0,
+        "num_host_alloc": 0,
+        "num_host_free": 0
+      }
+    },
+    {
+      "phase": "input_reference_deleted",
+      "seconds": 4.525377062003827,
+      "utc": "2026-08-31T16:01:35.570821+00:00",
+      "MemAvailable": 119201263616,
+      "Normal_free_pages": 25892227,
+      "process": {
+        "VmRSS": 2531573760,
+        "RssAnon": 2217025536,
+        "RssFile": 270311424,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "cuda": {
+        "allocated": 1904214016,
+        "reserved": 1904214016,
+        "peak": 1904214016
+      },
+      "host_allocator": {
+        "active_bytes.allocated": 0,
+        "active_bytes.current": 0,
+        "active_bytes.freed": 0,
+        "active_bytes.peak": 0,
+        "active_requests.allocated": 0,
+        "active_requests.current": 0,
+        "active_requests.freed": 0,
+        "active_requests.peak": 0,
+        "allocated_bytes.allocated": 0,
+        "allocated_bytes.current": 0,
+        "allocated_bytes.freed": 0,
+        "allocated_bytes.peak": 0,
+        "allocations.allocated": 0,
+        "allocations.current": 0,
+        "allocations.freed": 0,
+        "allocations.peak": 0,
+        "host_alloc_time.avg": 0,
+        "host_alloc_time.count": 0,
+        "host_alloc_time.max": 0,
+        "host_alloc_time.min": 0,
+        "host_alloc_time.total": 0,
+        "host_free_time.avg": 0,
+        "host_free_time.count": 0,
+        "host_free_time.max": 0,
+        "host_free_time.min": 0,
+        "host_free_time.total": 0,
+        "num_host_alloc": 0,
+        "num_host_free": 0
+      }
+    },
+    {
+      "phase": "file_context_closed",
+      "seconds": 4.786137288007012,
+      "utc": "2026-08-31T16:01:35.831582+00:00",
+      "MemAvailable": 120893779968,
+      "Normal_free_pages": 26305407,
+      "process": {
+        "VmRSS": 628404224,
+        "RssAnon": 313860096,
+        "RssFile": 270307328,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "cuda": {
+        "allocated": 1904214016,
+        "reserved": 1904214016,
+        "peak": 1904214016
+      },
+      "host_allocator": {
+        "active_bytes.allocated": 0,
+        "active_bytes.current": 0,
+        "active_bytes.freed": 0,
+        "active_bytes.peak": 0,
+        "active_requests.allocated": 0,
+        "active_requests.current": 0,
+        "active_requests.freed": 0,
+        "active_requests.peak": 0,
+        "allocated_bytes.allocated": 0,
+        "allocated_bytes.current": 0,
+        "allocated_bytes.freed": 0,
+        "allocated_bytes.peak": 0,
+        "allocations.allocated": 0,
+        "allocations.current": 0,
+        "allocations.freed": 0,
+        "allocations.peak": 0,
+        "host_alloc_time.avg": 0,
+        "host_alloc_time.count": 0,
+        "host_alloc_time.max": 0,
+        "host_alloc_time.min": 0,
+        "host_alloc_time.total": 0,
+        "host_free_time.avg": 0,
+        "host_free_time.count": 0,
+        "host_free_time.max": 0,
+        "host_free_time.min": 0,
+        "host_free_time.total": 0,
+        "num_host_alloc": 0,
+        "num_host_free": 0
+      }
+    },
+    {
+      "phase": "destination_deleted",
+      "seconds": 4.807407512002101,
+      "utc": "2026-08-31T16:01:35.852851+00:00",
+      "MemAvailable": 120901054464,
+      "Normal_free_pages": 26307183,
+      "process": {
+        "VmRSS": 628404224,
+        "RssAnon": 313860096,
+        "RssFile": 270307328,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "cuda": {
+        "allocated": 0,
+        "reserved": 1904214016,
+        "peak": 1904214016
+      },
+      "host_allocator": {
+        "active_bytes.allocated": 0,
+        "active_bytes.current": 0,
+        "active_bytes.freed": 0,
+        "active_bytes.peak": 0,
+        "active_requests.allocated": 0,
+        "active_requests.current": 0,
+        "active_requests.freed": 0,
+        "active_requests.peak": 0,
+        "allocated_bytes.allocated": 0,
+        "allocated_bytes.current": 0,
+        "allocated_bytes.freed": 0,
+        "allocated_bytes.peak": 0,
+        "allocations.allocated": 0,
+        "allocations.current": 0,
+        "allocations.freed": 0,
+        "allocations.peak": 0,
+        "host_alloc_time.avg": 0,
+        "host_alloc_time.count": 0,
+        "host_alloc_time.max": 0,
+        "host_alloc_time.min": 0,
+        "host_alloc_time.total": 0,
+        "host_free_time.avg": 0,
+        "host_free_time.count": 0,
+        "host_free_time.max": 0,
+        "host_free_time.min": 0,
+        "host_free_time.total": 0,
+        "num_host_alloc": 0,
+        "num_host_free": 0
+      }
+    },
+    {
+      "phase": "device_cache_released",
+      "seconds": 4.830840066002565,
+      "utc": "2026-08-31T16:01:35.876284+00:00",
+      "MemAvailable": 122829115392,
+      "Normal_free_pages": 26777901,
+      "process": {
+        "VmRSS": 628469760,
+        "RssAnon": 313860096,
+        "RssFile": 270372864,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "cuda": {
+        "allocated": 0,
+        "reserved": 0,
+        "peak": 1904214016
+      },
+      "host_allocator": {
+        "active_bytes.allocated": 0,
+        "active_bytes.current": 0,
+        "active_bytes.freed": 0,
+        "active_bytes.peak": 0,
+        "active_requests.allocated": 0,
+        "active_requests.current": 0,
+        "active_requests.freed": 0,
+        "active_requests.peak": 0,
+        "allocated_bytes.allocated": 0,
+        "allocated_bytes.current": 0,
+        "allocated_bytes.freed": 0,
+        "allocated_bytes.peak": 0,
+        "allocations.allocated": 0,
+        "allocations.current": 0,
+        "allocations.freed": 0,
+        "allocations.peak": 0,
+        "host_alloc_time.avg": 0,
+        "host_alloc_time.count": 0,
+        "host_alloc_time.max": 0,
+        "host_alloc_time.min": 0,
+        "host_alloc_time.total": 0,
+        "host_free_time.avg": 0,
+        "host_free_time.count": 0,
+        "host_free_time.max": 0,
+        "host_free_time.min": 0,
+        "host_free_time.total": 0,
+        "num_host_alloc": 0,
+        "num_host_free": 0
+      }
+    },
+    {
+      "phase": "diagnostic_pass",
+      "full_model": false,
+      "inference_requests": 0,
+      "no_host_tuning": true
+    }
+  ]
+}

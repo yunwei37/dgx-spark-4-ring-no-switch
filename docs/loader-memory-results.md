@@ -607,3 +607,55 @@ get_tensor and in-place copy, especially the first large shard/tensor.
 A repeat full-model attempt with serial alone is not justified by these data.
 The sole mixed-quantization full-checksum process continues against existing
 bytes; neither partial reads nor four storage registrations mean it has passed.
+
+### First-tensor lifetime decomposition (16:01 UTC)
+
+The same pinned base actually contains PyTorch2.13.0+cu130 and
+safetensors0.8.0. A fresh bounded process measured native CPU
+safe_open/get_tensor and an in-place CUDA copy of lm_head.weight
+(BF16,[154880,6144],1,903,165,440bytes) from the5,342,821,448byte first shard.
+The CPU/GPU edge-byte check passed; this is one tensor, not full inference.
+
+![Measured first-tensor allocation phases](assets/glm53-loader-phases.svg)
+
+| Phase | Process RSS GiB | Anonymous RSS GiB | CUDA allocated GiB |
+| --- | ---: | ---: | ---: |
+| CPU get_tensor | 0.491 | 0.274 | 0 |
+| CUDA initialized | 0.582 | 0.290 | 0 |
+| Destination allocated | 0.582 | 0.290 | 1.773 |
+| In-place copy synchronized | 2.355 | 2.063 | 1.773 |
+| Input reference deleted, file still open | 2.358 | 2.065 | 1.773 |
+| File context closed | 0.585 | 0.292 | 1.773 |
+| Destination deleted, cache not released | 0.585 | 0.292 | 0 |
+
+Opening/obtaining the CPU tensor barely grew RSS. Copying added about1.773GiB
+anonymous RSS; deleting the input reference did not release it, while closing
+the file context did. CUDA reserved remained1.773GiB after destination deletion
+and became0 only on this process's final device-cache release. Native pinned
+host-allocator counters stayed0, so those counters alone miss this allocation.
+RSS/CUDA/host values overlap and must not be summed.
+
+The tensor initially pointed into a full-shard private writable mapping.
+The [matching safetensors0.8.0 source](https://github.com/huggingface/safetensors/blob/v0.8.0/bindings/python/src/lib.rs)
+uses private Torch file storage for its mmap path and also exposes a native
+pread backend. File-lifetime-associated anonymous residency is observed;
+driver-triggered copy-on-write is a plausible explanation, not a proven kernel
+allocation trace. Closing a model's entire file context only at the end of a
+large shard can therefore matter even with serial loading. Do not equate this
+single-tensor result with a complete root-cause proof or an already-fixed OOM.
+
+The next candidate is the existing per-tensor pread backend or shorter native
+file-context lifetime, compared against mmap with the same tensor sequence.
+Neither was applied in this probe. No package upgrade, host tuning, cache-drop
+loop, checkpoint copy or permanent configuration resulted.
+The [executed script](../tests/glm53_loader_phase_probe.py) and
+[raw phase counters](assets/glm53-loader-phases.json) preserve the evidence.
+The Pod finished exit0 in6seconds and was deleted. At16:08:54UTC all original
+service ranks were Ready with zero restarts; backend authentication/generation
+and the16:09UTC external client check passed401/401/200 with correct output.
+All storage owners registered and original host boots persisted. Probe-time
+kernel scans found no allocation error/OOM/Xid. Service startup recorded
+105/23/53/61 driver allocation warnings but no Linux OOM/Xid; after verified
+Ready through16:09:56UTC no matching error appeared. This is bounded recovery,
+not a long-term stability claim. **Passed-restored diagnostic only; formal
+GLM-5.3 inference remains unproven.**
