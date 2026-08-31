@@ -1,0 +1,5 @@
+ARG RUNTIME_IMAGE=ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:glm53-deferred-scales-544470d
+FROM ${RUNTIME_IMAGE}
+COPY tests/glm53_constructor_shape_audit.py /opt/ring-diagnostics/
+RUN python3 -c 'import hashlib; from pathlib import Path; p=Path("/sgl-workspace/sglang/python/sglang/srt/model_loader/loader.py"); raw=p.read_bytes(); assert hashlib.sha256(raw).hexdigest()=="89cab28a23f42591a83715e177737c31f99a4dc089526827a9921ebd738c0d26"; p.write_bytes(raw+b"\n"+Path("/opt/ring-diagnostics/glm53_constructor_shape_audit.py").read_bytes())' \
+    && python3 -m py_compile /sgl-workspace/sglang/python/sglang/srt/model_loader/loader.py

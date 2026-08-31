@@ -123,3 +123,13 @@ The single-layer test is not a full-model or kernel-output correctness claim.
 The image containing this additional patch still needs full allocation sizing,
 real TP4 inference and stability validation; no corrected serving result or
 GHCR publication is claimed.
+
+The corrected ARM64 build passed locally with image config ID
+`sha256:f5e0b9c3117483bdac1d81a527757fc5026d52ae8d2fa2398fd4862569a78531`.
+The committed one-layer A/B also passed inside that assembled image, repeating
+the recorded allocation and equivalence results. For the next sizing step,
+`tests/Dockerfile.glm53-shape-audit` creates a disposable diagnostic-only image:
+the real model constructor runs under PyTorch FakeTensor and then deliberately
+exits before weight loading. Its 5% Torch allocator cap is test-local protection,
+not a serving parameter or host policy. Any unsupported fake operation is a
+diagnostic failure; it must not fall through to allocating the full model.
