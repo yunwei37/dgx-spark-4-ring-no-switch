@@ -659,3 +659,65 @@ kernel scans found no allocation error/OOM/Xid. Service startup recorded
 Ready through16:09:56UTC no matching error appeared. This is bounded recovery,
 not a long-term stability claim. **Passed-restored diagnostic only; formal
 GLM-5.3 inference remains unproven.**
+
+### Native mmap/pread ABBA GPU-copy test (16:22-16:28 UTC)
+
+The same ten shards and native eight-thread iterator were run in four
+independent processes, in fixed mmap,pread,pread,mmap order. Only the native
+safe_open backend differed, via an isolated function namespace; no installed
+source, shared module or host setting was modified. All four copied7,594
+tensors/19,559,631,048bytes and produced the same name-and-edge-byte digest.
+The actual0.8.0 API accepted keyword-only backend. This was not a model load
+or a complete tensor-byte correctness check.
+
+![Native backend memory and timing measurements](assets/glm53-mmap-pread.svg)
+
+| Run order | Backend | Sampled RSS peak GiB | Anonymous peak GiB | Elapsed seconds |
+| --- | --- | ---: | ---: | ---: |
+| 1 | mmap | 5.787 | 5.263 | 231.01 |
+| 2 | pread | 15.045 | 14.752 | 8.20 |
+| 3 | pread | 13.787 | 13.495 | 8.16 |
+| 4 | mmap | 5.780 | 5.255 | 92.23 |
+
+CUDA allocation peak was1.773GiB in every run; minimum host availability
+remained93.32GiB or higher. Both pread runs were much faster in this bounded
+copy/check loop, but used over twice the sampled process RSS. The actual
+native multithread implementation constructs and retains a whole tensor
+dictionary per in-flight file. Pread materializes those CPU buffers, while
+mmap initially returns file-backed views. Therefore replacing mmap with pread
+inside the eight-thread iterator is **not an OOM fix** and is not retained.
+
+Mmap itself changed from231.01to92.23seconds across this sequence. Cache and
+other shared I/O were uncontrolled; neither a cold-load speedup nor a
+28-times-faster full model follows. The synchronized copies and edge checks
+also differ from real model loading. Sampling was requested every250ms but
+only18/20samples were captured in the two fast pread runs; short allocation
+peaks may be missed. RSS/host/CUDA counters overlap and must not be summed.
+
+The useful next hypothesis is the existing serial iterator with per-tensor
+pread, preserving model bytes and avoiding multiple whole-file dictionaries.
+Its actual memory, consumer-held references, correctness and full-model
+behavior remain untested here. Default serial mmap alone was already measured
+above and barely reduced RSS. Do not treat either as an already-fixed loader.
+
+The [exact executed child](../tests/glm53_mmap_pread_probe.py) takes backend
+and run-index arguments in the pinned GPU container. The parent ran
+`mmap 0`, `pread 1`, `pread 2`, `mmap 3`, each with420seconds and an
+overall1800second Pod deadline. The32GiB Pod capped its Torch allocator at4GiB
+and required64GiB host availability. It mounted only the existing checkpoint
+read-only and removed its small temporary result files. No download,
+package/driver install, cache-drop or permanent setting was involved.
+[Raw repeated measurements](assets/glm53-mmap-pread.json) retain exact bytes,
+source hash and sample counts. All four children and the Pod exited0; the
+Pod was deleted16:29:04UTC and original-service restoration was pushed in
+4624130. At16:36:26UTC all four original ranks were Ready/zero restarts.
+Backend health and authenticated correct generation passed200; missing and
+invalid credentials were rejected401. The external client independently
+passed401/401/200 at16:36:57UTC. Original host boots, SSH/services/GPUs,
+fresh Leases, four storage registrations and absent new large cores passed.
+Probe-time driver/OOM/Xid counts were0. Original service startup logged
+92/59/77/71 driver allocation warnings across the four hosts, no Linux OOM
+or Xid; after verified Ready through16:37:24UTC all matching counts were0.
+This is bounded recovery evidence, not long-term stability. Candidate outcome
+is **failed-restored** for the memory objective; all diagnostic copies passed.
+**This diagnostic is not formal GLM-5.3 inference success; requests remain0.**

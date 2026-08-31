@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "classification": "bounded-loader-diagnostic",
+  "model": "LibertAIDAI/GLM-5.3-NVFP4",
+  "revision": "653d98214a487d78c1b2a37167b56764b6240080",
+  "runtime_image": "docker.io/lmsysorg/sglang@sha256:73f9294b78e38d8cc297bfed16daec8ac192b126a2d1fb9055e259a632c68f00",
+  "started_utc": "2026-08-31T16:22:15Z",
+  "ended_utc": "2026-08-31T16:28:04Z",
+  "backend_order": [
+    "mmap",
+    "pread",
+    "pread",
+    "mmap"
+  ],
+  "native_threads": 8,
+  "actual_signature": "(filename, framework, device=Ellipsis, *, backend=Ellipsis)",
+  "actual_versions": {
+    "torch": "2.13.0+cu130",
+    "safetensors": "0.8.0"
+  },
+  "complete_model": false,
+  "inference_requests": 0,
+  "scope": "First ten formal checkpoint shards; all tensors copied, only name/edge bytes digested. Not full-byte or inference correctness.",
+  "cache": "ABBA sequence, independent processes, no cache manipulation. Shared cache and IO uncontrolled; no cold-load or model speedup claim.",
+  "measurement": "250ms requested sampling; actual sample counts vary and miss short peaks. Process/CUDA/host memory can overlap and must not be added.",
+  "results": [
+    {
+      "phase": "result",
+      "mode": "mmap",
+      "run": "0",
+      "seconds": 231.01206195099803,
+      "tensors": 7594,
+      "tensor_bytes": 19559631048,
+      "edge_digest": "772887e74ef3ded3137dba62621991132bfd703bbd0bde2f8bf4dc1111ff131f",
+      "source_sha256": "d82dc59e8d4a2fafac2e61c468da485e9f7a85042cf9044b6b37c3a3b6b86041",
+      "cuda_peak_allocated": 1904214016,
+      "cuda_peak_reserved": 1906311168,
+      "mem_available_start": 123288653824,
+      "mem_available_min": 110173167616,
+      "process_peaks": {
+        "VmRSS": 6213881856,
+        "RssAnon": 5651324928,
+        "RssFile": 519626752,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "normal_free_pages_min": 19805675,
+      "samples": 890,
+      "scope": "real first-ten-shard CPU-to-GPU copies, not complete model or inference; cache order uncontrolled"
+    },
+    {
+      "phase": "result",
+      "mode": "pread",
+      "run": "1",
+      "seconds": 8.202516072997241,
+      "tensors": 7594,
+      "tensor_bytes": 19559631048,
+      "edge_digest": "772887e74ef3ded3137dba62621991132bfd703bbd0bde2f8bf4dc1111ff131f",
+      "source_sha256": "d82dc59e8d4a2fafac2e61c468da485e9f7a85042cf9044b6b37c3a3b6b86041",
+      "cuda_peak_allocated": 1904214016,
+      "cuda_peak_reserved": 1906311168,
+      "mem_available_start": 117536006144,
+      "mem_available_min": 100201873408,
+      "process_peaks": {
+        "VmRSS": 16153927680,
+        "RssAnon": 15839817728,
+        "RssFile": 269869056,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "normal_free_pages_min": 16327651,
+      "samples": 18,
+      "scope": "real first-ten-shard CPU-to-GPU copies, not complete model or inference; cache order uncontrolled"
+    },
+    {
+      "phase": "result",
+      "mode": "pread",
+      "run": "2",
+      "seconds": 8.160694511003385,
+      "tensors": 7594,
+      "tensor_bytes": 19559631048,
+      "edge_digest": "772887e74ef3ded3137dba62621991132bfd703bbd0bde2f8bf4dc1111ff131f",
+      "source_sha256": "d82dc59e8d4a2fafac2e61c468da485e9f7a85042cf9044b6b37c3a3b6b86041",
+      "cuda_peak_allocated": 1904214016,
+      "cuda_peak_reserved": 1906311168,
+      "mem_available_start": 113190936576,
+      "mem_available_min": 104303452160,
+      "process_peaks": {
+        "VmRSS": 14803972096,
+        "RssAnon": 14489862144,
+        "RssFile": 269934592,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "normal_free_pages_min": 17431506,
+      "samples": 20,
+      "scope": "real first-ten-shard CPU-to-GPU copies, not complete model or inference; cache order uncontrolled"
+    },
+    {
+      "phase": "result",
+      "mode": "mmap",
+      "run": "3",
+      "seconds": 92.2306111890066,
+      "tensors": 7594,
+      "tensor_bytes": 19559631048,
+      "edge_digest": "772887e74ef3ded3137dba62621991132bfd703bbd0bde2f8bf4dc1111ff131f",
+      "source_sha256": "d82dc59e8d4a2fafac2e61c468da485e9f7a85042cf9044b6b37c3a3b6b86041",
+      "cuda_peak_allocated": 1904214016,
+      "cuda_peak_reserved": 1906311168,
+      "mem_available_start": 116650999808,
+      "mem_available_min": 112518258688,
+      "process_peaks": {
+        "VmRSS": 6205808640,
+        "RssAnon": 5642924032,
+        "RssFile": 519954432,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "normal_free_pages_min": 19438220,
+      "samples": 366,
+      "scope": "real first-ten-shard CPU-to-GPU copies, not complete model or inference; cache order uncontrolled"
+    }
+  ],
+  "decision": "Reject native8threads+pread as an OOM fix: sampled RSS 13.79-15.04GiB vs mmap5.78-5.79GiB. Fast copy loop merits separately testing per-tensor serial pread; no candidate retained.",
+  "restoration": {
+    "status": "verified-restored",
+    "git": "4624130",
+    "ready_utc": "2026-08-31T16:36:26Z",
+    "probe_deleted_utc": "2026-08-31T16:29:04Z",
+    "ready_ranks": 4,
+    "restarts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "backend": {
+      "health": 200,
+      "missing": 401,
+      "invalid": 401,
+      "valid": 200,
+      "correct": true
+    },
+    "public": {
+      "utc": "2026-08-31T16:36:57Z",
+      "missing": 401,
+      "invalid": 401,
+      "valid": 200,
+      "correct": true
+    },
+    "storage_owners": 4,
+    "unchanged_host_boots": true,
+    "new_large_cores": 0,
+    "kernel": {
+      "probe_driver_errors": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "startup_driver_warnings": [
+        92,
+        59,
+        77,
+        71
+      ],
+      "linux_oom": 0,
+      "xid": 0,
+      "after_ready_driver_errors": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "observation_end": "2026-08-31T16:37:24Z"
+    },
+    "limitation": "Bounded restoration, not long-term stability. Candidate failed memory benefit; measurement completed. Formal model inference requests remain zero."
+  },
+  "outcome": "failed-restored",
+  "probe_script_sha256": "510c60a191571ad97137d7255335eb7898451bcd9e9eef6dbab704dbce5cf81d"
+}
