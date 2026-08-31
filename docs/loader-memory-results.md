@@ -1,5 +1,78 @@
 # Loader and memory results
 
+### Native consumer and quantization post-load ABBA (17:36-17:38 UTC)
+
+This one-GPU test goes beyond tensor copies: it constructs real layer3 with
+all256experts, embedding/head/norm, then runs native weight mapping, QKV/expert
+loading and quantization postprocessing. Other layers are missing-layer
+placeholders solely to bound the diagnostic. **No forward request is run; this
+is not a cropped model presented as a successful full GLM-5.3 deployment.**
+
+Same verified653d982 checkpoint,3089tensors in7shards, serialpread input;
+only the native consumer async predicate changes across async/sync/sync/async.
+Every run ends with32registered parameters/9,650,883,608bytes and the identical
+full-byte SHA256 `d9f706e49f8e58529b9a6ad5bcb06f5a09463b28bd86643823371da92c103f47`.
+This includes native post-load transforms but does not validate forward outputs.
+
+| Run | Native consumer | Peak RSS GiB | Peak anonymous GiB | Load + postprocess s | Pending task peak |
+| --- | --- | ---: | ---: | ---: | ---: |
+| 0 | async | 5.307 | 4.721 | 24.432 | 19 |
+| 1 | sync | 3.535 | 2.949 | 3.670 | 0 |
+| 2 | sync | 3.515 | 2.929 | 3.759 | 0 |
+| 3 | async | 5.297 | 4.711 | 4.723 | 29 |
+
+![Native consumer measured memory and loading time](assets/glm53-native-consumer.svg)
+
+The synchronous path lowers mean measured RSS by1.777GiB (about33.5%). Native
+async submitted3088tasks and peaked at3.55-3.58GiB of outstanding logical input
+bytes; those counts can overlap and are **not** physical resident memory.
+Sync submitted no tasks. The observer captures only byte counts in completion
+callbacks; it does not retain input tensors or change async queue behavior.
+The last async run took4.72s against3.67/3.76s for sync; the first async24.43s
+also includes uncontrolled cache/shared-I/O effects. Do not claim a6x full-model
+speedup, one-minute cold start, or causally attribute every RSS byte to queuing.
+
+Torch peak remained10.463GiB in every run; minimum host availability96.67GiB.
+Requested50ms sampling produced284/134/135/155samples; peaks may be missed.
+One32GiPod,20GiTorch cap,64Gi host floor,1800s total/420s per child.
+No eager mode, host tuning, cache-drop, extra quantization or checkpoint rewrite.
+Each child deliberately raises an end-of-component sentinel; SGLang logs its
+SIGQUIT/kill_process_tree cleanup and exits-9. Parent requires the explicit
+result/hash agreement, restores its container source and exits0. No Linux OOM,
+Xid or driver allocation error appeared on any of the four hosts during the
+component interval through17:39:43Z. No inference request was issued.
+
+The initial attempt stopped before allocation because expected upstream and
+installed hashes differed. We inspected the exact stopped-container snapshot
+without mounting/mutating it and reviewed differences on a non-GPU development
+node before retrying. Actual loader89cab28a and deepseek_v2 c78b4ad7 include
+runtime-context compatibility and EXPERT_PACK-related branches; this test uses
+modelopt_fp4 and unchanged native consumer51ea4fe5. The cached image is not
+claimed to be a byte-identical f609 source checkout. Exact hashes are in
+[the sanitized data](assets/glm53-native-consumer.json).
+
+The exact executed [wrapper](../tests/glm53_native_consumer_wrapper.py) and
+[parent](../tests/glm53_native_consumer_parent.py) are diagnostic artifacts,
+not serving profiles. Run the parent only inside the pinned disposable GPU
+container with the same read-only checkpoint mount and recorded resource bounds;
+never apply the one-layer wrapper to a production service. The test container
+was removed at17:39:38Z, and Git restored the original service desired state.
+The original four-rank service became Ready at17:44:40Z with zero restarts.
+Actual backend17:44:52Z and independent public17:45:55-57Z authentication and
+correct generation passed (401/401/200). All nodes/leases, host SSH/services/GPU,
+four storage owners and disks passed; no newcores. Probe errors were0.
+Original-service startup logged91/44/35/73 driver warnings, no LinuxOOM/Xid;
+afterReady through17:46:14Z matching errors were0. This is a short restoration
+check, not evidence of a warning-free startup or long-term stability.
+Component outcome: **passed-restored**; complete-model inference remains0.
+
+Next: incorporate only the validated serial input/consumer behavior into the
+full native loader, retaining PP ownership and all78layers/256experts; include
+constructor, CPU/driver, post-load and KV peaks in admission. A1.78GiB component
+RSS saving alone does not establish safe full-model capacity. Formal GLM-5.3
+NVFP4 still has **zero successful inference requests**.
+
+
 ## GLM-5.2 vLLM results
 
 The first default loading path took approximately two hours. Storage was not

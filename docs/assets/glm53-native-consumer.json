@@ -1,0 +1,245 @@
+{
+  "outcome": "passed-restored",
+  "restoration": {
+  "ready_utc": "2026-08-31T17:44:40Z",
+  "ranks": 4,
+  "restarts": 0,
+  "backend": {
+    "health": 200,
+    "missing": 401,
+    "invalid": 401,
+    "allowed": 200,
+    "correct": true
+  },
+  "public": {
+    "missing": 401,
+    "invalid": 401,
+    "allowed": 200,
+    "correct": true
+  },
+  "probe_errors": {
+    "driver": 0,
+    "linux_oom": 0,
+    "xid": 0
+  },
+  "restore_startup_driver_warnings": [
+    91,
+    44,
+    35,
+    73
+  ],
+  "restore_startup_linux_oom": 0,
+  "restore_startup_xid": 0,
+  "after_ready_errors": 0,
+  "last_kernel_check_utc": "2026-08-31T17:46:14Z",
+  "new_cores": 0
+},
+  "schema_version": 1,
+  "scope": "One native GLM-5.3 MoE layer (all 256 experts), embedding/head/norm; NOT full-model inference",
+  "full_model": false,
+  "inference_requests": 0,
+  "model_revision": "653d98214a487d78c1b2a37167b56764b6240080",
+  "model": "LibertAIDAI/GLM-5.3-NVFP4",
+  "image": "docker.io/lmsysorg/sglang@sha256:73f9294b78e38d8cc297bfed16daec8ac192b126a2d1fb9055e259a632c68f00",
+  "source_hashes": {
+    "loader": "89cab28a23f42591a83715e177737c31f99a4dc089526827a9921ebd738c0d26",
+    "deepseek_v2": "c78b4ad75ab2478f1911136da18c09d3353d8ffaaf32d0e701536d1c9234898c",
+    "consumer": "51ea4fe580ce161d60dd42d3c3bcf047cdcf70b311ddb9a660f0fa3c81d112ac",
+    "wrapper": "e1ba4cfe30cd482ce0642293cb5272550ac85fc46a9dfafaa6254c5535b87c3d",
+    "parent": "b93557162e7baf342fe04c4dd5d978764c2f172863d4690b264525b1e84cb56b"
+  },
+  "started_utc": "2026-08-31T17:36:01Z",
+  "finished_utc": "2026-08-31T17:38:20Z",
+  "deleted_utc": "2026-08-31T17:39:38Z",
+  "results": [
+    {
+      "constructor_allocated": 10601213440,
+      "constructor_host_available": 108171845632,
+      "full_model": false,
+      "host_available_min": 104575410176,
+      "inference_requests": 0,
+      "input_edge_digest": "f8db7b70c93561fc1431cc3b66b0aab57db10a6ba1d623a3dc67efa68193eb45",
+      "layer_id": 3,
+      "load_host_available_min": 104575410176,
+      "load_process_peaks": {
+        "RssAnon": 5068824576,
+        "RssFile": 577339392,
+        "VmRSS": 5698695168
+      },
+      "mode": "async",
+      "native_load_and_postprocess_seconds": 24.43211363699811,
+      "parameter_bytes": 9650883608,
+      "parameter_count": 32,
+      "parameter_full_sha256": "d9f706e49f8e58529b9a6ad5bcb06f5a09463b28bd86643823371da92c103f47",
+      "peak_cuda_allocated": 11234558464,
+      "peak_cuda_reserved": 11284774912,
+      "pending_tasks": {
+        "logical_bytes": 0,
+        "logical_bytes_peak": 3813408772,
+        "submitted": 3088,
+        "tasks": 0,
+        "tasks_peak": 19
+      },
+      "probe_scope": "one real MoE layer/all256experts plus embedding/head/norm; not full architecture inference",
+      "process_peaks": {
+        "RssAnon": 5068824576,
+        "RssFile": 577339392,
+        "VmLck": 16384,
+        "VmPin": 0,
+        "VmRSS": 5698695168
+      },
+      "read_tensors": 3089,
+      "samples": 284,
+      "selected_experts": 256,
+      "selected_tensor_bytes": 9650880512,
+      "selected_tensors": 3089,
+      "total_seconds": 29.586087677998876,
+      "run": 0,
+      "expected_diagnostic_child_exit": -9
+    },
+    {
+      "constructor_allocated": 10601213440,
+      "constructor_host_available": 107971416064,
+      "full_model": false,
+      "host_available_min": 104375119872,
+      "inference_requests": 0,
+      "input_edge_digest": "f8db7b70c93561fc1431cc3b66b0aab57db10a6ba1d623a3dc67efa68193eb45",
+      "layer_id": 3,
+      "load_host_available_min": 104375119872,
+      "load_process_peaks": {
+        "RssAnon": 3165986816,
+        "RssFile": 577118208,
+        "VmRSS": 3795767296
+      },
+      "mode": "sync",
+      "native_load_and_postprocess_seconds": 3.6702961070041056,
+      "parameter_bytes": 9650883608,
+      "parameter_count": 32,
+      "parameter_full_sha256": "d9f706e49f8e58529b9a6ad5bcb06f5a09463b28bd86643823371da92c103f47",
+      "peak_cuda_allocated": 11234558464,
+      "peak_cuda_reserved": 11284774912,
+      "pending_tasks": {
+        "logical_bytes": 0,
+        "logical_bytes_peak": 0,
+        "submitted": 0,
+        "tasks": 0,
+        "tasks_peak": 0
+      },
+      "probe_scope": "one real MoE layer/all256experts plus embedding/head/norm; not full architecture inference",
+      "process_peaks": {
+        "RssAnon": 3165986816,
+        "RssFile": 577118208,
+        "VmLck": 16384,
+        "VmPin": 0,
+        "VmRSS": 3795767296
+      },
+      "read_tensors": 3089,
+      "samples": 134,
+      "selected_experts": 256,
+      "selected_tensor_bytes": 9650880512,
+      "selected_tensors": 3089,
+      "total_seconds": 8.64278275200195,
+      "run": 1,
+      "expected_diagnostic_child_exit": -9
+    },
+    {
+      "constructor_allocated": 10601213440,
+      "constructor_host_available": 107389841408,
+      "full_model": false,
+      "host_available_min": 103795765248,
+      "inference_requests": 0,
+      "input_edge_digest": "f8db7b70c93561fc1431cc3b66b0aab57db10a6ba1d623a3dc67efa68193eb45",
+      "layer_id": 3,
+      "load_host_available_min": 103795765248,
+      "load_process_peaks": {
+        "RssAnon": 3144577024,
+        "RssFile": 577327104,
+        "VmRSS": 3774566400
+      },
+      "mode": "sync",
+      "native_load_and_postprocess_seconds": 3.7588221290061483,
+      "parameter_bytes": 9650883608,
+      "parameter_count": 32,
+      "parameter_full_sha256": "d9f706e49f8e58529b9a6ad5bcb06f5a09463b28bd86643823371da92c103f47",
+      "peak_cuda_allocated": 11234558464,
+      "peak_cuda_reserved": 11284774912,
+      "pending_tasks": {
+        "logical_bytes": 0,
+        "logical_bytes_peak": 0,
+        "submitted": 0,
+        "tasks": 0,
+        "tasks_peak": 0
+      },
+      "probe_scope": "one real MoE layer/all256experts plus embedding/head/norm; not full architecture inference",
+      "process_peaks": {
+        "RssAnon": 3144577024,
+        "RssFile": 577327104,
+        "VmLck": 16384,
+        "VmPin": 0,
+        "VmRSS": 3774566400
+      },
+      "read_tensors": 3089,
+      "samples": 135,
+      "selected_experts": 256,
+      "selected_tensor_bytes": 9650880512,
+      "selected_tensors": 3089,
+      "total_seconds": 8.775392749004823,
+      "run": 2,
+      "expected_diagnostic_child_exit": -9
+    },
+    {
+      "constructor_allocated": 10601213440,
+      "constructor_host_available": 107599314944,
+      "full_model": false,
+      "host_available_min": 104105594880,
+      "inference_requests": 0,
+      "input_edge_digest": "f8db7b70c93561fc1431cc3b66b0aab57db10a6ba1d623a3dc67efa68193eb45",
+      "layer_id": 3,
+      "load_host_available_min": 104105594880,
+      "load_process_peaks": {
+        "RssAnon": 5058416640,
+        "RssFile": 576442368,
+        "VmRSS": 5687390208
+      },
+      "mode": "async",
+      "native_load_and_postprocess_seconds": 4.723130286001833,
+      "parameter_bytes": 9650883608,
+      "parameter_count": 32,
+      "parameter_full_sha256": "d9f706e49f8e58529b9a6ad5bcb06f5a09463b28bd86643823371da92c103f47",
+      "peak_cuda_allocated": 11234558464,
+      "peak_cuda_reserved": 11284774912,
+      "pending_tasks": {
+        "logical_bytes": 0,
+        "logical_bytes_peak": 3841732644,
+        "submitted": 3088,
+        "tasks": 0,
+        "tasks_peak": 29
+      },
+      "probe_scope": "one real MoE layer/all256experts plus embedding/head/norm; not full architecture inference",
+      "process_peaks": {
+        "RssAnon": 5058416640,
+        "RssFile": 576442368,
+        "VmLck": 16384,
+        "VmPin": 0,
+        "VmRSS": 5687390208
+      },
+      "read_tensors": 3089,
+      "samples": 155,
+      "selected_experts": 256,
+      "selected_tensor_bytes": 9650880512,
+      "selected_tensors": 3089,
+      "total_seconds": 9.81849921400135,
+      "run": 3,
+      "expected_diagnostic_child_exit": -9
+    }
+  ],
+  "caveats": [
+    "50ms requested sampling; observed counts provided; peaks may be missed",
+    "Cache order/shared storage I/O not controlled; first async run is slower",
+    "Pending input byte counts are logical, not resident memory",
+    "Full parameter byte hashes agree after native transforms; no forward correctness evidence",
+    "First attempt stopped before allocation because upstream and installed source hashes differed; exact installed differences reviewed before retry",
+    "Parent exit0 only after explicit result and parameter hashes; child deliberately raises sentinel and exits -9; not Linux OOM evidence",
+    "No host tuning, second download, checkpoint rewrite, extra quantization or persistent service"
+  ]
+}
