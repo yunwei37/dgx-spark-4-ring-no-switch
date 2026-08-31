@@ -33,7 +33,12 @@ checksum/index/size verification on August31; its temporary verifier was removed
 It has not completed local inference;
 its [four-rank router/capacity preflight](docs/benchmarks.md#formal-glm-53-int4int8-preflight-2026-08-31)
 measured 94.65 GiB/rank of static tensors with the FP32-router candidate, not a
-full checkpoint load or serving peak.
+full checkpoint load or serving peak. The first actual TP4 attempt at21:05UTC
+then failed at fastsafetensors' initial4.65GiB GPU file-buffer allocation after
+94.91GiB Torch allocation; its97GiB test cap cannot fit that combination.
+All four ranks had joined; no API/inference completed. Original service was
+restored and authenticated generation passed. See
+[the full-load failure record](benchmarks/glm53-intmix-first-load-2026-08-31.json).
 Prefer two nodes when the complete checkpoint, context, correctness and memory
 reserve fit; node count is not a success criterion. The formal ~465GB NVFP4 and
 ~405GB INT4/INT8 checkpoints do not fit entirely in two 128GB nodes.

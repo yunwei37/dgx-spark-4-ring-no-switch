@@ -161,6 +161,35 @@ this is not a claim that every local cache file is upstream content. The
 controlled filesystem bandwidth benchmark. Actual full INT4/INT8 loading and
 inference still remain unverified; NVFP4 stays the first-priority target.
 
+## Formal GLM-5.3 INT4/INT8 first real load, 2026-08-31
+
+The complete verified checkpoint entered real TP4 loading at21:05UTC using the
+fixed FP32-router image, native compilation and Marlin sparse-attention stack.
+All four NCCL Mesh ranks joined. The first fastsafetensors producer batch then
+requested a4.65GiB whole-file GPU buffer after94.91GiB Torch allocation and
+failed before any completed shard batch or API readiness. The97GiB test cap
+cannot contain those allocations together. CUDA also reported2.84GiB free;
+raising the cap alone is not a proven solution. This allocation failure does
+not measure or establish a SeaweedFS bandwidth bottleneck.
+
+Native load calls lasted5.046/11.647/11.580/11.598seconds until exception;
+these are **failure timings, not full model-load times**. Parent-process
+lifetimes were45.86-58.51seconds. Minimum host MemAvailable was13.80-14.66GiB.
+No model request succeeded and no tokens/s measurement exists for this run.
+
+All four exited containers and the test ConfigMap were removed, full logs were
+preserved privately, and original four-rank DeepSeek inference/authentication
+passed internally and publicly at21:18-21:19UTC. Nodes retained their boot IDs,
+SSH/services/Leases and four storage registrations. Original-service startup
+emitted driver allocation warnings21:17:24-21:18:15Z; no Xid/Linux OOM or new
+warnings after readiness were observed. This remains a warning-qualified
+`failed-restored` result, not formal-model success or NVFP4-weight evidence.
+
+The next bounded hypothesis selects the same runtime's native safetensors
+per-tensor CPU reader instead of whole-file GPU staging, with model, kernels,
+compilation and safety limits unchanged. It is not a validated optimization
+until measured. [Exact failed-run data](../benchmarks/glm53-intmix-first-load-2026-08-31.json).
+
 ## SeaweedFS ConnectX storage measurements
 
 With rank 2 offline, the remaining three-node storage path wrote a temporary

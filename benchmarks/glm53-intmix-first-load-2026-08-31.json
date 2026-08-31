@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "outcome": "failed-restored",
+  "model": "Tech2wild/GLM-5.3-Int4-Int8Mix",
+  "revision": "206507bbb047d8223964a0414cd83230c59428f9",
+  "observed_utc": "2026-08-31T21:05:09Z",
+  "scope": "First full-checkpoint TP4 native-compilation attempt, not Flash and not NVFP4 weights",
+  "checkpoint": {
+    "safetensors": 282,
+    "bytes": 405241870672,
+    "indexed_tensors": 177569,
+    "full_hash_verified": true
+  },
+  "runtime": {
+    "vllm": "0.23.1rc1.dev190+gab6660699.d20260705",
+    "image_manifest_sha256": "65cfb227b40f92709bed00d49bb502772ad6948ba31dbaf3b09fbbb3b6c41a3d",
+    "image_config_sha256": "71ef93e62e5ad7f76821f25632e2df9c3840f1bcb1df1ad268b8618a40031ab2",
+    "image_publication": "local caches only; GHCR publication not verified",
+    "router_sha256": "d6cf87377e530c878b7f4a12b1517c08ba4213f320caa337b5e9c1462db4e24e",
+    "tp": 4,
+    "pp": 1,
+    "load_format": "fastsafetensors",
+    "fastsafetensors_unified_mem": 0,
+    "queue_size": -1,
+    "torch_allocator_cap_bytes": 104152956928,
+    "host_available_floor_bytes": 3221225472,
+    "max_model_len": 8192,
+    "max_num_seqs": 1,
+    "kv_cache_bytes": 1073741824,
+    "kv_cache_dtype": "fp8_ds_mla",
+    "enforce_eager": false,
+    "mtp": false,
+    "attention": "FLASHMLA_SPARSE",
+    "quantization": "Marlin WNA16",
+    "communication": "NCCL 2.29.7 Mesh, all four ranks joined"
+  },
+  "result": {
+    "full_load_completed": false,
+    "api_ready": false,
+    "successful_inference_requests": 0,
+    "decode_tps": null,
+    "first_failure": "rank0 Producer batch0 whole-file GPU staging allocation",
+    "requested_allocation_gib": 4.65,
+    "cuda_reported_free_gib": 2.84,
+    "notes": "94.91 GiB already allocated plus 4.65 GiB request exceeds the 97 GiB test cap. CUDA also reported less free than the request; removing the cap alone is not proven sufficient. No evidence of storage throughput causing this allocation failure."
+  },
+  "ranks": [
+    {
+      "rank": 0,
+      "load_call_until_exception_s": 5.0455707119981525,
+      "torch_peak_bytes": 101905911296,
+      "parent_elapsed_s": 45.85636558599799,
+      "host_mem_available_min_bytes": 15741329408,
+      "exit_code": 1
+    },
+    {
+      "rank": 1,
+      "load_call_until_exception_s": 11.647110834004707,
+      "torch_peak_bytes": 101905911808,
+      "parent_elapsed_s": 53.152513984001416,
+      "host_mem_available_min_bytes": 14818717696,
+      "exit_code": 1
+    },
+    {
+      "rank": 2,
+      "load_call_until_exception_s": 11.579776690996368,
+      "torch_peak_bytes": 101905911808,
+      "parent_elapsed_s": 54.34524725600204,
+      "host_mem_available_min_bytes": 14851780608,
+      "exit_code": 1
+    },
+    {
+      "rank": 3,
+      "load_call_until_exception_s": 11.59785690499848,
+      "torch_peak_bytes": 101905911808,
+      "parent_elapsed_s": 58.50513967099687,
+      "host_mem_available_min_bytes": 14864883712,
+      "exit_code": 1
+    }
+  ],
+  "evidence": {
+    "timestamped_log_sha256": [
+      "89fdb447e175598c0f1a649b98d8b94e52e62f37f3dacf77bc5f42b5dcd0f42a",
+      "8f8acec25f0db3ee6be7598aec1d7aaaa899b308925cd5dc4cb0cfd5aa4201fd",
+      "7fc8a4c47d677a729a3c7ec54900f92b75bce4b8ee91328f5f8bffc148333222",
+      "9fb65298937d0b86250b131bf05f926bf84c1324c1085cf7b77fc79936204599"
+    ],
+    "logs": "Complete compressed logs retained privately; not published because they include fleet topology.",
+    "cleanup": "Four terminal Pods and worker ConfigMap UID-precondition deleted21:10:43-45Z. Requested checkpoint and runtime preserved."
+  },
+  "restoration": {
+    "utc": "2026-08-31T21:19:38Z",
+    "original_service": "DeepSeek original four ranks Ready, zero restarts",
+    "internal_health": 200,
+    "internal_and_public_missing_invalid_auth": 401,
+    "internal_and_public_authenticated_generation": 200,
+    "arithmetic_correct": true,
+    "all_four_boots_unchanged": true,
+    "all_four_ssh_and_services_verified": true,
+    "checkpoint_preserved": true,
+    "volume_owners": 4,
+    "driver_warning_boundary": "No NV_ERR_NO_MEMORY, Xid or Linux OOM observed during INTmix21:04-21:14Z. Original-service startup21:17:24-21:18:15Z emitted NV_ERR_NO_MEMORY83/37/34/72 by physical node; no Xid/Linux OOM or new errors after21:18:50Z. Exact cause not established."
+  }
+}
