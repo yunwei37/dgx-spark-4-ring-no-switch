@@ -1,5 +1,28 @@
 ARG DFLASH2_SOURCE_IMAGE=ghcr.io/tonyd2wild/vllm-glm53-flash@sha256:4def0ef644cb2e9814136dcffd5e385e21bc594f48f3b292234051904abe85a6
 ARG RUNTIME_IMAGE=ghcr.io/yunwei37/dgx-spark-4-ring-no-switch@sha256:52b289baf653bcb550194822f1c1381275601731d4882fefe7c0413513a99cae
+ARG BUILD_IMAGE=ghcr.io/anemll/dspark-vllm-gx10@sha256:a83948492cf13df455170fb42885f5ef4db54fefe0feff0f841ecbff464ac9d8
+
+FROM ${BUILD_IMAGE} AS mesh-builder
+
+ARG NCCL_COMMIT=b91894bd5b190c874d98a017f93f5daa515b65d0
+ARG MESH_COMMIT=19924dcc7c571d6e260953724d394ae50bad82cf
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      build-essential ca-certificates git libibverbs-dev pkg-config \
+    && rm -rf /var/lib/apt/lists/* \
+    && git clone https://github.com/NVIDIA/nccl.git /src/nccl \
+    && git -C /src/nccl checkout "${NCCL_COMMIT}" \
+    && make -C /src/nccl -j"$(nproc)" src.build CUDA_HOME=/usr/local/cuda \
+    && git clone https://github.com/autoscriptlabs/nccl-mesh-plugin.git /src/mesh \
+    && git -C /src/mesh checkout "${MESH_COMMIT}" \
+    && make -C /src/mesh -j"$(nproc)" \
+    && mkdir -p /opt/nccl-mesh/lib \
+    && install -m 0755 /src/nccl/build/lib/libnccl.so.2.29.7 /opt/nccl-mesh/lib/ \
+    && install -m 0755 /src/mesh/libnccl-net.so /opt/nccl-mesh/lib/ \
+    && ln -s libnccl.so.2.29.7 /opt/nccl-mesh/lib/libnccl.so.2 \
+    && ln -s libnccl.so.2 /opt/nccl-mesh/lib/libnccl.so \
+    && ln -s libnccl-net.so /opt/nccl-mesh/lib/libnccl-net-mesh.so
+
 FROM ${DFLASH2_SOURCE_IMAGE} AS dflash2-source
 
 FROM ${RUNTIME_IMAGE}
@@ -14,6 +37,8 @@ LABEL org.opencontainers.image.title="DGX Spark GLM-5.3 Int4/Int8Mix NVFP4-KV DF
       org.opencontainers.image.licenses="NOASSERTION" \
       io.yunwei37.dflash2-community-revision="${COMMUNITY_PORT_COMMIT}" \
       io.yunwei37.dflash2-source-digest="${DFLASH2_SOURCE_DIGEST}"
+
+COPY --from=mesh-builder /opt/nccl-mesh /opt/nccl-mesh
 
 ADD --checksum=sha256:c2fd1bc93957c8a534b03cc83d9d6c28cf7238a9a8ab7113b919f7e013e37c42 \
     https://github.com/tonyd2wild/GLM-5.3-Int4-Int8Mix-TP4-4x-DGX-Spark/archive/a1806cb82493aa6f28709f77acf59c1937bdf756.tar.gz \
@@ -55,3 +80,5 @@ RUN set -eux; \
     rm -rf /tmp/community-port /tmp/dflash2-source \
       /tmp/community-port.tar.gz \
       /tmp/dsa_block.py /tmp/apply_dflash2_swa_under_mla.py
+
+ENV LD_LIBRARY_PATH=/opt/nccl-mesh/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/cuda/lib64

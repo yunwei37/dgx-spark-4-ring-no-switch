@@ -146,6 +146,10 @@ for required_text in (
     "@sha256:4def0ef644cb2e9814136dcffd5e385e21bc594f48f3b292234051904abe85a6",
     "--checksum=sha256:c2fd1bc93957c8a534b03cc83d9d6c28cf7238a9a8ab7113b919f7e013e37c42",
     "COPY --from=dflash2-source",
+    "COPY --from=mesh-builder /opt/nccl-mesh /opt/nccl-mesh",
+    "NCCL_COMMIT=b91894bd5b190c874d98a017f93f5daa515b65d0",
+    "MESH_COMMIT=19924dcc7c571d6e260953724d394ae50bad82cf",
+    "LD_LIBRARY_PATH=/opt/nccl-mesh/lib:",
     "apply_dflash2_swa_under_mla.py",
     "verify_dflash2.py",
 ):
