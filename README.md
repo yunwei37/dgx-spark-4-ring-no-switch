@@ -23,7 +23,9 @@ weights or modify host management networking.
 
 Formal **GLM-5.3 (not Flash)** remains the first priority and has **zero**
 successful local inference requests. NVFP4 constructor savings are diagnostics,
-not inference. The requested INT4/INT8 variant is being prepared separately;
+not inference. The requested INT4/INT8 checkpoint finished full upstream
+checksum/index/size verification on August31; its temporary verifier was removed.
+It has not completed local inference;
 its [four-rank router/capacity preflight](docs/benchmarks.md#formal-glm-53-int4int8-preflight-2026-08-31)
 measured 94.65 GiB/rank of static tensors with the FP32-router candidate, not a
 full checkpoint load or serving peak.

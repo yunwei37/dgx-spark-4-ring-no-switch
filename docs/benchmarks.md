@@ -150,6 +150,17 @@ unverified. Earlier RDMA container-permission and A/B registration failures
 were fixed only in disposable test code; no host configuration was installed.
 See [sanitized all-rank results](../benchmarks/glm53-intmix-router-capacity-2026-08-31.json).
 
+Checkpoint preparation subsequently passed at18:13UTC: native HF verification
+matched all292upstream files; exact282safetensors total405,241,870,672bytes,
+index coverage and revision marker passed before atomic final-directory rename.
+Independent final-directory/marker checks passed18:29UTC; the temporary verifier
+Job and Pod were removed18:30UTC without deleting the requested weights.
+The verification log's587extra-local-file warning remains in the private record;
+this is not a claim that every local cache file is upstream content. The
+11,466.13-second shared-storage checksum pass is not model loading time or a
+controlled filesystem bandwidth benchmark. Actual full INT4/INT8 loading and
+inference still remain unverified; NVFP4 stays the first-priority target.
+
 ## SeaweedFS ConnectX storage measurements
 
 With rank 2 offline, the remaining three-node storage path wrote a temporary

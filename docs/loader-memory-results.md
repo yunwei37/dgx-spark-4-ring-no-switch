@@ -72,6 +72,27 @@ constructor, CPU/driver, post-load and KV peaks in admission. A1.78GiB component
 RSS saving alone does not establish safe full-model capacity. Formal GLM-5.3
 NVFP4 still has **zero successful inference requests**.
 
+### Native integration caveat (18:03 UTC; source checks only)
+
+The pinned runtime's `--weight-loader-disable-mmap` is **not** equivalent to
+the tested per-tensor pread reader: its serial branch uses
+`safetensors.torch.load(f.read())`, reading a complete shard before yielding
+tensors. Do not substitute that flag for the measured reader.
+
+A two-line native-source candidate now selects `backend="pread"` in the serial
+iterator and synchronous loading in `DeepseekV2WeightLoaderMixin.do_load_weights`.
+The remaining source bytes, including PP ownership, all layers/experts and
+post-load transforms, are unchanged. Exact-source hashes, syntax and a stubbed
+lazy-iterator check passed in the existing non-GPU development container.
+Its git/patch tools were absent; no package was installed and no git-apply
+check is claimed. The patch and source-test program remain private experiment
+artifacts until actual runtime validation; this is not a published working
+serving image, integrated GPU test, or full-model pass. DeepSeek was not paused.
+
+The preceding component's parameter digest covers named parameters only, not
+every CUDA buffer or unregistered tensor attribute. Its 1.777 GiB RSS saving
+does not yet establish complete-model constructor/post-load/KV capacity.
+
 
 ## GLM-5.2 vLLM results
 
