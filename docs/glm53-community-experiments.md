@@ -145,6 +145,42 @@ reports justify bounded comparisons, not importing their host watchdogs,
 cache loops or swap settings. The full formal checkpoints discussed above
 still require four nodes for resident-weight testing.
 
+### Additional TP2 reproductions checked against pinned source
+
+This August31 refresh adds two independent operator reports. GitHub's current
+commit API and raw README were checked; neither recipe was executed here.
+
+[Weschera's Qwen report](https://github.com/Weschera/qwen38-flashnext-dgx-spark/blob/545a1810b873127114fe04baf72940cc08bce7b5/README.md)
+(August27 commit) reports TP2 NVFP4: 41.7 single-stream, 49.8 thinking and
+149.5 aggregate tok/s at eight streams. Its heading says end-to-end while its
+column says decode; preserve that measurement ambiguity until checking the
+benchmark client. All reported numbers used memory fraction0.70, not the
+subsequently recommended0.80. A sparse-decode dispatch change improved the
+author's baseline from41.3 to43.3; split-K helps larger batches but loses on
+small shapes. This motivates shape-specific profiling, not copying every flag.
+The README reports degradation above approximately50K with YaRN524K, despite
+still advertising that launch option. Configured262K is not a verified262K
+retrieval result in this source. Its repository-description47tok/s headline
+does not match the current table. These are Qwen results, not GLM results.
+
+[kingjones30's Flash report](https://github.com/kingjones30/GLM-5.3-Flash-2x-DGX-Spark/blob/48a2f322f5bd4b37b35af6c908f4c8d514f1e7c8/README.md)
+(August27 commit) reports TP2 NVFP4/MTP5 medians of24.74 code,30.30 structured
+and19.58 prose tok/s, temperature0, thinking enabled, three runs. It reports
+exact recall with needles30K/100K/200K deep, not512K/1M validation, and about
+18minutes boot. The source describes Marlin avoiding its observed corrupt
+output and text-only mode avoiding a15.7GB frontend allocation. These claims
+are specific to its image and checkpoint, not all NVFP4 execution.
+Importantly, its compatibility patch does more than zero padding: it retains
+2045 selected entries plus3 tail entries, dropping3 original selections.
+Therefore do not label the whole patch lossless or transfer it to formal
+GLM-5.3's different attention layout. Its mutable base-image tag and host swap
+helper are not a verified immutable deployment for our fleet.
+
+The formal INT4/INT8 source remains at the already inspected `a1806cb`.
+Searching actual formal NVFP4 weights again found no new reproducible four-GB10
+success; the IncoAI card still gives TP8 examples. Neither Flash report closes
+that evidence gap, and none changes our measured-result table.
+
 ## Consequences for our next experiments
 
 1. Keep the requested actual NVFP4-weight test open. Our subsequent August31
