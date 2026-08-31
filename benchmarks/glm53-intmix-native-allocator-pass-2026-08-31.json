@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-08-31",
+  "outcome": "passed-bounded-experiment",
+  "hardware": {
+    "nodes": 4,
+    "platform": "NVIDIA DGX Spark",
+    "interconnect": "direct ConnectX ring without a switch"
+  },
+  "checkpoint": {
+    "repository": "Tech2wild/GLM-5.3-Int4-Int8Mix",
+    "revision": "206507bbb047d8223964a0414cd83230c59428f9"
+  },
+  "runtime": {
+    "image": "ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:glm53-intmix-router-d6cf87377e53",
+    "vllm": "0.23.1rc1.dev190+gab6660699.d20260705",
+    "parallelism": "TP4",
+    "model_load_format": "native_safetensors",
+    "kv_cache_dtype": "fp8_ds_mla",
+    "kv_cache_bytes_per_rank": 1073741824,
+    "context_length": 8192,
+    "mtp": false,
+    "enforce_eager": false,
+    "experiment_cuda_allocator_cap": "removed"
+  },
+  "startup": {
+    "load_seconds_by_rank": [545.2208, 480.8308, 479.5853, 480.9546],
+    "model_memory_gib_per_rank": 94.5,
+    "torch_allocated_bytes_per_rank": 101476319744,
+    "torch_reserved_bytes_per_rank": 102097747968,
+    "cuda_graph_seconds": 14,
+    "cuda_graph_memory_gib_rank0": 0.35,
+    "sampled_minimum_host_available_bytes_rank0": 9993826304
+  },
+  "correctness": {
+    "missing_auth_http": 401,
+    "authorized_models_http": 200,
+    "arithmetic_expected": "86415",
+    "arithmetic_actual": "86415",
+    "code_review_semantically_correct": true,
+    "strict_one_integer_per_line_gate": "failed in all three repeatability trials"
+  },
+  "performance": {
+    "code_review_prompt_tokens": 60,
+    "code_review_completion_tokens": 263,
+    "code_review_seconds": 20.4726,
+    "code_review_completion_tokens_per_second": 12.85,
+    "repeat_completion_tokens_per_trial": 200,
+    "repeat_seconds": [15.4941, 15.5773, 15.4355],
+    "repeat_completion_tokens_per_second": [12.9082, 12.8392, 12.9571],
+    "repeat_mean_completion_tokens_per_second": 12.9015
+  },
+  "measurement_boundary": [
+    "This pass proves bounded formal-model loading, initialization and real inference, not native full-context capacity.",
+    "The strict count formatting failure is retained and is not counted as a correctness pass.",
+    "The sampled host-memory minimum is not a continuous monitor or a long-term stability result.",
+    "All disposable Pods and the test ConfigMap were deleted after validation; checkpoint storage remained intact."
+  ]
+}

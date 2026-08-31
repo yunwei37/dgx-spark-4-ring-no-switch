@@ -20,6 +20,7 @@ required = (
     "Dockerfile.package",
     "Dockerfile.sglang-qwen38",
     "Dockerfile.sglang-glm53",
+    "Dockerfile.vllm-glm53-intmix-nvfp4",
     "profiles/glm52-int4-int8mix.sh",
     "profiles/qwen38-flash-next-nvfp4.sh",
     "scripts/launch-ring.sh",
@@ -118,6 +119,18 @@ for patch_name in (
     patch_text = (ROOT / "images/runtime" / patch_name).read_text(encoding="utf-8")
     if "hashlib.sha256" not in patch_text or "EXPECTED_SHA256" not in patch_text:
         fail(f"{patch_name} must retain its source hash guard")
+
+intmix_nvfp4_dockerfile = (
+    ROOT / "Dockerfile.vllm-glm53-intmix-nvfp4"
+).read_text(encoding="utf-8")
+for required_text in (
+    "@sha256:e006935eb4f8266705f213c369de1eac8de7d20417254c5f234601a2fd56d481",
+    "34e81562984bda993e0c9ed01ed6900c17e4857b",
+    "--checksum=sha256:7c8d22715693cfa7ddb428d761b6fac71935adcdf3a77c58c80768061d876a72",
+    "nvfp4_ds_mla",
+):
+    if required_text not in intmix_nvfp4_dockerfile:
+        fail(f"GLM-5.3 IntMix NVFP4 Dockerfile missing {required_text}")
 
 readme = (ROOT / "README.md").read_text(encoding="utf-8")
 if "60,469" not in readme or "unsafe" not in readme:

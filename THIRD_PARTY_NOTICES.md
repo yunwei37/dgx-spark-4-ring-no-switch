@@ -20,6 +20,16 @@ The tested NVFP4 result used
 It is referenced for reproducibility but is not copied into this repository's
 first published image.
 
+The formal GLM-5.3 Int4/Int8Mix NVFP4-KV image incorporates the `port/`
+sources from
+`tonyd2wild/GLM-5.2-NVFP4-KV-4x-DGX-Spark-300kctx-42tok-s` at commit
+`34e81562984bda993e0c9ed01ed6900c17e4857b`, under that repository's
+Apache-2.0 license. The source archive is checksum-pinned in the Dockerfile.
+The resulting image also contains the separately distributed base image named
+above, whose repository-level license was not declared when recorded; the OCI
+license label therefore remains `NOASSERTION` rather than implying a license
+for the complete image.
+
 The Qwen3.8 Flash Next NVFP4 package uses
 `lmsysorg/sglang@sha256:12d3392bdc8be8d35e9a95f191df6aef99c5114bdbefd41bfdc7e760e6d25ec1`
 as its immutable runtime base and applies only the source-hash-guarded

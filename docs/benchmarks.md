@@ -114,15 +114,17 @@ measurements, not rerun or treated as interchangeable workloads:
 | Qwen3.8 Flash Next BF16 | 4 | 25.8662 tok/s short request | Cold 32768-input retrieval passed; 32769 failed with repeated token0. Smaller chunks and disabling radix did not fix quality |
 | GLM-5.3 Flash FP8 | 4 | 20.162 tok/s, 512-token single stream | 240000-input retrieval passed; pool252352, not the advertised1M window |
 | GLM-5.3 Flash FP8 MTP5 | 4 | 25.56635 tok/s forced512; 24.76421 natural256 | MTP acceptance37.75% forced; pool78528; 78000-input retrieval passed |
+| GLM-5.3 Int4/Int8Mix | 4 | 12.9015 tok/s mean, three200-token trials | Full formal model served at8K; arithmetic and code-review correctness passed; strict count formatting failed;1M untested |
 | Qwen NVFP4 + native MTP file view | 2 | 40.20 tok/s single; 102.19 aggregate4; strict262K passed | See dated 2026-08-31 result; not a matched throughput comparison to TP4 |
 
 Original private evidence filenames are `qwen38-bf16-tp4-serving-20260829.json`,
 `glm53-fp8-tp4-20260829.json`, and `glm53-fp8-tp4-mtp5-20260829.json`; public
 sanitized matrix data preserves their model/runtime and measurement boundaries.
 Use two nodes where complete-model correctness, capacity and performance allow;
-do not run four solely to fill a matrix cell. Formal GLM-5.3 remains separate
-and unpassed. Its ~465GB NVFP4 and ~405GB INT4/INT8 formats require more than
-two128GB nodes for full accelerator residency before runtime/KV overhead.
+do not run four solely to fill a matrix cell. Formal GLM-5.3 Int4/Int8Mix now
+has a bounded TP4 functional pass, but no full-context pass. Its ~465GB NVFP4
+and ~405GB INT4/INT8 formats require more than two128GB nodes for full
+accelerator residency before runtime/KV overhead.
 
 ## Formal GLM-5.3 INT4/INT8 preflight, 2026-08-31
 
@@ -189,6 +191,28 @@ The next bounded hypothesis selects the same runtime's native safetensors
 per-tensor CPU reader instead of whole-file GPU staging, with model, kernels,
 compilation and safety limits unchanged. It is not a validated optimization
 until measured. [Exact failed-run data](../benchmarks/glm53-intmix-first-load-2026-08-31.json).
+
+## Formal GLM-5.3 Int4/Int8 bounded functional pass, 2026-08-31
+
+The native-safetensors follow-up loaded94.5GiB/rank in480-545seconds but first
+failed when our experiment-added97GiB CUDA allocator limit rejected an896MiB
+MLA profiling workspace. Removing only that artificial limit let all four ranks
+finish compilation and graph capture, and the API became ready with zero Pod
+restarts. The model, checkpoint, TP4 layout, kernels,1GiB FP8 MLA KV cache and
+8,192-token diagnostic window were unchanged.
+
+Authenticated arithmetic returned the expected`86415`; a code-review prompt
+correctly diagnosed an inverted duplicate predicate and supplied the repair.
+The latter generated263tokens in20.4726seconds (12.85tok/s). Three independent
+200-token repeats measured12.9082,12.8392 and12.9571tok/s, mean12.9015tok/s.
+The count prompt failed the strict one-integer-per-line format gate in all three
+trials, so those runs establish repeatable decode throughput but are not counted
+as formatting correctness passes.
+
+The lowest sampled host-available memory on rank0 was9.31GiB. This bounded test
+does not prove long-term stability or the native1,048,576-token context. The
+test resources were removed; checkpoint storage and credentials were retained.
+See the [sanitized pass record](../benchmarks/glm53-intmix-native-allocator-pass-2026-08-31.json).
 
 ## SeaweedFS ConnectX storage measurements
 

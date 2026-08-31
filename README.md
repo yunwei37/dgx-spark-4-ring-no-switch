@@ -20,14 +20,26 @@ weights or modify host management networking.
 | `Qwen/Qwen3.8-Flash-Next` BF16 | TP=4/EP=4 | 32,768 cold input passed; 32,769 failed | 25.87 tok/s short request | long-context correctness failure, not full-window success |
 | `zai-org/GLM-5.3-Flash` FP8 | TP=4/EP=4 | 240,000 input retrieval passed | 20.16 tok/s single | bounded inference passed |
 | same Flash FP8, MTP=5 | TP=4/EP=4 | 78,000 input retrieval passed | 25.57 tok/s forced 512-token decode | bounded pass; less KV capacity, not formal GLM-5.3 |
+| `Tech2wild/GLM-5.3-Int4-Int8Mix` | TP=4 | 8,192 bounded baseline | 12.90 tok/s mean across 3 trials | formal GLM-5.3 loaded and answered real requests; full 1M context not yet passed |
 
-Formal **GLM-5.3 (not Flash)** remains the first priority and has **zero**
-successful local inference requests. August31 native NVFP4 loading failed
-during initial reads. A follow-up pre-read ownership/sliced-vocabulary patch
-saved about1.74GiB RSS in a byte-identical GPU component but loaded more slowly;
-the actual full-model follow-up still hit the host-memory floor on its final
-pipeline rank. [Failure data and graphs](docs/loader-memory-results.md) are
-published; constructor or component savings are not inference.
+Formal **GLM-5.3 (not Flash)** remains the first priority. The fixed
+`Tech2wild/GLM-5.3-Int4-Int8Mix` revision now completes TP4 loading,
+initialization and authenticated generation with the experiment-added CUDA
+allocator cap removed. All four ranks loaded94.5GiB in480-545seconds. A real
+arithmetic request returned the exact expected answer, and a code-review request
+identified and fixed the supplied defect. Three200-token repeats measured
+12.84-12.96tok/s, mean12.90tok/s. The strict counting-output format failed and
+is retained as a failure rather than counted as a correctness pass. This is an
+8K functional baseline, **not** the requested1,048,576-token result. See the
+[sanitized pass record](benchmarks/glm53-intmix-native-allocator-pass-2026-08-31.json).
+
+Formal NVFP4 **weights** remain separate and unsuccessful. August31 native
+NVFP4 loading failed during initial reads. A follow-up pre-read
+ownership/sliced-vocabulary patch saved about1.74GiB RSS in a byte-identical GPU
+component but loaded more slowly; the actual full-model follow-up still hit the
+host-memory floor on its final pipeline rank. [Failure data and
+graphs](docs/loader-memory-results.md) are published; constructor or component
+savings are not inference.
 The requested INT4/INT8 checkpoint finished full upstream
 checksum/index/size verification on August31; its temporary verifier was removed.
 It has not completed local inference;
@@ -44,7 +56,8 @@ on all four ranks in477-536seconds, using94.5GiB each. Initialization then
 failed on an896MiB MLA profiling workspace rejected by our97GiB test allocator
 limit. This limit is not an upstream requirement; it is being removed rather
 than promoted as a serving default. One driver allocation warning is retained.
-There is still no successful formal-model inference or full-context result.
+Removing that artificial cap produced the bounded formal-model pass above, but
+there is still no full-context result.
 See [the native-loader evidence](benchmarks/glm53-intmix-native-load-2026-08-31.json).
 The requested final context is the checkpoint's native1,048,576tokens;
 the8K diagnostic and community200K/300K configurations are not that result.
