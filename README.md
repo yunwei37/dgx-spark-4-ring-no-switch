@@ -39,6 +39,15 @@ then failed at fastsafetensors' initial4.65GiB GPU file-buffer allocation after
 All four ranks had joined; no API/inference completed. Original service was
 restored and authenticated generation passed. See
 [the full-load failure record](benchmarks/glm53-intmix-first-load-2026-08-31.json).
+A subsequent native `safetensors` run completed all weights and postprocessing
+on all four ranks in477-536seconds, using94.5GiB each. Initialization then
+failed on an896MiB MLA profiling workspace rejected by our97GiB test allocator
+limit. This limit is not an upstream requirement; it is being removed rather
+than promoted as a serving default. One driver allocation warning is retained.
+There is still no successful formal-model inference or full-context result.
+See [the native-loader evidence](benchmarks/glm53-intmix-native-load-2026-08-31.json).
+The requested final context is the checkpoint's native1,048,576tokens;
+the8K diagnostic and community200K/300K configurations are not that result.
 Prefer two nodes when the complete checkpoint, context, correctness and memory
 reserve fit; node count is not a success criterion. The formal ~465GB NVFP4 and
 ~405GB INT4/INT8 checkpoints do not fit entirely in two 128GB nodes.

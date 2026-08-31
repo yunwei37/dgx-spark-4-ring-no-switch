@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-08-31",
+  "status": "complete-load-passed-native-initialization-failed",
+  "outcome": "failed-restored",
+  "restoration_baseline": "Latest user-selected baseline has the retired previous Spark model off; host/storage health restored, not that rejected service.",
+  "model": "Tech2wild/GLM-5.3-Int4-Int8Mix",
+  "revision": "206507bbb047d8223964a0414cd83230c59428f9",
+  "runtime_image": "ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:glm53-intmix-router-d6cf87377e53",
+  "runtime_config_sha256": "71ef93e62e5ad7f76821f25632e2df9c3840f1bcb1df1ad268b8618a40031ab2",
+  "runtime_distribution": "locally built/imported; not GHCR-published",
+  "tp": 4,
+  "loader": "safetensors",
+  "context_test_baseline": 8192,
+  "native_context_goal": 1048576,
+  "successful_inference_requests": 0,
+  "full_context_passed": false,
+  "load_model_seconds": [
+    536.1124455110039,
+    476.69883679699706,
+    477.1058575479983,
+    477.3674962099976
+  ],
+  "torch_allocated_bytes_per_rank": 101476319744,
+  "failure": {
+    "stage": "native MLA profile workspace after full loading and graph compilation",
+    "allocation_mib": 896,
+    "test_allocator_limit_gib": 97,
+    "torch_allocated_gib_reported": 95.63,
+    "reserved_unallocated_mib_reported": 546.04,
+    "cuda_free_gib_reported": [
+      1.95,
+      2.32,
+      2.75,
+      2.1
+    ],
+    "host_minimum_bytes": [
+      12700794880,
+      13287821312,
+      13385719808,
+      12666212352
+    ],
+    "driver_warning": "one head NV_ERR_NO_MEMORY before allocator failure; no Xid/Linux OOM observed"
+  },
+  "cleanup": "four exact test Pods and their ConfigMap removed; hosts verified; rejected prior service remains disabled per latest user instruction",
+  "next": "98GiB candidate not run, superseded by user request to follow community/native allocator and validate full native context; no unexecuted candidate is a result"
+}
