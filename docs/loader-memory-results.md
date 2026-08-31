@@ -357,3 +357,23 @@ test directory was removed. The sourceSHA is
 a1d03e84926a7f9650b9fca6728b101999865277b4853bfab0002984603749e1.
 This source has not been rebuilt into an image or tested with real Gloo/GPU
 ranks. No full-model retry is justified solely by these unit tests.
+
+### Real allocation-prefix probe: prepared
+
+`tests/glm53_constructor_prefix_probe.py` is deliberately non-serving: it uses
+the real constructor,64GiB Torch cap and16GiB reserve, records allocated,
+reserved,peak and host availability at roughly4GiB intervals, and cannot enter
+checkpoint loading. The register_parameter observer is scoped to construction
+and restores the original method. The four-rank900second probe retains native
+41/37TP2/EP2/PP2 and the original checkpoint identity, with70GiB Pod limits.
+This can test the real CPU collective and allocation growth below the previous
+unsafe range; it is not an inference or a precision-reduced model result.
+
+The non-Spark container compiled and assembled one215040byte OCI increment:
+tag glm53-prefix64-704004c78fe4,config
+1e7ac88484b917029adfd8415890ef301b2f06217998b338103e3b0d2b2dd4f4,
+loaderSHA704004c78fe444fb65d6a515756afcc75ad5ba6a5001b42f926530c212a2ab98.
+All four imports/unpacks/CRI identities passed. The included Dockerfile is a
+rebuild recipe, not an executed full-build claim; actual incremental assembly
+reused the verified old image layers. No GHCR publication. Runtime results
+remain pending; preserve the original service through normal pause/restore.
