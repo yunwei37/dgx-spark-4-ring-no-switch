@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="480" viewBox="0 0 900 480" role="img" aria-labelledby="title desc">
+<title id="title">GLM-5.3 NVFP4 real constructor-prefix memory</title>
+<desc id="desc">Four logical ranks, TP2 EP2 PP2. Host MemAvailable decreases nearly linearly with real Torch allocation up to a 64 GiB cap. No checkpoint load or inference completed. No extrapolation shown.</desc>
+<rect width="900" height="480" fill="#fff"/>
+<g font-family="Arial,sans-serif" font-size="13" fill="#172033">
+<text x="55" y="30" font-size="20" font-weight="bold">GLM-5.3 NVFP4: measured constructor prefix</text>
+<text x="55" y="53">2026-08-31 13:33–13:34 UTC · TP2 / EP2 / PP2 · full architecture, allocation stopped at cap</text>
+<line x1="70" y1="360" x2="830" y2="360" stroke="#e2e8f0"/><text x="59" y="365" text-anchor="end">0</text>
+<line x1="70" y1="313.3333333333333" x2="830" y2="313.3333333333333" stroke="#e2e8f0"/><text x="59" y="318.3333333333333" text-anchor="end">20</text>
+<line x1="70" y1="266.6666666666667" x2="830" y2="266.6666666666667" stroke="#e2e8f0"/><text x="59" y="271.6666666666667" text-anchor="end">40</text>
+<line x1="70" y1="220" x2="830" y2="220" stroke="#e2e8f0"/><text x="59" y="225" text-anchor="end">60</text>
+<line x1="70" y1="173.33333333333334" x2="830" y2="173.33333333333334" stroke="#e2e8f0"/><text x="59" y="178.33333333333334" text-anchor="end">80</text>
+<line x1="70" y1="126.66666666666666" x2="830" y2="126.66666666666666" stroke="#e2e8f0"/><text x="59" y="131.66666666666666" text-anchor="end">100</text>
+<line x1="70" y1="80" x2="830" y2="80" stroke="#e2e8f0"/><text x="59" y="85" text-anchor="end">120</text>
+<line x1="70" y1="80" x2="70" y2="360" stroke="#f1f5f9"/><text x="70" y="382" text-anchor="middle">0</text>
+<line x1="186.92307692307693" y1="80" x2="186.92307692307693" y2="360" stroke="#f1f5f9"/><text x="186.92307692307693" y="382" text-anchor="middle">10</text>
+<line x1="303.84615384615387" y1="80" x2="303.84615384615387" y2="360" stroke="#f1f5f9"/><text x="303.84615384615387" y="382" text-anchor="middle">20</text>
+<line x1="420.7692307692308" y1="80" x2="420.7692307692308" y2="360" stroke="#f1f5f9"/><text x="420.7692307692308" y="382" text-anchor="middle">30</text>
+<line x1="537.6923076923077" y1="80" x2="537.6923076923077" y2="360" stroke="#f1f5f9"/><text x="537.6923076923077" y="382" text-anchor="middle">40</text>
+<line x1="654.6153846153846" y1="80" x2="654.6153846153846" y2="360" stroke="#f1f5f9"/><text x="654.6153846153846" y="382" text-anchor="middle">50</text>
+<line x1="771.5384615384615" y1="80" x2="771.5384615384615" y2="360" stroke="#f1f5f9"/><text x="771.5384615384615" y="382" text-anchor="middle">60</text>
+<path d="M70,80 V360 H830" stroke="#475569" fill="none"/><text x="450" y="408" text-anchor="middle">Torch allocated memory (GiB)</text><text x="17" y="228" transform="rotate(-90 17 228)" text-anchor="middle">Host MemAvailable (GiB)</text>
+<line x1="818.3076923076924" y1="80" x2="818.3076923076924" y2="360" stroke="#dc2626" stroke-dasharray="5 4"/><text x="810.3076923076924" y="96" text-anchor="end" fill="#b91c1c">64 GiB cap</text>
+<line x1="70" y1="322.6666666666667" x2="830" y2="322.6666666666667" stroke="#64748b" stroke-dasharray="5 4"/><text x="80" y="315.6666666666667">16 GiB diagnostic reserve (not reached)</text>
+<polyline points="70.81,102.57 117.57,112.24 181.60,125.25 245.84,138.32 309.86,151.39 374.10,164.46 438.13,177.47 502.36,190.58 566.39,203.62 630.62,216.69 694.65,229.76 758.88,242.81 804.61,252.31" fill="none" stroke="#2563eb" stroke-width="2" />
+<circle cx="117.57" cy="112.24" r="3" fill="#2563eb" fill-opacity=".65"/>
+<circle cx="181.60" cy="125.25" r="3" fill="#2563eb" fill-opacity=".65"/>
+<circle cx="245.84" cy="138.32" r="3" fill="#2563eb" fill-opacity=".65"/>
+<circle cx="309.86" cy="151.39" r="3" fill="#2563eb" fill-opacity=".65"/>
+<circle cx="374.10" cy="164.46" r="3" fill="#2563eb" fill-opacity=".65"/>
+<circle cx="438.13" cy="177.47" r="3" fill="#2563eb" fill-opacity=".65"/>
+<circle cx="502.36" cy="190.58" r="3" fill="#2563eb" fill-opacity=".65"/>
+<circle cx="566.39" cy="203.62" r="3" fill="#2563eb" fill-opacity=".65"/>
+<circle cx="630.62" cy="216.69" r="3" fill="#2563eb" fill-opacity=".65"/>
+<circle cx="694.65" cy="229.76" r="3" fill="#2563eb" fill-opacity=".65"/>
+<circle cx="758.88" cy="242.81" r="3" fill="#2563eb" fill-opacity=".65"/>
+<circle cx="804.61" cy="252.31" r="3" fill="#2563eb" fill-opacity=".65"/>
+<line x1="90" y1="434" x2="115" y2="434" stroke="#2563eb" stroke-width="3"/><text x="123" y="439">rank 0: 46.15 GiB left</text>
+<polyline points="70.81,98.80 117.57,108.47 181.60,121.48 245.84,134.55 309.86,147.62 374.10,160.70 438.13,173.72 502.36,186.80 566.39,199.83 630.62,212.89 694.65,225.97 758.88,239.04 804.61,248.51" fill="none" stroke="#059669" stroke-width="2" stroke-dasharray="5 3"/>
+<circle cx="117.57" cy="108.47" r="2" fill="#059669" fill-opacity=".65"/>
+<circle cx="181.60" cy="121.48" r="2" fill="#059669" fill-opacity=".65"/>
+<circle cx="245.84" cy="134.55" r="2" fill="#059669" fill-opacity=".65"/>
+<circle cx="309.86" cy="147.62" r="2" fill="#059669" fill-opacity=".65"/>
+<circle cx="374.10" cy="160.70" r="2" fill="#059669" fill-opacity=".65"/>
+<circle cx="438.13" cy="173.72" r="2" fill="#059669" fill-opacity=".65"/>
+<circle cx="502.36" cy="186.80" r="2" fill="#059669" fill-opacity=".65"/>
+<circle cx="566.39" cy="199.83" r="2" fill="#059669" fill-opacity=".65"/>
+<circle cx="630.62" cy="212.89" r="2" fill="#059669" fill-opacity=".65"/>
+<circle cx="694.65" cy="225.97" r="2" fill="#059669" fill-opacity=".65"/>
+<circle cx="758.88" cy="239.04" r="2" fill="#059669" fill-opacity=".65"/>
+<circle cx="804.61" cy="248.51" r="2" fill="#059669" fill-opacity=".65"/>
+<line x1="275" y1="434" x2="300" y2="434" stroke="#059669" stroke-width="3"/><text x="308" y="439">rank 1: 47.78 GiB left</text>
+<polyline points="70.81,99.19 125.50,110.58 189.53,123.57 253.76,136.66 317.79,149.73 382.02,162.78 446.05,175.80 510.29,188.87 574.31,201.95 638.55,215.02 702.58,228.04 766.81,241.18 812.50,250.63" fill="none" stroke="#d97706" stroke-width="2" />
+<circle cx="125.50" cy="110.58" r="3" fill="#d97706" fill-opacity=".65"/>
+<circle cx="189.53" cy="123.57" r="3" fill="#d97706" fill-opacity=".65"/>
+<circle cx="253.76" cy="136.66" r="3" fill="#d97706" fill-opacity=".65"/>
+<circle cx="317.79" cy="149.73" r="3" fill="#d97706" fill-opacity=".65"/>
+<circle cx="382.02" cy="162.78" r="3" fill="#d97706" fill-opacity=".65"/>
+<circle cx="446.05" cy="175.80" r="3" fill="#d97706" fill-opacity=".65"/>
+<circle cx="510.29" cy="188.87" r="3" fill="#d97706" fill-opacity=".65"/>
+<circle cx="574.31" cy="201.95" r="3" fill="#d97706" fill-opacity=".65"/>
+<circle cx="638.55" cy="215.02" r="3" fill="#d97706" fill-opacity=".65"/>
+<circle cx="702.58" cy="228.04" r="3" fill="#d97706" fill-opacity=".65"/>
+<circle cx="766.81" cy="241.18" r="3" fill="#d97706" fill-opacity=".65"/>
+<circle cx="812.50" cy="250.63" r="3" fill="#d97706" fill-opacity=".65"/>
+<line x1="460" y1="434" x2="485" y2="434" stroke="#d97706" stroke-width="3"/><text x="493" y="439">rank 2: 46.87 GiB left</text>
+<polyline points="70.81,98.74 125.50,110.01 189.53,123.03 253.76,136.11 317.79,149.18 382.02,162.25 446.05,175.28 510.29,188.35 574.31,201.43 638.55,214.50 702.58,227.52 766.81,240.66 812.50,250.11" fill="none" stroke="#9333ea" stroke-width="2" stroke-dasharray="5 3"/>
+<circle cx="125.50" cy="110.01" r="2" fill="#9333ea" fill-opacity=".65"/>
+<circle cx="189.53" cy="123.03" r="2" fill="#9333ea" fill-opacity=".65"/>
+<circle cx="253.76" cy="136.11" r="2" fill="#9333ea" fill-opacity=".65"/>
+<circle cx="317.79" cy="149.18" r="2" fill="#9333ea" fill-opacity=".65"/>
+<circle cx="382.02" cy="162.25" r="2" fill="#9333ea" fill-opacity=".65"/>
+<circle cx="446.05" cy="175.28" r="2" fill="#9333ea" fill-opacity=".65"/>
+<circle cx="510.29" cy="188.35" r="2" fill="#9333ea" fill-opacity=".65"/>
+<circle cx="574.31" cy="201.43" r="2" fill="#9333ea" fill-opacity=".65"/>
+<circle cx="638.55" cy="214.50" r="2" fill="#9333ea" fill-opacity=".65"/>
+<circle cx="702.58" cy="227.52" r="2" fill="#9333ea" fill-opacity=".65"/>
+<circle cx="766.81" cy="240.66" r="2" fill="#9333ea" fill-opacity=".65"/>
+<circle cx="812.50" cy="250.11" r="2" fill="#9333ea" fill-opacity=".65"/>
+<line x1="645" y1="434" x2="670" y2="434" stroke="#9333ea" stroke-width="3"/><text x="678" y="439">rank 3: 47.10 GiB left</text>
+<text x="55" y="466" fill="#475569">Diagnostic only. Next 1.50 GiB allocation refused. Full loading, correctness and decode throughput remain unmeasured.</text></g></svg>

@@ -376,4 +376,53 @@ loaderSHA704004c78fe444fb65d6a515756afcc75ad5ba6a5001b42f926530c212a2ab98.
 All four imports/unpacks/CRI identities passed. The included Dockerfile is a
 rebuild recipe, not an executed full-build claim; actual incremental assembly
 reused the verified old image layers. No GHCR publication. Runtime results
-remain pending; preserve the original service through normal pause/restore.
+were pending at preparation time; the subsequent measured outcome follows.
+
+
+### Actual allocation-prefix diagnostic and restoration, 13:33-13:44 UTC
+
+All four native ranks passed the existing-world CPU admission collective and
+entered the real full-architecture constructor. Each refused the next1.50GiB
+allocation at the64GiB Torch allocator cap. No checkpoint loading, API readiness
+or model request occurred. Child torch.OutOfMemoryError followed by container
+exit0/Completed is the expected diagnostic stop, not a model pass.
+
+| Logical rank | Final Torch allocated GiB | Reserved GiB | Host available GiB | Constructor seconds |
+| --- | --- | --- | --- | --- |
+| 0 | 62.829 | 62.912 | 46.154 | 2.887 |
+| 1 | 62.829 | 62.912 | 47.783 | 2.628 |
+| 2 | 63.504 | 63.576 | 46.873 | 3.109 |
+| 3 | 63.504 | 63.576 | 47.096 | 3.090 |
+
+Each rank emitted12real samples. The drop in native available memory exceeded
+its increase in Torch allocation by1.400-1.467GiB at the last sample. This is
+an accounting difference, not an attribution to any particular driver/cache;
+background activity and allocator overhead are not separated. The measured
+prefix shows near-linear growth, not a large retained double copy. It does
+not measure the full106GiB-scale constructor, weight-loading peak, post-load
+transforms, inference memory, correctness or speed. Do not extrapolate a pass
+or repeat the prior107.5GiB recipe solely from this result.
+
+All four Pods were deleted13:37Z after log capture.9ffaf4e restored the original
+DeepSeek desired state; models FluxReady13:43:45Z. At13:44:11Z all4original Pods
+wereReady/zero restarts and actual authenticated generation returnedHTTP200,
+correct arithmetic,16input/2output tokens. All4realSSH, unchangedboots, required
+services andGB10 checks passed; no newNVRM/Xid/OOM kernel messages since13:32Z.
+Master /dir/status contained4volume owners with28/33/39/30volumes respectively,
+models replication000. Four registration entries are not a new full-file hash.
+
+The four diagnostic-only image tags were removed13:44Z and their absence was
+independently checked. The temporary non-Spark assembly directory/archive was
+removed too; source, reproducible recipe, counters and plot remain requested
+artifacts. Other image tags, foreign workspaces, original checkpoints and the
+sole INTmix verifier were untouched. Diagnostic outcome: passed-restored;
+formal GLM-5.3 NVFP4 full-inference outcome remains failed-restored,0requests.
+
+
+
+[Raw sanitized counters](../benchmarks/glm53-nvfp4-prefix64-2026-08-31.json)
+and [probe source](../tests/glm53_constructor_prefix_probe.py) are published
+with the exact image/config identity. The plotted points are measured only;
+no extrapolation into the previous unsafe region is drawn.
+
+![Measured constructor-prefix memory](assets/glm53-prefix-memory.svg)

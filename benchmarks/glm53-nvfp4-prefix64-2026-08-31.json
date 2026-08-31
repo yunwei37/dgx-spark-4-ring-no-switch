@@ -1,0 +1,420 @@
+{
+  "schema_version": 1,
+  "outcome": "passed-restored",
+  "measurement_scope": "real_constructor_prefix_only",
+  "model": "LibertAIDAI/GLM-5.3-NVFP4",
+  "model_revision": "653d98214a487d78c1b2a37167b56764b6240080",
+  "architecture_layers": 78,
+  "checkpoint_loaded": false,
+  "successful_inference_requests": 0,
+  "full_model_pass": false,
+  "utc": "2026-08-31T13:34:05.952949Z",
+  "image_config": "sha256:1e7ac88484b917029adfd8415890ef301b2f06217998b338103e3b0d2b2dd4f4",
+  "layout": {
+    "tp": 2,
+    "ep": 2,
+    "pp": 2,
+    "partition": [
+      41,
+      37
+    ]
+  },
+  "memory_cap_bytes": 68719476736,
+  "reserve_bytes": 17179869184,
+  "expected_termination": "torch.OutOfMemoryError at allocator cap; container exit0 does not indicate model success",
+  "cleanup": "Four diagnostic Pods deleted13:37Z; original4rank service Ready/zero restarts and authenticated correctHTTP200 at13:44:11Z; diagnostic image tags removed and absence checked on4nodes13:44Z. No full model inference pass.",
+  "ranks": [
+    {
+      "rank": 0,
+      "start": {
+        "allocated_before_bytes": 74771456,
+        "budget_bytes": 68719476736,
+        "cuda_free_before_bytes": 106400399360,
+        "free_before_bytes": 118464311296,
+        "reserve_bytes": 17179869184,
+        "scope": "Torch caching allocator only; excludes CPU and non-Torch allocations",
+        "total_bytes": 130662936576
+      },
+      "samples": [
+        {
+          "allocated_bytes": 4368927744,
+          "elapsed_s": 0.28092399099841714,
+          "host_available_bytes": 114012925952,
+          "peak_bytes": 4368927744,
+          "reserved_bytes": 4385144832
+        },
+        {
+          "allocated_bytes": 10248892416,
+          "elapsed_s": 0.5286966280000343,
+          "host_available_bytes": 108026114048,
+          "peak_bytes": 10248892416,
+          "reserved_bytes": 10257170432
+        },
+        {
+          "allocated_bytes": 16147601408,
+          "elapsed_s": 0.7773440409982868,
+          "host_available_bytes": 102009393152,
+          "peak_bytes": 16147601408,
+          "reserved_bytes": 16150167552
+        },
+        {
+          "allocated_bytes": 22027566080,
+          "elapsed_s": 1.0167882059977273,
+          "host_available_bytes": 95998226432,
+          "peak_bytes": 22027566080,
+          "reserved_bytes": 22043164672
+        },
+        {
+          "allocated_bytes": 27926275072,
+          "elapsed_s": 1.254714115999377,
+          "host_available_bytes": 89983569920,
+          "peak_bytes": 27926275072,
+          "reserved_bytes": 27936161792
+        },
+        {
+          "allocated_bytes": 33806239744,
+          "elapsed_s": 1.4947786560005625,
+          "host_available_bytes": 83996569600,
+          "peak_bytes": 33806239744,
+          "reserved_bytes": 33808187392
+        },
+        {
+          "allocated_bytes": 39704948736,
+          "elapsed_s": 1.73587370200039,
+          "host_available_bytes": 77964369920,
+          "peak_bytes": 39704948736,
+          "reserved_bytes": 39722156032
+        },
+        {
+          "allocated_bytes": 45584913408,
+          "elapsed_s": 1.9723282999984804,
+          "host_available_bytes": 71962398720,
+          "peak_bytes": 45584913408,
+          "reserved_bytes": 45594181632
+        },
+        {
+          "allocated_bytes": 51483622400,
+          "elapsed_s": 2.2126445539979613,
+          "host_available_bytes": 65947762688,
+          "peak_bytes": 51483622400,
+          "reserved_bytes": 51487178752
+        },
+        {
+          "allocated_bytes": 57363587072,
+          "elapsed_s": 2.4502370039990637,
+          "host_available_bytes": 59932258304,
+          "peak_bytes": 57363587072,
+          "reserved_bytes": 57380175872
+        },
+        {
+          "allocated_bytes": 63262296064,
+          "elapsed_s": 2.6889912740007276,
+          "host_available_bytes": 53927043072,
+          "peak_bytes": 63262296064,
+          "reserved_bytes": 63273172992
+        },
+        {
+          "allocated_bytes": 67461617664,
+          "elapsed_s": 2.8867722360009793,
+          "host_available_bytes": 49557475328,
+          "peak_bytes": 67531648000,
+          "reserved_bytes": 67551363072
+        }
+      ]
+    },
+    {
+      "rank": 1,
+      "start": {
+        "allocated_before_bytes": 74771456,
+        "budget_bytes": 68719476736,
+        "cuda_free_before_bytes": 106702524416,
+        "free_before_bytes": 120196501504,
+        "reserve_bytes": 17179869184,
+        "scope": "Torch caching allocator only; excludes CPU and non-Torch allocations",
+        "total_bytes": 130663165952
+      },
+      "samples": [
+        {
+          "allocated_bytes": 4368927744,
+          "elapsed_s": 0.25613686599899665,
+          "host_available_bytes": 115746086912,
+          "peak_bytes": 4368927744,
+          "reserved_bytes": 4385144832
+        },
+        {
+          "allocated_bytes": 10248892416,
+          "elapsed_s": 0.4853491079993546,
+          "host_available_bytes": 109758832640,
+          "peak_bytes": 10248892416,
+          "reserved_bytes": 10257170432
+        },
+        {
+          "allocated_bytes": 16147601408,
+          "elapsed_s": 0.7012078070001735,
+          "host_available_bytes": 103744819200,
+          "peak_bytes": 16147601408,
+          "reserved_bytes": 16150167552
+        },
+        {
+          "allocated_bytes": 22027566080,
+          "elapsed_s": 0.9144374399984372,
+          "host_available_bytes": 97731899392,
+          "peak_bytes": 22027566080,
+          "reserved_bytes": 22043164672
+        },
+        {
+          "allocated_bytes": 27926275072,
+          "elapsed_s": 1.1297719609974592,
+          "host_available_bytes": 91713929216,
+          "peak_bytes": 27926275072,
+          "reserved_bytes": 27936161792
+        },
+        {
+          "allocated_bytes": 33806239744,
+          "elapsed_s": 1.3450816340009624,
+          "host_available_bytes": 85721108480,
+          "peak_bytes": 33806239744,
+          "reserved_bytes": 33808187392
+        },
+        {
+          "allocated_bytes": 39704948736,
+          "elapsed_s": 1.5625640680009383,
+          "host_available_bytes": 79703654400,
+          "peak_bytes": 39704948736,
+          "reserved_bytes": 39722156032
+        },
+        {
+          "allocated_bytes": 45584913408,
+          "elapsed_s": 1.7787276809976902,
+          "host_available_bytes": 73707356160,
+          "peak_bytes": 45584913408,
+          "reserved_bytes": 45594181632
+        },
+        {
+          "allocated_bytes": 51483622400,
+          "elapsed_s": 1.9986326369980816,
+          "host_available_bytes": 67694559232,
+          "peak_bytes": 51483622400,
+          "reserved_bytes": 51487178752
+        },
+        {
+          "allocated_bytes": 57363587072,
+          "elapsed_s": 2.216476464000152,
+          "host_available_bytes": 61676593152,
+          "peak_bytes": 57363587072,
+          "reserved_bytes": 57380175872
+        },
+        {
+          "allocated_bytes": 63262296064,
+          "elapsed_s": 2.4360647149987926,
+          "host_available_bytes": 55663464448,
+          "peak_bytes": 63262296064,
+          "reserved_bytes": 63273172992
+        },
+        {
+          "allocated_bytes": 67461617664,
+          "elapsed_s": 2.627810802998283,
+          "host_available_bytes": 51306778624,
+          "peak_bytes": 67531648000,
+          "reserved_bytes": 67551363072
+        }
+      ]
+    },
+    {
+      "rank": 2,
+      "start": {
+        "allocated_before_bytes": 74771456,
+        "budget_bytes": 68719476736,
+        "cuda_free_before_bytes": 106635001856,
+        "free_before_bytes": 120016723968,
+        "reserve_bytes": 17179869184,
+        "scope": "Torch caching allocator only; excludes CPU and non-Torch allocations",
+        "total_bytes": 130662940672
+      },
+      "samples": [
+        {
+          "allocated_bytes": 5096841728,
+          "elapsed_s": 0.3433136099993135,
+          "host_available_bytes": 114775007232,
+          "peak_bytes": 5096841728,
+          "reserved_bytes": 5119148032
+        },
+        {
+          "allocated_bytes": 10976806400,
+          "elapsed_s": 0.6004315680002037,
+          "host_available_bytes": 108797669376,
+          "peak_bytes": 10976806400,
+          "reserved_bytes": 10991173632
+        },
+        {
+          "allocated_bytes": 16875515392,
+          "elapsed_s": 0.861943842999608,
+          "host_available_bytes": 102774804480,
+          "peak_bytes": 16875515392,
+          "reserved_bytes": 16884170752
+        },
+        {
+          "allocated_bytes": 22755480064,
+          "elapsed_s": 1.113704883002356,
+          "host_available_bytes": 96759361536,
+          "peak_bytes": 22755480064,
+          "reserved_bytes": 22777167872
+        },
+        {
+          "allocated_bytes": 28654189056,
+          "elapsed_s": 1.367965893001383,
+          "host_available_bytes": 90756808704,
+          "peak_bytes": 28654189056,
+          "reserved_bytes": 28670164992
+        },
+        {
+          "allocated_bytes": 34534153728,
+          "elapsed_s": 1.6186138529992604,
+          "host_available_bytes": 84765954048,
+          "peak_bytes": 34534153728,
+          "reserved_bytes": 34542190592
+        },
+        {
+          "allocated_bytes": 40432862720,
+          "elapsed_s": 1.872737853002036,
+          "host_available_bytes": 78751199232,
+          "peak_bytes": 40432862720,
+          "reserved_bytes": 40435187712
+        },
+        {
+          "allocated_bytes": 46312827392,
+          "elapsed_s": 2.1230474590011,
+          "host_available_bytes": 72732938240,
+          "peak_bytes": 46312827392,
+          "reserved_bytes": 46328184832
+        },
+        {
+          "allocated_bytes": 52211536384,
+          "elapsed_s": 2.376371550002659,
+          "host_available_bytes": 66717327360,
+          "peak_bytes": 52211536384,
+          "reserved_bytes": 52221181952
+        },
+        {
+          "allocated_bytes": 58091501056,
+          "elapsed_s": 2.6280026999993424,
+          "host_available_bytes": 60723433472,
+          "peak_bytes": 58091501056,
+          "reserved_bytes": 58093207552
+        },
+        {
+          "allocated_bytes": 63990210048,
+          "elapsed_s": 2.8867245399997046,
+          "host_available_bytes": 54677217280,
+          "peak_bytes": 63990210048,
+          "reserved_bytes": 64007176192
+        },
+        {
+          "allocated_bytes": 68186450432,
+          "elapsed_s": 3.109137889001431,
+          "host_available_bytes": 50329853952,
+          "peak_bytes": 68259561984,
+          "reserved_bytes": 68264394752
+        }
+      ]
+    },
+    {
+      "rank": 3,
+      "start": {
+        "allocated_before_bytes": 74771456,
+        "budget_bytes": 68719476736,
+        "cuda_free_before_bytes": 106917806080,
+        "free_before_bytes": 120223502336,
+        "reserve_bytes": 17179869184,
+        "scope": "Torch caching allocator only; excludes CPU and non-Torch allocations",
+        "total_bytes": 130663165952
+      },
+      "samples": [
+        {
+          "allocated_bytes": 5096841728,
+          "elapsed_s": 0.3227864029977354,
+          "host_available_bytes": 115036966912,
+          "peak_bytes": 5096841728,
+          "reserved_bytes": 5119148032
+        },
+        {
+          "allocated_bytes": 10976806400,
+          "elapsed_s": 0.5804257889976725,
+          "host_available_bytes": 109049380864,
+          "peak_bytes": 10976806400,
+          "reserved_bytes": 10991173632
+        },
+        {
+          "allocated_bytes": 16875515392,
+          "elapsed_s": 0.8367494439989969,
+          "host_available_bytes": 103028219904,
+          "peak_bytes": 16875515392,
+          "reserved_bytes": 16884170752
+        },
+        {
+          "allocated_bytes": 22755480064,
+          "elapsed_s": 1.0912751899995783,
+          "host_available_bytes": 97013825536,
+          "peak_bytes": 22755480064,
+          "reserved_bytes": 22777167872
+        },
+        {
+          "allocated_bytes": 28654189056,
+          "elapsed_s": 1.3443586610010243,
+          "host_available_bytes": 90997850112,
+          "peak_bytes": 28654189056,
+          "reserved_bytes": 28670164992
+        },
+        {
+          "allocated_bytes": 34534153728,
+          "elapsed_s": 1.5935832729992399,
+          "host_available_bytes": 85003960320,
+          "peak_bytes": 34534153728,
+          "reserved_bytes": 34542190592
+        },
+        {
+          "allocated_bytes": 40432862720,
+          "elapsed_s": 1.8502310250005394,
+          "host_available_bytes": 78988197888,
+          "peak_bytes": 40432862720,
+          "reserved_bytes": 40435187712
+        },
+        {
+          "allocated_bytes": 46312827392,
+          "elapsed_s": 2.104801811998186,
+          "host_available_bytes": 72972001280,
+          "peak_bytes": 46312827392,
+          "reserved_bytes": 46328184832
+        },
+        {
+          "allocated_bytes": 52211536384,
+          "elapsed_s": 2.359773126998334,
+          "host_available_bytes": 66955489280,
+          "peak_bytes": 52211536384,
+          "reserved_bytes": 52221181952
+        },
+        {
+          "allocated_bytes": 58091501056,
+          "elapsed_s": 2.6096583340004145,
+          "host_available_bytes": 60962267136,
+          "peak_bytes": 58091501056,
+          "reserved_bytes": 58093207552
+        },
+        {
+          "allocated_bytes": 63990210048,
+          "elapsed_s": 2.868204746999254,
+          "host_available_bytes": 54915297280,
+          "peak_bytes": 63990210048,
+          "reserved_bytes": 64007176192
+        },
+        {
+          "allocated_bytes": 68186450432,
+          "elapsed_s": 3.090494457999739,
+          "host_available_bytes": 50568683520,
+          "peak_bytes": 68259561984,
+          "reserved_bytes": 68264394752
+        }
+      ]
+    }
+  ]
+}
