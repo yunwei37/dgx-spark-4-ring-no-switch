@@ -426,3 +426,22 @@ with the exact image/config identity. The plotted points are measured only;
 no extrapolation into the previous unsafe region is drawn.
 
 ![Measured constructor-prefix memory](assets/glm53-prefix-memory.svg)
+
+### Additional upstream checks, 13:49 UTC (no runtime mutation)
+
+The pinned upstream `f609d677b` source already forwards DSA top-k indices
+between pipeline stages and receives them through PP proxy tensors. The old
+[stage-boundary issue28537](https://github.com/sgl-project/sglang/issues/28537)
+does not justify adding another workaround merely because41/37 starts on a
+reuse layer. This is [source inspection](https://github.com/sgl-project/sglang/blob/f609d677b/python/sglang/srt/models/deepseek_v2.py),
+not a real forward-pass or installed-file equivalence test.
+
+`SGLANG_NVFP4_CKPT_FP8_GEMM_IN_ATTN` is an upstream opt-in, defaultFalse in
+[environ.py](https://github.com/sgl-project/sglang/blob/f609d677b/python/sglang/srt/environ.py).
+It additionally quantizes q_b_proj, so it is not a byte-equivalent weight
+representation optimization. Its [loader](https://github.com/sgl-project/sglang/blob/f609d677b/python/sglang/srt/models/deepseek_common/deepseek_weight_loader.py)
+materializes dict(weights) before conversion instead of retaining the normal
+streaming iterator. With mmap this retains tensor/mapping references, not
+necessarily resident copies of every byte; with a different loader the peak
+could differ. Neither safety nor speed is demonstrated. The actual test
+manifests do not set this flag, and it was not enabled as a memory fix.
