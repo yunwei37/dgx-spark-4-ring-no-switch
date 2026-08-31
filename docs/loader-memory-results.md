@@ -312,3 +312,30 @@ b79564bfa04098821a9a0d818ee24c1a9091fb2e974c957e521f3f6f7b2a448b,
 config3bfdfb60c06d5dd439a264e4ec3d4fc041ea29c12a4f6f19f3d5bca7107cce9b.
 Its215040-byte OCI increment reuses every base layer; all four imports/unpacks
 passed. No GHCR publication or corrected full-model runtime pass is claimed.
+
+### Corrected UMA attempt: failed and restored,12:51-13:14 UTC
+
+The corrected real four-rank attempt started12:51:50Z. One rank failed the
+unchanged107.5GiB Torch budget plus3GiB reserve while peers allocated. At
+12:52:39Z a worker recorded15driver NV_ERR_NO_MEMORY messages; two hosts'
+MemAvailable then fell below3GiB and one temporarily lostSSH/readiness.
+All four temporary Pods were removed and the original service restored.
+The affected host returned on the same boot; no reboot/power cycle or effective
+runtime kill caused recovery. Original four-rank authenticated generation
+passed13:06:13Z; all four hosts/services/GPUs remained responsive13:14Z.
+
+This is a failed real load, not a successful corrected recipe. Formal GLM-5.3
+NVFP4 still has zero successful requests and no measured decode throughput.
+The native UMA reading correction is valid but not sufficient: the Torch cap
+does not bound all CPU/driver/communication memory, and rank-local admission
+was not collectively completed before peers allocated. Exact peak categories
+remain unmeasured because full constructor logs did not survive cleanup.
+No model layers/experts were removed and no weights were requantized. Do not
+lower the reserve or rerun this unchanged recipe as a purported fix.
+
+The node outage also interrupted the single-copy INTmix full-checksum reader
+at shard191. The downloaded snapshot remains unpublished, not verified or
+known corrupt. After recovery all282NVFP4 header/tail ranges and the precise
+previously failed INTmix middle range became readable. These are HTTP range
+recovery checks, not fullSHA validation or ConnectX loader throughput.
+Only same-snapshot verification is being resumed; no duplicate download.
