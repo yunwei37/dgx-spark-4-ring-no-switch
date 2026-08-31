@@ -19,5 +19,38 @@
   "preceding_full_tp4_attempt": {"image_source": "1642ff5ea03bd7bc51f5ad00e6cb779cb5540b24", "status": "failed-unsafe", "completed_inference_requests": 0, "failure": "host unified memory exhausted during startup before Load weight end", "test_removed": true, "hosts_recovered": true, "previous_service_restored": false},
   "temporary_diagnostic_container_removed": true,
   "ghcr_publication": "pending",
-  "full_corrected_model_inference": "not measured"
+  "full_corrected_model_inference": "not measured",
+  "nccl_channel_capacity_diagnostic": {
+    "tp": 4, "ep": 4, "max_nchannels_candidate": 8,
+    "baseline_distributed_init_GiB_approx": 2.23,
+    "candidate_distributed_init_GiB_range": [0.71, 0.73],
+    "candidate_preload_available_GiB": [110.59, 112.46, 112.43, 112.19],
+    "model_tensor_inventory_unchanged_on_all_four_ranks": true,
+    "throughput": "not measured", "temporary_job_removed": true
+  },
+  "full_architecture_shape_audit": {
+    "source": "65df8ef9ca372cb7f349506c3b9b41749eafc4ac",
+    "image_config_id": "sha256:0e5faaf8d14cc47826be8bdcac1626eb8cf5434149a72a9e186df4845353791d",
+    "tp": 4,
+    "ep": 4,
+    "ranks_with_identical_report": 4,
+    "scope": "FakeTensor unique registered parameter/buffer storage, not real allocation or loading",
+    "unique_storage_bytes_per_rank": 113851199968,
+    "actual_torch_allocated_bytes_per_rank": 74931200,
+    "actual_torch_reserved_bytes_per_rank": 85983232,
+    "grouped_storage_bytes": {
+      "attention_bfloat16": 8716032000,
+      "attention_float32": 268458208,
+      "embedding_head_bfloat16": 951582720,
+      "other_bfloat16": 577597440,
+      "other_float32": 76800,
+      "routed_experts_float32": 288000,
+      "routed_experts_float8_e4m3fn": 11324620800,
+      "routed_experts_uint8": 90596966400,
+      "shared_experts_bfloat16": 1415577600
+    },
+    "all_ranks_exited_before_checkpoint_loading": true,
+    "temporary_job_removed": true,
+    "excludes": ["unregistered runtime buffers", "allocator fragmentation", "NCCL driver allocations", "loader staging and pinned memory", "KV cache and inference workspace"]
+  }
 }

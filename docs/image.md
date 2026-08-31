@@ -70,7 +70,10 @@ this does not substitute for launching all four ranks from the assembled image.
 `Dockerfile.sglang-glm53` pins the exact SGLang runtime and Mesh build bases by
 digest. It installs the already exercised `fastsafetensors 0.3.3` release and
 applies two exact-source-hash guards: process-local CUDA device selection and
-allocator release only after a completed file batch closes. These are image
+allocator release in `ParallelLoader` after a completed file batch closes.
+Later call-path inspection found that this pinned SGLang iterator uses
+`SafeTensorsFileLoader` directly, so the `ParallelLoader` cache patch is not
+active on this GLM-5.3 path and is not evidence of memory protection. These are image
 changes only; the recipe installs no host daemon, timer, cache-drop loop, swap,
 or recovery service.
 
@@ -145,3 +148,23 @@ The first adjustment referenced the caller module instead of the function's
 definition in `parallel_state`; that second diagnostic also exited before
 model allocation. Source inspection confirmed the caller uses a local import,
 and the wrapper now patches the defining module only within its scoped test.
+
+All four corrected shape audits subsequently agreed on 106.032193 GiB of
+unique registered model tensor storage per rank. This excludes runtime and
+staging allocations. A test-local `NCCL_MAX_NCHANNELS=8` candidate reduced
+logged distributed-initialization memory from about 2.23 GiB to 0.71–0.73 GiB
+without changing the tensor inventory. Communication throughput is not yet
+measured. EP=1 gave no communication-memory benefit and changed the shared
+expert storage inventory; its apparent saving is not an established
+precision-equivalent optimization and is not selected.
+
+`tests/Dockerfile.glm53-bounded-load` is the next **experimental**, not approved
+serving image. It applies a native 107.5 GiB Torch allocator limit before the
+real constructor, requires at least 3 GiB outside that budget at entry, and
+logs actual allocations. The cap does not cover CPU or non-Torch allocations.
+The disposable Job also has a 112 GiB cgroup limit and a 30-minute deadline.
+The candidate retains TP4/EP4, full checkpoint precision and native kernels;
+it uses the upstream safetensors mmap loader, eight NCCL channels, an initial
+8K context/token budget and 512-token chunked prefill. This is a capacity
+bring-up, not a one-variable throughput A/B or the final maximum-context
+profile. No host configuration or persistent monitoring process is installed.

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="480" viewBox="0 0 900 480" role="img" aria-labelledby="title desc">
+  <title id="title">GLM-5.3 NVFP4 one-layer memory A/B</title>
+  <desc id="desc">Measured CUDA allocation for one local 64-expert layer on GB10. Constructor: baseline 1440 MiB, deferred 1296 MiB. Through finalization peak: 1632 versus 1488 MiB. Final resident allocation: both 1296 MiB. This is not full-model inference.</desc>
+  <rect width="900" height="480" fill="#fff"/>
+  <g font-family="Arial, sans-serif" fill="#172b4d">
+    <text x="32" y="38" font-size="23" font-weight="bold">NVFP4 constructor: remove unused scale placeholders</text>
+    <text x="32" y="65" font-size="14">One GB10 · one local 64-expert layer · measured allocation, not inference</text>
+    <rect x="32" y="85" width="15" height="15" fill="#9aa7b8"/><text x="55" y="98" font-size="14">Baseline</text>
+    <rect x="170" y="85" width="15" height="15" fill="#167d8d"/><text x="193" y="98" font-size="14">Deferred scales</text>
+    <g stroke="#e5e9ef" stroke-width="1"><path d="M220 120V402 M340 120V402 M460 120V402 M580 120V402 M700 120V402 M760 120V402"/></g>
+    <g font-size="14" text-anchor="end"><text x="202" y="155">Constructor resident</text><text x="202" y="252">Peak through finalization</text><text x="202" y="349">Final resident</text></g>
+    <rect x="220" y="129" width="432" height="24" fill="#9aa7b8"/><rect x="220" y="159" width="388.8" height="24" fill="#167d8d"/>
+    <rect x="220" y="226" width="489.6" height="24" fill="#9aa7b8"/><rect x="220" y="256" width="446.4" height="24" fill="#167d8d"/>
+    <rect x="220" y="323" width="388.81" height="24" fill="#9aa7b8"/><rect x="220" y="353" width="388.81" height="24" fill="#167d8d"/>
+    <g font-size="14"><text x="660" y="147">1440</text><text x="617" y="177">1296</text><text x="718" y="244">1632</text><text x="675" y="274">1488</text><text x="617" y="341">1296</text><text x="617" y="371">1296</text></g>
+    <g font-size="12" text-anchor="middle"><text x="220" y="419">0</text><text x="340" y="419">400</text><text x="460" y="419">800</text><text x="580" y="419">1200</text><text x="700" y="419">1600</text><text x="800" y="419">MiB</text></g>
+    <text x="32" y="455" font-size="14">144 MiB saved/layer → calculated 10.546875 GiB/rank for 75 layers; scale hashes match.</text>
+  </g>
+</svg>
