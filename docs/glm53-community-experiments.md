@@ -98,6 +98,53 @@ not a substitute for correct formal-model sparse-attention kernels.
 No directly reproducible full **NVFP4-weight** four-GB10 success was found in
 this search. That is a search result boundary, not proof that none exists.
 
+## Two-node reports: useful, but different targets and changing evidence
+
+The operator also requested two nodes whenever they suffice. The following
+August31 source refresh concerns **Flash models**, not formal GLM-5.3. It
+does not replace the formal-model priority or add locally measured results.
+
+### Qwen3.8 Flash Next: the 42 tok/s recommendation was withdrawn
+
+[hellojiaru's fixed README](https://github.com/hellojiaru/qwen38-flash-next-dual-gb10/blob/b1394ae7e57220ae80750fd9899593988c0061cc/README.md)
+reports historical TP2 NVFP4 measurements of 41.60/42.39/42.86 tok/s with
+NEXTN 3/1/4, eager execution and overlap disabled. It now **withdraws that
+deployment recommendation** after multi-turn re-prefill caused invalid
+probabilities, CUDA assertions, Xid43 and both ranks restarting, despite no
+OOM kill. Continuous generation, roughly25K retrieval and a disconnect fix
+had passed earlier; those tests did not establish service stability.
+
+The indexed GitHub page still described a retained canary, but direct HTTP200
+retrieval of this exact commit confirmed the withdrawal. The commit is dated
+August31 17:39:50Z; its [advisory](https://github.com/hellojiaru/qwen38-flash-next-dual-gb10/blob/b1394ae7e57220ae80750fd9899593988c0061cc/docs/withdrawal-advisory.md)
+is author-dated September1. Preserve both timestamps rather than silently
+relabeling the report. The historical timer also differs from its current
+benchmark formula. Do not treat 262K configured context as tested262K input,
+or this failure as proof that our different profile has the same defect.
+
+### GLM-5.3 Flash: a two-node DFlash2 route, with checkpoint caveats
+
+[Tony's Flash report](https://github.com/tonyd2wild/GLM-5.3-Flash-NVFP4-DFlash2-2x-DGX-Spark/blob/3eef46632c45ffb6c397de0716c23b3d2d594798/docs/DFLASH2-SPECULATIVE-DECODING.md)
+measured warm single-request code decode at46.9 tok/s with DFlash2 k7, versus
+21.8 with MTP4, on twoGB10 nodes. These are historical Flash measurements,
+not formal-model performance or our own benchmark.
+
+Its [current pinned README](https://github.com/tonyd2wild/GLM-5.3-Flash-NVFP4-DFlash2-2x-DGX-Spark/blob/3eef46632c45ffb6c397de0716c23b3d2d594798/README.md)
+now selects RedHatAI compressed-tensors NVFP4 after reporting malformed
+multilingual output from its ModelOpt route. A public prebuilt Flash image
+exists as `ghcr.io/tonyd2wild/vllm-glm53-flash:sm121-v11-dflash2`; this audit
+has not resolved or tested its digest. Do not transfer older throughput
+numbers to the replacement checkpoint without remeasurement. Related
+[vLLM issue54150](https://github.com/vllm-project/vllm/issues/54150) reports
+the comparison on SM120 and leaves checkpoint-versus-loader causality open;
+it does not establish a defect in every NVFP4 model or our formal checkpoint.
+
+For our next qualification, repeated long-prefill/decode/tool-result turns
+and multilingual/tool-call correctness matter alongside throughput. These
+reports justify bounded comparisons, not importing their host watchdogs,
+cache loops or swap settings. The full formal checkpoints discussed above
+still require four nodes for resident-weight testing.
+
 ## Consequences for our next experiments
 
 1. Keep the requested actual NVFP4-weight test open. Our CPU-only pre-read
