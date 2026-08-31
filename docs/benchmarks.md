@@ -124,6 +124,32 @@ do not run four solely to fill a matrix cell. Formal GLM-5.3 remains separate
 and unpassed. Its ~465GB NVFP4 and ~405GB INT4/INT8 formats require more than
 two128GB nodes for full accelerator residency before runtime/KV overhead.
 
+## Formal GLM-5.3 INT4/INT8 preflight, 2026-08-31
+
+All four actual GPU ranks completed the synthetic router comparison and the
+full 78-layer FakeTensor constructor audit. This is **not full-model inference**:
+no checkpoint weights were loaded and no serving throughput was measured.
+The pinned model revision is `206507bbb047d8223964a0414cd83230c59428f9`.
+
+| Constructor | Unique registered tensor storage per rank | Scope |
+| --- | ---: | --- |
+| Existing BF16 router | 94.43058 GiB | Full 78 layers, no MTP, no actual large allocation |
+| FP32-router candidate | 94.65031 GiB | Adds 225 MiB; same model/quantization |
+
+The packaged GateLinear's BF16 raw logits differed from GPU FP32 F.linear:
+top-8-set agreement was 100%, 90.625%, 97.65625% for synthetic 1/32/128-token
+batches. Setting both parameter/output dtype to FP32 made outputs bitwise
+identical to the FP32 reference on every rank. This does not establish actual
+checkpoint quality, grouped/bias-corrected expert choices or overall accuracy.
+The run selected the existing Marlin compressed-tensor linear and MoE methods.
+
+Static tensor accounting excludes checkpoint staging/repacking, communication,
+KV, workspaces and allocator overhead. Actual small-tensor PyTorch peak was
+37.50 MiB/rank, not 94.65 GiB of resident model. Full loading and inference remain
+unverified. Earlier RDMA container-permission and A/B registration failures
+were fixed only in disposable test code; no host configuration was installed.
+See [sanitized all-rank results](../benchmarks/glm53-intmix-router-capacity-2026-08-31.json).
+
 ## SeaweedFS ConnectX storage measurements
 
 With rank 2 offline, the remaining three-node storage path wrote a temporary

@@ -1,0 +1,275 @@
+{
+  "date": "2026-08-31",
+  "test": "formal GLM-5.3 INT4/INT8 GPU router and FakeTensor capacity preflight",
+  "model": "Tech2wild/GLM-5.3-Int4-Int8Mix",
+  "revision": "206507bbb047d8223964a0414cd83230c59428f9",
+  "image_config_sha256": "d58701574065dc23b5bf246fc98c974ca5fbd40e0f16ff4972db4eb05e244746",
+  "image_manifest_sha256": "3b4cdfac090e9eb5f9cfa4846abbb1549264cda306d8982df07c74f46dd127de",
+  "runtime": "vLLM 0.23.1rc1.dev190+gab6660699.d20260705 / torch 2.11.0+cu130 / NCCL 2.29.7 / existing Mesh",
+  "tensor_parallel": 4,
+  "pipeline_parallel": 1,
+  "layers": 78,
+  "routed_experts": 256,
+  "mtp": false,
+  "full_inference": false,
+  "full_weights_loaded": false,
+  "boundary": "Synthetic GPU GateLinear compared with F.linear(x.float(), weight.float()); entire model constructed with FakeTensor, not real weights. Static storage excludes loading/repacking/communication/KV/runtime/allocator. Top8 compares raw-logit sets, not actual checkpoint quality or full grouped/bias-corrected routing. CUDA peak measures only actual PyTorch allocator use during diagnostic.",
+  "reports": [
+    {
+      "actual_cuda_peak_bytes": 39319040,
+      "full_inference": false,
+      "full_weights_loaded": false,
+      "rank": 0,
+      "router": [
+        {
+          "baseline_dtype": "torch.bfloat16",
+          "baseline_max_abs_error": 0.007383823394775391,
+          "baseline_top8_set_match_fraction": 1,
+          "candidate_exact_fp32_reference": true,
+          "tokens": 1
+        },
+        {
+          "baseline_dtype": "torch.bfloat16",
+          "baseline_max_abs_error": 0.013032913208007812,
+          "baseline_top8_set_match_fraction": 0.90625,
+          "candidate_exact_fp32_reference": true,
+          "tokens": 32
+        },
+        {
+          "baseline_dtype": "torch.bfloat16",
+          "baseline_max_abs_error": 0.009366989135742188,
+          "baseline_top8_set_match_fraction": 0.9765625,
+          "candidate_exact_fp32_reference": true,
+          "tokens": 128
+        }
+      ],
+      "shapes": {
+        "baseline": {
+          "grouped_bytes": {
+            "other:torch.bfloat16": 4609996800,
+            "other:torch.float32": 22752,
+            "other:torch.int32": 96548028416,
+            "other:torch.int64": 7392,
+            "router:torch.bfloat16": 235929600,
+            "router:torch.float32": 76800
+          },
+          "quant_methods": {
+            "CompressedTensorsLinearMethod": 462,
+            "CompressedTensorsWNA16MarlinMoEMethod": 75,
+            "UnquantizedEmbeddingMethod": 2,
+            "UnquantizedLinearMethod": 123
+          },
+          "unique_registered_bytes": 101394061760
+        },
+        "fp32_router": {
+          "grouped_bytes": {
+            "other:torch.bfloat16": 4609996800,
+            "other:torch.float32": 22752,
+            "other:torch.int32": 96548028416,
+            "other:torch.int64": 7392,
+            "router:torch.float32": 471936000
+          },
+          "quant_methods": {
+            "CompressedTensorsLinearMethod": 462,
+            "CompressedTensorsWNA16MarlinMoEMethod": 75,
+            "UnquantizedEmbeddingMethod": 2,
+            "UnquantizedLinearMethod": 123
+          },
+          "unique_registered_bytes": 101629991360
+        }
+      }
+    },
+    {
+      "actual_cuda_peak_bytes": 39319040,
+      "full_inference": false,
+      "full_weights_loaded": false,
+      "rank": 1,
+      "router": [
+        {
+          "baseline_dtype": "torch.bfloat16",
+          "baseline_max_abs_error": 0.007383823394775391,
+          "baseline_top8_set_match_fraction": 1,
+          "candidate_exact_fp32_reference": true,
+          "tokens": 1
+        },
+        {
+          "baseline_dtype": "torch.bfloat16",
+          "baseline_max_abs_error": 0.013032913208007812,
+          "baseline_top8_set_match_fraction": 0.90625,
+          "candidate_exact_fp32_reference": true,
+          "tokens": 32
+        },
+        {
+          "baseline_dtype": "torch.bfloat16",
+          "baseline_max_abs_error": 0.009366989135742188,
+          "baseline_top8_set_match_fraction": 0.9765625,
+          "candidate_exact_fp32_reference": true,
+          "tokens": 128
+        }
+      ],
+      "shapes": {
+        "baseline": {
+          "grouped_bytes": {
+            "other:torch.bfloat16": 4609996800,
+            "other:torch.float32": 22752,
+            "other:torch.int32": 96548028416,
+            "other:torch.int64": 7392,
+            "router:torch.bfloat16": 235929600,
+            "router:torch.float32": 76800
+          },
+          "quant_methods": {
+            "CompressedTensorsLinearMethod": 462,
+            "CompressedTensorsWNA16MarlinMoEMethod": 75,
+            "UnquantizedEmbeddingMethod": 2,
+            "UnquantizedLinearMethod": 123
+          },
+          "unique_registered_bytes": 101394061760
+        },
+        "fp32_router": {
+          "grouped_bytes": {
+            "other:torch.bfloat16": 4609996800,
+            "other:torch.float32": 22752,
+            "other:torch.int32": 96548028416,
+            "other:torch.int64": 7392,
+            "router:torch.float32": 471936000
+          },
+          "quant_methods": {
+            "CompressedTensorsLinearMethod": 462,
+            "CompressedTensorsWNA16MarlinMoEMethod": 75,
+            "UnquantizedEmbeddingMethod": 2,
+            "UnquantizedLinearMethod": 123
+          },
+          "unique_registered_bytes": 101629991360
+        }
+      }
+    },
+    {
+      "actual_cuda_peak_bytes": 39319040,
+      "full_inference": false,
+      "full_weights_loaded": false,
+      "rank": 2,
+      "router": [
+        {
+          "baseline_dtype": "torch.bfloat16",
+          "baseline_max_abs_error": 0.007383823394775391,
+          "baseline_top8_set_match_fraction": 1,
+          "candidate_exact_fp32_reference": true,
+          "tokens": 1
+        },
+        {
+          "baseline_dtype": "torch.bfloat16",
+          "baseline_max_abs_error": 0.013032913208007812,
+          "baseline_top8_set_match_fraction": 0.90625,
+          "candidate_exact_fp32_reference": true,
+          "tokens": 32
+        },
+        {
+          "baseline_dtype": "torch.bfloat16",
+          "baseline_max_abs_error": 0.009366989135742188,
+          "baseline_top8_set_match_fraction": 0.9765625,
+          "candidate_exact_fp32_reference": true,
+          "tokens": 128
+        }
+      ],
+      "shapes": {
+        "baseline": {
+          "grouped_bytes": {
+            "other:torch.bfloat16": 4609996800,
+            "other:torch.float32": 22752,
+            "other:torch.int32": 96548028416,
+            "other:torch.int64": 7392,
+            "router:torch.bfloat16": 235929600,
+            "router:torch.float32": 76800
+          },
+          "quant_methods": {
+            "CompressedTensorsLinearMethod": 462,
+            "CompressedTensorsWNA16MarlinMoEMethod": 75,
+            "UnquantizedEmbeddingMethod": 2,
+            "UnquantizedLinearMethod": 123
+          },
+          "unique_registered_bytes": 101394061760
+        },
+        "fp32_router": {
+          "grouped_bytes": {
+            "other:torch.bfloat16": 4609996800,
+            "other:torch.float32": 22752,
+            "other:torch.int32": 96548028416,
+            "other:torch.int64": 7392,
+            "router:torch.float32": 471936000
+          },
+          "quant_methods": {
+            "CompressedTensorsLinearMethod": 462,
+            "CompressedTensorsWNA16MarlinMoEMethod": 75,
+            "UnquantizedEmbeddingMethod": 2,
+            "UnquantizedLinearMethod": 123
+          },
+          "unique_registered_bytes": 101629991360
+        }
+      }
+    },
+    {
+      "actual_cuda_peak_bytes": 39319040,
+      "full_inference": false,
+      "full_weights_loaded": false,
+      "rank": 3,
+      "router": [
+        {
+          "baseline_dtype": "torch.bfloat16",
+          "baseline_max_abs_error": 0.007383823394775391,
+          "baseline_top8_set_match_fraction": 1,
+          "candidate_exact_fp32_reference": true,
+          "tokens": 1
+        },
+        {
+          "baseline_dtype": "torch.bfloat16",
+          "baseline_max_abs_error": 0.013032913208007812,
+          "baseline_top8_set_match_fraction": 0.90625,
+          "candidate_exact_fp32_reference": true,
+          "tokens": 32
+        },
+        {
+          "baseline_dtype": "torch.bfloat16",
+          "baseline_max_abs_error": 0.009366989135742188,
+          "baseline_top8_set_match_fraction": 0.9765625,
+          "candidate_exact_fp32_reference": true,
+          "tokens": 128
+        }
+      ],
+      "shapes": {
+        "baseline": {
+          "grouped_bytes": {
+            "other:torch.bfloat16": 4609996800,
+            "other:torch.float32": 22752,
+            "other:torch.int32": 96548028416,
+            "other:torch.int64": 7392,
+            "router:torch.bfloat16": 235929600,
+            "router:torch.float32": 76800
+          },
+          "quant_methods": {
+            "CompressedTensorsLinearMethod": 462,
+            "CompressedTensorsWNA16MarlinMoEMethod": 75,
+            "UnquantizedEmbeddingMethod": 2,
+            "UnquantizedLinearMethod": 123
+          },
+          "unique_registered_bytes": 101394061760
+        },
+        "fp32_router": {
+          "grouped_bytes": {
+            "other:torch.bfloat16": 4609996800,
+            "other:torch.float32": 22752,
+            "other:torch.int32": 96548028416,
+            "other:torch.int64": 7392,
+            "router:torch.float32": 471936000
+          },
+          "quant_methods": {
+            "CompressedTensorsLinearMethod": 462,
+            "CompressedTensorsWNA16MarlinMoEMethod": 75,
+            "UnquantizedEmbeddingMethod": 2,
+            "UnquantizedLinearMethod": 123
+          },
+          "unique_registered_bytes": 101629991360
+        }
+      }
+    }
+  ]
+}
