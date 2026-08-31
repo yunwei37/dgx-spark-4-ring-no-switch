@@ -143,9 +143,9 @@ dflash2_dockerfile = (
 for required_text in (
     "@sha256:52b289baf653bcb550194822f1c1381275601731d4882fefe7c0413513a99cae",
     "a1806cb82493aa6f28709f77acf59c1937bdf756",
-    "660a446fc93ebb780144585b3fdc34ed96fa755c",
+    "@sha256:4def0ef644cb2e9814136dcffd5e385e21bc594f48f3b292234051904abe85a6",
     "--checksum=sha256:c2fd1bc93957c8a534b03cc83d9d6c28cf7238a9a8ab7113b919f7e013e37c42",
-    "--checksum=sha256:83b8e8df6f513a7da661c3eb24a14c6f4892626f67a5d50599f10e892ee2cb63",
+    "COPY --from=dflash2-source",
     "apply_dflash2_swa_under_mla.py",
     "verify_dflash2.py",
 ):

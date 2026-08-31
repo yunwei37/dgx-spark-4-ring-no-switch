@@ -1,46 +1,48 @@
+ARG DFLASH2_SOURCE_IMAGE=ghcr.io/tonyd2wild/vllm-glm53-flash@sha256:4def0ef644cb2e9814136dcffd5e385e21bc594f48f3b292234051904abe85a6
+FROM ${DFLASH2_SOURCE_IMAGE} AS dflash2-source
+
 ARG RUNTIME_IMAGE=ghcr.io/yunwei37/dgx-spark-4-ring-no-switch@sha256:52b289baf653bcb550194822f1c1381275601731d4882fefe7c0413513a99cae
 FROM ${RUNTIME_IMAGE}
 
 ARG VCS_REF=unknown
 ARG COMMUNITY_PORT_COMMIT=a1806cb82493aa6f28709f77acf59c1937bdf756
-ARG VLLM_DFLASH2_COMMIT=660a446fc93ebb780144585b3fdc34ed96fa755c
+ARG DFLASH2_SOURCE_DIGEST=sha256:4def0ef644cb2e9814136dcffd5e385e21bc594f48f3b292234051904abe85a6
 LABEL org.opencontainers.image.title="DGX Spark GLM-5.3 Int4/Int8Mix NVFP4-KV DFlash2 runtime" \
       org.opencontainers.image.description="Pinned NVFP4-KV runtime with the community DFlash2 port and FP32 router correction" \
       org.opencontainers.image.source="https://github.com/yunwei37/dgx-spark-4-ring-no-switch" \
       org.opencontainers.image.revision="${VCS_REF}" \
       org.opencontainers.image.licenses="NOASSERTION" \
       io.yunwei37.dflash2-community-revision="${COMMUNITY_PORT_COMMIT}" \
-      io.yunwei37.dflash2-vllm-revision="${VLLM_DFLASH2_COMMIT}"
+      io.yunwei37.dflash2-source-digest="${DFLASH2_SOURCE_DIGEST}"
 
 ADD --checksum=sha256:c2fd1bc93957c8a534b03cc83d9d6c28cf7238a9a8ab7113b919f7e013e37c42 \
     https://github.com/tonyd2wild/GLM-5.3-Int4-Int8Mix-TP4-4x-DGX-Spark/archive/a1806cb82493aa6f28709f77acf59c1937bdf756.tar.gz \
     /tmp/community-port.tar.gz
-ADD --checksum=sha256:83b8e8df6f513a7da661c3eb24a14c6f4892626f67a5d50599f10e892ee2cb63 \
-    https://github.com/vllm-project/vllm/archive/660a446fc93ebb780144585b3fdc34ed96fa755c.tar.gz \
-    /tmp/vllm-dflash2.tar.gz
+COPY --from=dflash2-source \
+    /usr/local/lib/python3.12/dist-packages/vllm/model_executor/models/qwen3_dflash2.py \
+    /tmp/dflash2-source/qwen3_dflash2.py
+COPY --from=dflash2-source \
+    /usr/local/lib/python3.12/dist-packages/vllm/v1/worker/gpu/spec_decode/dflash2/__init__.py \
+    /tmp/dflash2-source/__init__.py
+COPY --from=dflash2-source \
+    /usr/local/lib/python3.12/dist-packages/vllm/v1/worker/gpu/spec_decode/dflash2/speculator.py \
+    /tmp/dflash2-source/speculator.py
 COPY images/runtime/dsa_block.py /tmp/dsa_block.py
 COPY images/runtime/apply_dflash2_swa_under_mla.py /tmp/apply_dflash2_swa_under_mla.py
 
 RUN set -eux; \
-    mkdir -p /tmp/community-port /tmp/vllm-dflash2; \
+    mkdir -p /tmp/community-port; \
     tar -xzf /tmp/community-port.tar.gz -C /tmp/community-port --strip-components=1; \
-    tar -xzf /tmp/vllm-dflash2.tar.gz -C /tmp/vllm-dflash2 --strip-components=1; \
     test "$(python3 -c 'import vllm; print(vllm.__version__)')" = \
       "0.23.1rc1.dev190+gab6660699.d20260705"; \
     sp=/usr/local/lib/python3.12/dist-packages; \
     vr=${sp}/vllm; \
-    test "$(sha256sum /tmp/vllm-dflash2/vllm/model_executor/models/qwen3_dflash2.py | cut -d' ' -f1)" = \
-      "62ff759d3039fe2d7a53130de1ab7d7318dc2bb3fdb2268d7d911c9b02216f26"; \
-    test "$(sha256sum /tmp/vllm-dflash2/vllm/v1/worker/gpu/spec_decode/dflash2/__init__.py | cut -d' ' -f1)" = \
-      "e3c55cbb0d7a8bd47df6f3378835644645f5d3bc89b45793b5d5a02d013e5c58"; \
-    test "$(sha256sum /tmp/vllm-dflash2/vllm/v1/worker/gpu/spec_decode/dflash2/speculator.py | cut -d' ' -f1)" = \
-      "5234063808cf880a7a9e5c01e6cd0f3164ed30c5bdc2007c6be5c2c6c114266b"; \
-    install -m 0644 /tmp/vllm-dflash2/vllm/model_executor/models/qwen3_dflash2.py \
+    install -m 0644 /tmp/dflash2-source/qwen3_dflash2.py \
       ${vr}/model_executor/models/qwen3_dflash2.py; \
     mkdir -p ${vr}/v1/worker/gpu/spec_decode/dflash2; \
-    install -m 0644 /tmp/vllm-dflash2/vllm/v1/worker/gpu/spec_decode/dflash2/__init__.py \
+    install -m 0644 /tmp/dflash2-source/__init__.py \
       ${vr}/v1/worker/gpu/spec_decode/dflash2/__init__.py; \
-    install -m 0644 /tmp/vllm-dflash2/vllm/v1/worker/gpu/spec_decode/dflash2/speculator.py \
+    install -m 0644 /tmp/dflash2-source/speculator.py \
       ${vr}/v1/worker/gpu/spec_decode/dflash2/speculator.py; \
     install -m 0644 /tmp/dsa_block.py /tmp/community-port/dflash2-port/dsa_block.py; \
     python3 /tmp/community-port/dflash2-port/patch_base_dflash2.py ${vr}; \
@@ -50,6 +52,6 @@ RUN set -eux; \
     test "$(sha256sum ${vr}/model_executor/models/deepseek_v2.py | cut -d' ' -f1)" = \
       "d6cf87377e530c878b7f4a12b1517c08ba4213f320caa337b5e9c1462db4e24e"; \
     find ${vr} -type d -name __pycache__ -prune -exec rm -rf {} +; \
-    rm -rf /tmp/community-port /tmp/vllm-dflash2 \
-      /tmp/community-port.tar.gz /tmp/vllm-dflash2.tar.gz \
+    rm -rf /tmp/community-port /tmp/dflash2-source \
+      /tmp/community-port.tar.gz \
       /tmp/dsa_block.py /tmp/apply_dflash2_swa_under_mla.py

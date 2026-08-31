@@ -30,8 +30,11 @@ above, whose repository-level license was not declared when recorded; the OCI
 license label therefore remains `NOASSERTION` rather than implying a license
 for the complete image.
 
-The optional formal GLM-5.3 DFlash2 image additionally incorporates Apache-2.0
-code from vLLM at commit `660a446fc93ebb780144585b3fdc34ed96fa755c`, the
+The optional formal GLM-5.3 DFlash2 image copies the three DFlash2 runtime
+modules from the immutable donor image
+`ghcr.io/tonyd2wild/vllm-glm53-flash@sha256:4def0ef644cb2e9814136dcffd5e385e21bc594f48f3b292234051904abe85a6`.
+That donor reports vLLM commit `487ecf187d3dfe74d2cf6119a92881dba403c219`;
+the copied vLLM modules retain their Apache-2.0 notices. The image also uses the
 community port at
 `tonyd2wild/GLM-5.3-Int4-Int8Mix-TP4-4x-DGX-Spark@a1806cb82493aa6f28709f77acf59c1937bdf756`,
 and an Apache-2.0 reconstruction published in that repository's issue #1.
