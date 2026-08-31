@@ -15,9 +15,17 @@ def _initialize_model(*args, **kwargs):
     from sglang.srt.utils.common import get_available_gpu_memory
     free = int(get_available_gpu_memory("cuda", device, empty_cache=False) * (1 << 30))
     allocated = torch.cuda.memory_allocated(device)
-    if free < budget - allocated + reserve:
+    from sglang.srt.distributed.parallel_state import get_world_group
+    # Reuse the existing CPU group: no GPU allocation before all ranks agree.
+    admitted = torch.tensor(
+        [int(free >= budget - allocated + reserve)], dtype=torch.int32, device="cpu"
+    )
+    torch.distributed.all_reduce(
+        admitted, op=torch.distributed.ReduceOp.MIN, group=get_world_group().cpu_group
+    )
+    if not admitted.item():
         raise RuntimeError(
-            f"Bounded load needs 3 GiB free outside its Torch budget: "
+            f"World admission failed; requires 3 GiB outside each Torch budget: "
             f"free={free}, allocated={allocated}, budget={budget}"
         )
     torch.cuda.set_per_process_memory_fraction(budget / total, device)

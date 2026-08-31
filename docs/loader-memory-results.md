@@ -339,3 +339,21 @@ known corrupt. After recovery all282NVFP4 header/tail ranges and the precise
 previously failed INTmix middle range became readable. These are HTTP range
 recovery checks, not fullSHA validation or ConnectX loader throughput.
 Only same-snapshot verification is being resumed; no duplicate download.
+
+### Admission propagation correction, prepared only
+
+The test wrapper now reduces a single CPU integer with MIN over SGLang's
+existing world CPU group before any model construction. A local or peer
+admission failure, or a failed collective, prevents this wrapper from entering
+the constructor. It creates no new process group, GPU buffer, flag or host
+service. The107.5GiB cap and3GiB reserve are unchanged. This fixes the observed
+preconstruction coordination defect only; it does not coordinate every later
+allocation failure or prove a sufficient physical reserve.
+
+Five mocked cases executed in the owned non-Spark container: adequate native
+UMA availability; two local low-memory cases; adequate local memory with a
+rejecting peer; and a collective exception. All passed and the temporary
+test directory was removed. The sourceSHA is
+a1d03e84926a7f9650b9fca6728b101999865277b4853bfab0002984603749e1.
+This source has not been rebuilt into an image or tested with real Gloo/GPU
+ranks. No full-model retry is justified solely by these unit tests.
