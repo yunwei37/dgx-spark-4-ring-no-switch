@@ -20,6 +20,43 @@
   "temporary_diagnostic_container_removed": true,
   "ghcr_publication": "pending",
   "full_corrected_model_inference": "not measured",
+  "corrected_tp4_attempt": {
+    "image_config_id": "sha256:06f5229f99788c293318427968224574455230f63d2f45711ff6461da7665c85",
+    "image_present_on_all_four_nodes": true,
+    "status": "resource-blocked",
+    "requested_memory_GiB_per_rank": 112,
+    "unrelated_memory_reservation_GiB_on_one_node": 16,
+    "scheduled_ranks": 3,
+    "pending_ranks": 1,
+    "constructor_started": false,
+    "completed_inference_requests": 0,
+    "temporary_job_removed": true,
+    "unrelated_workspace_unchanged": true
+  },
+  "native_pp4_capacity_diagnostic": {
+    "tp": 1, "ep": 1, "pp": 4,
+    "layers_by_stage": [22, 19, 18, 19],
+    "bf16_shared_experts_preserved": true,
+    "unique_registered_storage_bytes_by_stage": [115698182496, 111408366896, 105563829536, 113292800304],
+    "scope": "FakeTensor storage only; no checkpoint loading or inference",
+    "adequate_runtime_margin_established": false,
+    "temporary_job_removed": true
+  },
+  "cleanup_and_original_service_restoration": {
+    "observed_utc": "2026-08-31T05:19:00Z",
+    "outcome": "failed-restored",
+    "original_service": "DeepSeek-V4-Flash-0731",
+    "four_original_pods_ready": true,
+    "gitops_converged": true,
+    "internal_authenticated_generation_http": 200,
+    "public_authenticated_generation_http": 200,
+    "missing_and_invalid_key_http": 401,
+    "correctness_probe_passed": true,
+    "glm_test_jobs_remaining": 0,
+    "temporary_transfer_files_removed": true,
+    "requested_checkpoint_and_images_retained": true,
+    "not_a_glm_inference_or_throughput_result": true
+  },
   "nccl_channel_capacity_diagnostic": {
     "tp": 4, "ep": 4, "max_nchannels_candidate": 8,
     "baseline_distributed_init_GiB_approx": 2.23,

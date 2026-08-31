@@ -185,3 +185,13 @@ with BF16 shared experts retained. FakeTensor storage was 107.752329,
 not establish safe runtime margin alongside the other reservation. No real PP
 weights were loaded. This pinned runtime also excludes speculative decoding
 with PP, so the diagnostic is not a replacement for the requested TP4 result.
+
+The attempt ended **failed-restored**: the original four-node DeepSeek service
+was restored with its unchanged image, arguments and data, and passed internal
+and public authenticated generation plus missing/invalid-key checks. Its GitOps
+owner converged successfully. All GLM test Jobs and temporary transfer files
+were removed; the requested checkpoint and reproducible experimental images
+were retained. Corrected formal GLM-5.3 inference remains unmeasured, with zero
+successful requests. The 16 GiB reservation belongs to separate work and was
+not altered to make the experiment fit. A confirmed exclusive-memory window is
+still required; do not present these experimental images as a working service.
