@@ -543,3 +543,67 @@ reading shard4; full verification and publication are still pending. No
 second download or copy was started. The native serial-loader candidate has
 not yet been applied or benchmarked; CPU/pinned/driver peak measurements
 must precede another near-capacity full NVFP4 attempt.
+
+### Native iterator GPU-copy A/B (15:24-15:30 UTC)
+
+A bounded single-GPU diagnostic copied every tensor in the same first ten
+formal NVFP4 shards through each native iterator. It did not construct a model.
+The unchanged base image is pinned to
+`sha256:73f9294b78e38d8cc297bfed16daec8ac192b126a2d1fb9055e259a632c68f00`;
+its actual weight_utils.py SHA is
+`d82dc59e8d4a2fafac2e61c468da485e9f7a85042cf9044b6b37c3a3b6b86041`.
+Both processes copied7,594 tensors/19,559,631,048 bytes with identical
+name-and-edge-byte digests. This is not all-byte verification or inference.
+
+![Measured default and serial iterator memory](assets/glm53-loader-window-ab.svg)
+
+| Measured value | Native8threads | Native serial |
+| --- | ---: | ---: |
+| Sampled process RSS peak | 5.793GiB | 5.538GiB |
+| Sampled anonymous RSS peak | 5.269GiB | 5.244GiB |
+| CUDA allocation peak | 1.773GiB | 1.773GiB |
+| Lowest host MemAvailable | 102.476GiB | 103.250GiB |
+| Diagnostic elapsed, including copies/checks | 231.69s | 115.74s |
+
+RSS fell only0.255GiB(4.4%); anonymous RSS was nearly unchanged. Thus this
+experiment does **not** support the claim that selecting serial alone removes
+tens of GiB of resident memory or fixes the full-load OOM. File-window bytes
+are not resident bytes. RSS/CUDA/host counters can overlap and must not be
+added; VmPin/VmLck both sampled0, which does not prove zero NVIDIA driver
+allocation. Samples are250ms maxima, not a continuous allocation trace.
+
+Serial ran second without cache manipulation; no speedup conclusion follows
+from these timings. The loop includes per-tensor synchronization and edge
+copies, so its duration is not model loading throughput. No constructor,
+kernel post-load conversion, inference, or near-capacity residency was tested.
+Both processes exited0 within their480s limits; the1100s Pod was removed.
+The original service restoration was committed immediately afterward.
+
+The [exact executed probe](../tests/glm53_loader_window_probe.py) takes
+`multithread8` or `serial` as its positional argument inside the pinned GPU
+container, with the verified checkpoint mounted read-only at its recorded
+`/model` path. It requires64GiB initial host availability, caps its Torch
+allocator at4GiB, writes only a small per-mode result under container `/tmp`,
+and is intended for disposable bounded containers. Native function bodies are
+extracted unchanged from the image, not patched into the runtime. The
+[raw measurements](assets/glm53-loader-window-ab.json) retain exact counters.
+Do not run the probe alongside an existing GPU model or treat it as a service.
+
+At15:38UTC the original four-rank service was Ready with zero restarts,
+backend health/generation200 and missing/invalid credentials401. The external
+client independently repeated authenticated generation200 and rejected
+missing/invalid credentials401 at15:39UTC. All four storage owners registered,
+original host boots persisted, and the diagnostic Pod was absent.
+
+No driver allocation error, Linux OOM or Xid was found during the diagnostic.
+Original-service restart emitted109/48/67/77 driver allocation warnings,
+without Linux OOM/Xid; no matching error occurred after verified Ready through
+the15:39UTC check. This is bounded recovery evidence, not long-term stability.
+**Diagnostic completed and original service restored; formal GLM-5.3 NVFP4
+still has0 successful inference requests.** No serial setting was retained.
+
+The next useful measurement is allocation lifetime around actual file-open,
+get_tensor and in-place copy, especially the first large shard/tensor.
+A repeat full-model attempt with serial alone is not justified by these data.
+The sole mixed-quantization full-checksum process continues against existing
+bytes; neither partial reads nor four storage registrations mean it has passed.

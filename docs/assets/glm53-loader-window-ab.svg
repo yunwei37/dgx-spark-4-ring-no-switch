@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="420" viewBox="0 0 800 420" role="img" aria-labelledby="title desc">
+<title id="title">Native GLM-5.3 loader GPU-copy diagnostic memory</title>
+<desc id="desc">Default eight-thread and serial iterators have similar sampled RSS peaks, 5.79 and 5.54 GiB. CUDA peak is 1.77 GiB for both. Metrics overlap and must not be added. Not a complete-model run.</desc>
+<rect width="800" height="420" fill="#fff"/>
+<g font-family="sans-serif" fill="#16202a">
+<text x="24" y="32" font-size="21">Native loader: measured memory, not full-model inference</text>
+<text x="24" y="57" font-size="13">Same first 10 shards · 7,594 tensors · 250 ms process sampling</text>
+<text x="24" y="105" font-size="14">Sampled process RSS</text>
+<rect x="270" y="90" width="376.54" height="22" fill="#4367b2"/><text x="654.54" y="106" font-size="13">5.79 GiB</text>
+<rect x="270" y="119" width="359.95" height="22" fill="#1f8060"/><text x="637.95" y="135" font-size="13">5.54 GiB</text>
+<text x="24" y="195" font-size="14">Sampled anonymous RSS</text>
+<rect x="270" y="180" width="342.47" height="22" fill="#4367b2"/><text x="620.47" y="196" font-size="13">5.27 GiB</text>
+<rect x="270" y="209" width="340.89" height="22" fill="#1f8060"/><text x="618.89" y="225" font-size="13">5.24 GiB</text>
+<text x="24" y="285" font-size="14">CUDA allocator peak</text>
+<rect x="270" y="270" width="115.27" height="22" fill="#4367b2"/><text x="393.27" y="286" font-size="13">1.77 GiB</text>
+<rect x="270" y="299" width="115.27" height="22" fill="#1f8060"/><text x="393.27" y="315" font-size="13">1.77 GiB</text>
+<rect x="24" y="338" width="14" height="14" fill="#4367b2"/><text x="44" y="350" font-size="13">Native default, 8 threads</text><rect x="270" y="338" width="14" height="14" fill="#1f8060"/><text x="290" y="350" font-size="13">Native serial iterator</text><text x="24" y="378" font-size="13">RSS and CUDA measurements can overlap: do not stack or add them.</text><text x="24" y="400" font-size="13">No inference; uncontrolled cache order; not a full-load safety or speedup claim.</text></g></svg>
