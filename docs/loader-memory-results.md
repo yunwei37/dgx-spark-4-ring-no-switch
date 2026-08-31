@@ -721,3 +721,62 @@ or Xid; after verified Ready through16:37:24UTC all matching counts were0.
 This is bounded recovery evidence, not long-term stability. Candidate outcome
 is **failed-restored** for the memory objective; all diagnostic copies passed.
 **This diagnostic is not formal GLM-5.3 inference success; requests remain0.**
+
+### Native serial mmap/pread ABBA (16:47-16:51 UTC)
+
+This follow-up uses the existing serial iterator for both backends, with the
+same ten shards and fixed mmap,pread,pread,mmap order. The ordinary consumer
+loop retains its previous CPU input until the next yield, rather than deleting
+that input immediately. It still does not run the actual model consumer.
+All four runs copied7,594tensors/19,559,631,048bytes with identical name-and-edge
+digests. The image, checkpoint and native iterator source hashes are unchanged.
+
+![Serial backend memory and timing](assets/glm53-serial-pread.svg)
+
+| Run order | Backend | Sampled RSS peak GiB | Anonymous peak GiB | Seconds | Samples |
+| --- | --- | ---: | ---: | ---: | ---: |
+| 1 | mmap | 5.573 | 5.280 | 131.47 | 2553 |
+| 2 | pread | 4.143 | 3.850 | 5.08 | 60 |
+| 3 | pread | 2.370 | 2.078 | 5.39 | 62 |
+| 4 | mmap | 5.574 | 5.281 | 110.58 | 2147 |
+
+CUDA allocation peak stayed1.773GiB; host availability stayed at least106.93GiB.
+Serial pread avoided the much higher whole-file-dictionary residency observed
+with eight-thread pread. Its worst sampled RSS was about26%below serial mmap
+in this sequence. The two pread peaks nevertheless differ substantially;
+allocator timing and short-lived peaks are not isolated. Requested sampling
+was50ms, but only60/62samples were collected in the fast runs. These are sampled
+lower bounds, not guaranteed maxima. Cache/shared I/O was not controlled;
+5seconds for this copy loop cannot be extrapolated to a cold full-model load.
+RSS, CUDA and host counters overlap and must not be added.
+
+Read-only inspection of the exact installed image found a remaining mismatch:
+ordinary CPU tensors select asynchronous loading. The submission helper adds
+work to a thread executor without a pending-depth gate, and the DeepSeek
+consumer waits on futures after iteration. Queued work can retain CPU tensor
+arguments; completed futures alone are not proof that those arguments remain
+live. QKV and indexer caches can also hold inputs. Source hashes and observed
+locations are retained in the data file. This is a code finding, **not a
+measurement of how much backlog caused the original OOM**.
+
+The next complete-loader candidate must bound or eliminate pending tensor work
+while using serial pread, preserve native weight transforms/QKV handling, and
+validate actual consumer and post-load behavior. Do not repurpose the special
+RunAI buffer marker to pretend ordinary tensors came from another loader.
+Do not rerun the unchanged full model merely because this probe passed.
+
+The [exact executed child](../tests/glm53_serial_pread_probe.py) and
+[measurements/source findings](assets/glm53-serial-pread.json) are published.
+Four independent children had420seconds each; the16GiB/one-GPU Pod had an
+1800second deadline,4GiB Torch cap and64GiB host floor. It used the existing
+read-only checkpoint with no download, host tuning or source installation.
+All children/Pod exited0; the Pod was removed16:52:23UTC. Original-service
+restore was pushed as1094db9. Four ranks were Ready/zero restarts16:58:11UTC;
+backend health200, missing/invalid401 and authenticated correct generation200
+passed. An independent external client passed401/401/200 at16:59:25UTC.
+Original boots, real SSH/services/GPU, fresh Leases, four storage owners and
+absent new cores passed. Probe-time driver/OOM/Xid counts were0. Original
+service startup logged78/44/67/75 driver allocation warnings, no Linux OOM/Xid;
+after verified Ready through16:59:15UTC all matching counts were0. This is not
+long-term stability. **Passed-restored diagnostic; formal GLM-5.3 still has
+0successful inference requests.**

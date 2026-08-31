@@ -1,0 +1,196 @@
+{
+  "restoration": {
+    "restore_commit": "1094db9f0c35f5546bd32d50216eeb93b02dfb41",
+    "ready_at": "2026-08-31T16:58:11Z",
+    "original_ranks_ready": 4,
+    "rank_restarts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "backend_checks": {
+      "health": 200,
+      "missing": 401,
+      "invalid": 401,
+      "valid": 200,
+      "correct": true
+    },
+    "external_checks": {
+      "missing": 401,
+      "invalid": 401,
+      "valid": 200,
+      "correct": true,
+      "at": "2026-08-31T16:59:25Z"
+    },
+    "original_boots_services_gpu_and_fresh_leases": true,
+    "storage_volume_owners": 4,
+    "new_coredumps": 0,
+    "probe_kernel_counts": {
+      "driver": 0,
+      "linux_oom": 0,
+      "xid": 0
+    },
+    "startup_driver_warning_counts": [
+      78,
+      44,
+      67,
+      75
+    ],
+    "startup_linux_oom": 0,
+    "startup_xid": 0,
+    "after_ready_matching_kernel_errors": 0,
+    "post_ready_kernel_check_until": "2026-08-31T16:59:15Z",
+    "not_long_term_stability": true
+  },
+  "resource_contract": {
+    "pod_memory_bytes": 17179869184,
+    "torch_allocator_cap_bytes": 4294967296,
+    "host_min_available_bytes": 68719476736,
+    "cpu_request": 2,
+    "cpu_limit": 4,
+    "gpus": 1,
+    "pod_deadline_seconds": 1800,
+    "per_child_deadline_seconds": 420,
+    "backend_order": [
+      "mmap",
+      "pread",
+      "pread",
+      "mmap"
+    ],
+    "sample_interval_requested_seconds": 0.05
+  },
+  "script": "tests/glm53_serial_pread_probe.py",
+  "schema_version": 1,
+  "experiment": "formal GLM-5.3 NVFP4 native serial mmap/pread diagnostic",
+  "outcome": "passed-restored",
+  "runtime_image": "docker.io/lmsysorg/sglang@sha256:73f9294b78e38d8cc297bfed16daec8ac192b126a2d1fb9055e259a632c68f00",
+  "checkpoint": "LibertAIDAI/GLM-5.3-NVFP4",
+  "revision": "653d98214a487d78c1b2a37167b56764b6240080",
+  "started_at": "2026-08-31T16:47:14Z",
+  "finished_at": "2026-08-31T16:51:34Z",
+  "deleted_at": "2026-08-31T16:52:23Z",
+  "source_sha256": "c3fd6f623b19f8933ed43c69797150f73dad0fba0cdb71268a0db2958abf237e",
+  "results": [
+    {
+      "phase": "result",
+      "mode": "mmap",
+      "run": "0",
+      "seconds": 131.4675416070022,
+      "tensors": 7594,
+      "tensor_bytes": 19559631048,
+      "edge_digest": "772887e74ef3ded3137dba62621991132bfd703bbd0bde2f8bf4dc1111ff131f",
+      "source_sha256": "d82dc59e8d4a2fafac2e61c468da485e9f7a85042cf9044b6b37c3a3b6b86041",
+      "cuda_peak_allocated": 1904214016,
+      "cuda_peak_reserved": 1906311168,
+      "mem_available_start": 123215179776,
+      "mem_available_min": 115253714944,
+      "process_peaks": {
+        "VmRSS": 5984002048,
+        "RssAnon": 5669183488,
+        "RssFile": 270761984,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "normal_free_pages_min": 20747009,
+      "samples": 2553,
+      "iterator": "native_serial",
+      "consumer_keeps_previous_cpu_tensor": true,
+      "scope": "real first-ten-shard CPU-to-GPU copies with ordinary for-loop input lifetime, not complete model or inference; cache order uncontrolled"
+    },
+    {
+      "phase": "result",
+      "mode": "pread",
+      "run": "1",
+      "seconds": 5.079876989002514,
+      "tensors": 7594,
+      "tensor_bytes": 19559631048,
+      "edge_digest": "772887e74ef3ded3137dba62621991132bfd703bbd0bde2f8bf4dc1111ff131f",
+      "source_sha256": "d82dc59e8d4a2fafac2e61c468da485e9f7a85042cf9044b6b37c3a3b6b86041",
+      "cuda_peak_allocated": 1904214016,
+      "cuda_peak_reserved": 1906311168,
+      "mem_available_start": 122188730368,
+      "mem_available_min": 116452286464,
+      "process_peaks": {
+        "VmRSS": 4448071680,
+        "RssAnon": 4133814272,
+        "RssFile": 270016512,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "normal_free_pages_min": 20047145,
+      "samples": 60,
+      "iterator": "native_serial",
+      "consumer_keeps_previous_cpu_tensor": true,
+      "scope": "real first-ten-shard CPU-to-GPU copies with ordinary for-loop input lifetime, not complete model or inference; cache order uncontrolled"
+    },
+    {
+      "phase": "result",
+      "mode": "pread",
+      "run": "2",
+      "seconds": 5.388196503001382,
+      "tensors": 7594,
+      "tensor_bytes": 19559631048,
+      "edge_digest": "772887e74ef3ded3137dba62621991132bfd703bbd0bde2f8bf4dc1111ff131f",
+      "source_sha256": "d82dc59e8d4a2fafac2e61c468da485e9f7a85042cf9044b6b37c3a3b6b86041",
+      "cuda_peak_allocated": 1904214016,
+      "cuda_peak_reserved": 1906311168,
+      "mem_available_start": 121542828032,
+      "mem_available_min": 115802320896,
+      "process_peaks": {
+        "VmRSS": 2544979968,
+        "RssAnon": 2230722560,
+        "RssFile": 270016512,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "normal_free_pages_min": 20162461,
+      "samples": 62,
+      "iterator": "native_serial",
+      "consumer_keeps_previous_cpu_tensor": true,
+      "scope": "real first-ten-shard CPU-to-GPU copies with ordinary for-loop input lifetime, not complete model or inference; cache order uncontrolled"
+    },
+    {
+      "phase": "result",
+      "mode": "mmap",
+      "run": "3",
+      "seconds": 110.57506657700287,
+      "tensors": 7594,
+      "tensor_bytes": 19559631048,
+      "edge_digest": "772887e74ef3ded3137dba62621991132bfd703bbd0bde2f8bf4dc1111ff131f",
+      "source_sha256": "d82dc59e8d4a2fafac2e61c468da485e9f7a85042cf9044b6b37c3a3b6b86041",
+      "cuda_peak_allocated": 1904214016,
+      "cuda_peak_reserved": 1906311168,
+      "mem_available_start": 121087610880,
+      "mem_available_min": 114813878272,
+      "process_peaks": {
+        "VmRSS": 5985198080,
+        "RssAnon": 5670219776,
+        "RssFile": 270925824,
+        "VmLck": 0,
+        "VmPin": 0
+      },
+      "normal_free_pages_min": 19646764,
+      "samples": 2147,
+      "iterator": "native_serial",
+      "consumer_keeps_previous_cpu_tensor": true,
+      "scope": "real first-ten-shard CPU-to-GPU copies with ordinary for-loop input lifetime, not complete model or inference; cache order uncontrolled"
+    }
+  ],
+  "consumer_inspection": {
+    "utils_sha256": "7151f2b4092d14cb13a68ec645f386e024f4919eb22dc52fe72052da01419834",
+    "consumer_sha256": "51ea4fe580ce161d60dd42d3c3bcf047cdcf70b311ddb9a660f0fa3c81d112ac",
+    "observed": "Exact installed should_async_load returns true for ordinary CPU tensors. maybe_executor_submit appends executor.submit to futures without a pending-depth gate. Consumer creates ThreadPoolExecutor and futures at lines227-228, evaluates async at236, consumes futures at467. qkv/indexer pending dictionaries can also retain tensor references. Normal for-loop copy probe does not cover this consumer, full constructor or post-load kernels.",
+    "next_requirement": "Bound or eliminate real consumer pending tensor work and validate actual weight-loader behavior before a complete model attempt. Do not misuse the RunAI-only lifetime marker or infer peak from synchronous copies."
+  },
+  "limitations": [
+    "Not model construction, full consumer, post-load kernels, or inference.",
+    "Name plus first/last16byte digest only, not a complete tensor-byte checksum.",
+    "Fixed ABBA with uncontrolled filesystem cache and shared I/O; not a cold model speedup.",
+    "50ms requested sampling interval; actual sample count may miss brief peaks.",
+    "Normal for-loop retains previous input; no future queue or qkv/indexer caches exercised.",
+    "Process RSS, host and CUDA figures overlap; do not add."
+  ],
+  "complete_model": false,
+  "inference_requests": 0
+}

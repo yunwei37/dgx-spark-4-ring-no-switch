@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="440" viewBox="0 0 900 440" role="img" aria-labelledby="title desc">
+<title id="title">Native serial mmap versus pread: bounded GPU-copy measurements</title>
+<desc id="desc">ABBA runs copy the same 7594 tensors. Sampled RSS GiB 5.57,4.14,2.37,5.57; elapsed seconds 131.47,5.08,5.39,110.58. Uncontrolled cache, no full model or asynchronous consumer tested.</desc>
+<rect width="900" height="440" fill="#fff"/>
+<g font-family="sans-serif" fill="#18232c">
+<text x="24" y="32" font-size="21">Serial pread lowers sampled copy-loop memory, not a full-loader fix</text>
+<text x="24" y="57" font-size="13">First ten shards · 7,594 tensors · normal previous-input lifetime · same edge digest</text>
+<text x="170" y="94" font-size="14">Sampled process RSS (GiB)</text>
+<text x="582" y="94" font-size="14">Diagnostic elapsed (seconds)</text>
+<text x="24" y="134" font-size="14">1. mmap</text><rect x="170" y="117" width="278.65" height="24" fill="#4367b2"/><text x="456.65" y="134" font-size="13">5.57</text><rect x="582" y="117" width="210.35" height="24" fill="#4367b2"/><text x="800.35" y="134" font-size="13">131.47</text>
+<text x="24" y="192" font-size="14">2. pread</text><rect x="170" y="175" width="207.13" height="24" fill="#bc7029"/><text x="385.13" y="192" font-size="13">4.14</text><rect x="582" y="175" width="8.13" height="24" fill="#bc7029"/><text x="598.13" y="192" font-size="13">5.08</text>
+<text x="24" y="250" font-size="14">3. pread</text><rect x="170" y="233" width="118.51" height="24" fill="#bc7029"/><text x="296.51" y="250" font-size="13">2.37</text><rect x="582" y="233" width="8.62" height="24" fill="#bc7029"/><text x="598.62" y="250" font-size="13">5.39</text>
+<text x="24" y="308" font-size="14">4. mmap</text><rect x="170" y="291" width="278.71" height="24" fill="#4367b2"/><text x="456.71" y="308" font-size="13">5.57</text><rect x="582" y="291" width="176.92" height="24" fill="#4367b2"/><text x="766.92" y="308" font-size="13">110.58</text>
+<text x="24" y="357" font-size="13">CUDA peak: 1.773 GiB in all runs. Sampling target 50 ms; pread captured only 60/62 samples.</text>
+<text x="24" y="384" font-size="13">Cache and shared I/O uncontrolled. Actual model consumer queues CPU tensors asynchronously.</text>
+<text x="24" y="411" font-size="13">No full-model speedup claim. Formal GLM-5.3 successful inference requests: 0.</text>
+</g></svg>
