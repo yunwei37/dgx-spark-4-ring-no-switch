@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "outcome": "passed-restored",
+  "date": "2026-08-31",
+  "status": "passed-restored allocator microprobe; full GLM inference not measured",
+  "runtime": {
+    "image": "ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:int4-int8mix-20260824",
+    "config_digest": "sha256:d58701574065dc23b5bf246fc98c974ca5fbd40e0f16ff4972db4eb05e244746",
+    "torch": "2.11.0+cu130",
+    "fastsafetensors": "0.3.2",
+    "device": "NVIDIA GB10",
+    "unified_copier_source_sha256": "8d0b03e5220d12d862b5f1b827eb6fedd26c0e0eeb414f6a3401633d22dc97d3"
+  },
+  "probe": {
+    "script": "profile_fastsafetensors_host_cache.py",
+    "script_sha256": "5ed9d32fc9731225061d6eef24ef8fd4d87e7b4ecb0307a51510a4ffb61f1362",
+    "fixture": "synthetic uint8 filled with 37; private tmpfs; no checkpoint or SeaweedFS reads",
+    "samples_per_case": 1,
+    "time_scope": "loader construction, copy, equality, allocator statistics, cleanup; excludes initial file creation; not throughput",
+    "memory_limit_bytes": 2147483648,
+    "torch_allocation_cap_bytes": 536870912,
+    "tmpfs_limit_bytes": 268435456,
+    "process_alarm_seconds": 60,
+    "outer_timeout_seconds": 90,
+    "network": "none",
+    "retained_runtime_flag": false
+  },
+  "results": [
+    {
+      "copier": "unified autodetect",
+      "file_data_MiB": 32,
+      "pinned_owned_after_device_flush": 33554433,
+      "pinned_owned_after_host_flush": 0,
+      "device_allocated_tensor_live": 33554432,
+      "device_reserved_tensor_live": 33554432,
+      "case_seconds": 0.5220010459997866,
+      "correct_before_after_host_release": true
+    },
+    {
+      "copier": "unified autodetect",
+      "file_data_MiB": 65,
+      "pinned_owned_after_device_flush": 134217729,
+      "pinned_owned_after_host_flush": 0,
+      "device_allocated_tensor_live": 69206016,
+      "device_reserved_tensor_live": 69206016,
+      "case_seconds": 0.14110790199993062,
+      "correct_before_after_host_release": true
+    },
+    {
+      "copier": "nogds; FASTSAFETENSORS_UNIFIED_MEM=0",
+      "file_data_MiB": 32,
+      "pinned_owned_after_device_flush": 1,
+      "pinned_owned_after_host_flush": 0,
+      "device_allocated_tensor_live": 33554432,
+      "device_reserved_tensor_live": 33554432,
+      "case_seconds": 0.27448634400207084,
+      "correct_before_after_host_release": true
+    },
+    {
+      "copier": "nogds; FASTSAFETENSORS_UNIFIED_MEM=0",
+      "file_data_MiB": 65,
+      "pinned_owned_after_device_flush": 1,
+      "pinned_owned_after_host_flush": 0,
+      "device_allocated_tensor_live": 69206016,
+      "device_reserved_tensor_live": 69206016,
+      "case_seconds": 0.07934464299978572,
+      "correct_before_after_host_release": true
+    }
+  ],
+  "caveats": [
+    "Pinned allocator owned bytes are not complete process/host memory: native bounce buffers, CUDA context and page cache are excluded.",
+    "host active_bytes.current increased beyond owned bytes in these runtime outputs and remained nonzero after flush; do not use it to claim a live leak.",
+    "MemAvailable did not immediately rise with host-cache release; no equivalent physical-memory recovery claim.",
+    "A one-byte pinned allocation accompanied scalar equality checks. The table preserves raw counts.",
+    "Cold/warm state and startup cost were not controlled for speed comparisons; these times are not model-loading A/B.",
+    "The no-GDS selector avoids the measured whole-file pinned cache in this probe, but still allocates the whole device file buffer.",
+    "Original model service remained running; isolated processes did not release its allocator cache.",
+    "First invocation failed before Python because this image has python3, not python; container removed. Corrected two runs exited zero."
+  ],
+  "cleanup": {
+    "containers_remaining": 0,
+    "temporary_directories_remaining": 0,
+    "source_or_host_config_changed": false,
+    "original_service_four_pods_ready": true,
+    "original_service_restarts": 0,
+    "original_service_authenticated_request_http": 200,
+    "original_service_answer_correct": true
+  },
+  "upstream_sources": [
+    "https://github.com/foundation-model-stack/fastsafetensors/pull/81",
+    "https://github.com/foundation-model-stack/fastsafetensors/issues/71",
+    "https://github.com/foundation-model-stack/fastsafetensors/issues/94",
+    "https://docs.pytorch.org/devlogs/eager/2026-08-09-pinned-memory-allocator/"
+  ]
+}

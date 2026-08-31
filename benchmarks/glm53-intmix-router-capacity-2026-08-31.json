@@ -1,4 +1,6 @@
 {
+  "schema_version": 1,
+  "outcome": "passed-restored",
   "date": "2026-08-31",
   "test": "formal GLM-5.3 INT4/INT8 GPU router and FakeTensor capacity preflight",
   "model": "Tech2wild/GLM-5.3-Int4-Int8Mix",

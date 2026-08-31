@@ -87,3 +87,50 @@ an existing local model directory. That CLI flag alone would not implement the
 proposed selection on a mounted snapshot. Preserve the complete snapshot for
 verification; a future selection must use an explicit disposable file view,
 not remove checkpoint files. No selection was applied during this inspection.
+
+## Pinned-host cache: measured separately from CUDA cache
+
+A bounded2026-08-31 GPU microprobe used the existing Torch2.11.0/cu130,
+fastsafetensors0.3.2 image, two synthetic tmpfs files and no model checkpoint.
+Its default GB10 unified copier uses `from_file(...).pin_memory()` before the
+device copy. Dropping its Python references and calling `torch.cuda.empty_cache()`
+does not flush the separate host caching allocator.
+
+| Copy path | Sample | Pinned bytes owned after close + device flush | After host flush | Tensor equality |
+| --- | ---: | ---: | ---: | --- |
+| Unified default | 32MiB | 33,554,433 | 0 | passed |
+| Unified default | 65MiB | 134,217,729 | 0 | passed |
+| Native no-GDS | 32MiB | 1 | 0 | passed |
+| Native no-GDS | 65MiB | 1 | 0 | passed |
+
+The one-byte allocation accompanies scalar checks. The65MiB unified sample
+illustrates power-of-two pinned allocation rounding to128MiB. The native
+process-local `FASTSAFETENSORS_UNIFIED_MEM=0` selector avoided that whole-file
+pinned cache in the same small fixture. It still has its native bounce buffer
+and a whole-file device allocation; it is not a zero-memory loading path.
+
+Torch2.11 provides the private `torch._C._host_emptyCache()` used here. This is
+not a host page-cache drop or another process's allocator flush. Its statistics
+showed owned bytes falling to zero, but system MemAvailable did not immediately
+rise; `active_bytes.current` was also inconsistent with owned bytes. We do not
+infer equivalent physical-memory recovery or a confirmed leak from those
+counters. See the [PyTorch explanation](https://docs.pytorch.org/devlogs/eager/2026-08-09-pinned-memory-allocator/).
+
+The [exact probe](../benchmarks/profile_fastsafetensors_host_cache.py) and
+[results/bounds](../benchmarks/fastsafetensors-host-cache-2026-08-31.json)
+preserve both paths. Run only in a disposable Linux GPU process with the recorded
+resource limits, first with the selector unset and then set to0; the executed
+second run set the same variable inside the process before CUDA initialization.
+Do not run this as a daemon or infer model performance from one tmpfs sample.
+Both diagnostic containers/tmpfs were removed; the original four-rank service
+remained Ready with zero restarts and passed an authenticated arithmetic request.
+The initial `python` entrypoint failed before execution; this image uses `python3`.
+No copier setting, host-cache flush, new image or host configuration was retained.
+
+Upstream [PR81](https://github.com/foundation-model-stack/fastsafetensors/pull/81)
+is included in0.3.3 and reduces selected expert I/O, but explicitly retains
+full-file device allocation. [Issue71](https://github.com/foundation-model-stack/fastsafetensors/issues/71)
+and the separate [retention report94](https://github.com/foundation-model-stack/fastsafetensors/issues/94)
+were still open when checked. Neither an upgrade nor this microprobe proves
+a safe full GLM load. A real-checkpoint copier A/B remains necessary before
+retaining a performance choice; formal GLM-5.3 still has zero successful requests.
