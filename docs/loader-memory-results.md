@@ -97,6 +97,25 @@ sub-GiB available memory; those host changes are not imported into our test.
 For future A/B, separate weight format, KV format, drafter and workload before
 comparing numbers. Full NVFP4-weight inference remains unpassed here.
 
+### Native two-stage capacity attempt
+
+Before the mixed-precision test, a separate native NVFP4 TP2/EP2/PP2
+capacity attempt retained all 78 layers in a 42/36 partition. It failed
+before construction in the PP communicator's warm-up all-reduce. All four
+schedulers logged an NCCL exception even though their containers exited 0;
+there were zero shape reports, loaded checkpoints or inference requests.
+Kubernetes `Completed` therefore did not make this experiment pass.
+
+The attempt reused physical cycle order 0/1/2/3. Its TP pairs (0,1) and
+(2,3) are direct neighbors, but its PP pairs (0,2) and (1,3) are not. The
+observed TP connection followed by PP failure is consistent with this rank
+mapping error. A proposed 0/1/3/2 logical order maps both kinds of pair to
+existing direct links, without changing any cable, route or host setting.
+That correction is prepared but not yet tested; capacity and performance
+remain unknown. It cannot stand in for the unresolved optimized TP4 cell.
+The diagnostic was removed and the original four-rank service was verified
+Ready with zero restarts and an authenticated correct response at 12:01 UTC.
+
 ## Formal GLM-5.3 INT4/INT8: file staging is separate from model size
 
 The fixed `Tech2wild/GLM-5.3-Int4-Int8Mix` revision
