@@ -1,0 +1,26 @@
+{
+  "status": "measurement-only; inference trial pending",
+  "model_revision": "7b719225242aacd3dbd3f9407468c2ee9a9d2594",
+  "sglang_revision": "d91c3682b",
+  "capture_end_utc": "2026-08-31T07:28:04.415313235Z",
+  "duration_seconds": 30,
+  "sampling_frequency_hz": 49,
+  "nonblocking": true,
+  "include_idle": true,
+  "sampling_errors": 3,
+  "all_thread_samples": 14660,
+  "main_thread_samples": 1466,
+  "main_thread_leaf_counts": {
+    "scalar_transfer_to_device_layer_py_1175": 386,
+    "scalar_assignment_layer_py_884": 382,
+    "moe_weight_copies_layer_py_703_and_789": 335,
+    "weight_loader_dispatch_layer_py_1013": 129,
+    "other": 234
+  },
+  "limitations": [
+    "Python stack positions are not native GPU-time attribution.",
+    "A blocked copy can include native synchronization or memory-fault waiting; filesystem contribution is not excluded.",
+    "This samples one target-loading interval, not draft loading or decoding.",
+    "No source or performance setting changed during collection; sampling may perturb loading slightly."
+  ]
+}

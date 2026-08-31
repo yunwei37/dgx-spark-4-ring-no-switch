@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="600" viewBox="0 0 940 600" role="img" aria-labelledby="title desc">
+<title id="title">Qwen target loader: sampled main-thread locations</title>
+<desc id="desc">1466 main-thread samples during a 30-second capture including idle waits. Scalar transfer and assignment account for 768 samples. This is not native GPU-time attribution.</desc>
+<rect width="940" height="600" fill="#ffffff"/>
+<g font-family="Arial, sans-serif">
+<text x="28" y="43" font-size="26" font-weight="700" fill="#182b3a">Where the target loader was sampled</text>
+<text x="28" y="77" font-size="17" fill="#546e7a">Qwen NVFP4 TP2 · 30 seconds · 49 Hz · 1,466 main-thread samples</text>
+<text x="28" y="153" fill="#263238" font-size="18">Scalar transfer to device</text><rect x="300" y="130" width="368.62" height="34" rx="4" fill="#087e8b"/><text x="678.62" y="153" fill="#263238" font-size="18">26.3% (386)</text>
+<text x="28" y="225" fill="#263238" font-size="18">Scalar assignment</text><rect x="300" y="202" width="364.80" height="34" rx="4" fill="#087e8b"/><text x="674.80" y="225" fill="#263238" font-size="18">26.1% (382)</text>
+<text x="28" y="297" fill="#263238" font-size="18">MoE weight copies</text><rect x="300" y="274" width="319.92" height="34" rx="4" fill="#507a9a"/><text x="629.92" y="297" fill="#263238" font-size="18">22.9% (335)</text>
+<text x="28" y="369" fill="#263238" font-size="18">Weight-loader dispatch</text><rect x="300" y="346" width="123.19" height="34" rx="4" fill="#507a9a"/><text x="433.19" y="369" fill="#263238" font-size="18">8.8% (129)</text>
+<text x="28" y="441" fill="#263238" font-size="18">Other sampled locations</text><rect x="300" y="418" width="223.47" height="34" rx="4" fill="#507a9a"/><text x="533.47" y="441" fill="#263238" font-size="18">16.0% (234)</text>
+<text x="28" y="523" font-size="16" fill="#546e7a">Main thread only; other collected threads are not charted. Waits are included.</text>
+<text x="28" y="550" font-size="16" fill="#546e7a">Python stack locations, not native GPU-time attribution or a startup speedup.</text>
+<text x="28" y="577" font-size="14" fill="#546e7a">2026-08-31 · SGLang d91c3682b · 3 sampling errors across 14,660 thread samples</text>
+</g>
+</svg>

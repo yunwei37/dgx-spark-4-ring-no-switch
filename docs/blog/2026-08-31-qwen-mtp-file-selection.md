@@ -61,6 +61,23 @@ compatibility failure. The GPU trial will use the baseline's writable cache.
 
 ## Remaining experiment and restoration boundary
 
+### Target-loading profile from the running GPU trial
+
+The image's existing py-spy captured two 30-second, 49Hz nonblocking samples.
+The idle-inclusive capture contains 1,466 main-thread observations; 386 land
+at scalar `.to(device)`, 382 at scalar assignment, and 335 at two MoE `copy_`
+sites. This is a concrete reason to investigate per-tensor loading work, but
+it does not exclude native synchronization, page faults or filesystem waits.
+The image does **not** contain fastsafetensors; the separate GLM image's loader
+fixes must not be assumed to run here.
+
+![Target loading profile](../assets/qwen38-target-load-profile.svg)
+
+[Raw aggregate sample counts](../assets/qwen38-target-load-profile.json) preserve
+the measurement boundary. Profiling success is not model-inference success.
+
+### Trial contract
+
 Keep the exact full target, runtime, TP2/EP2 layout, seed, kernels, MTP one-step /
 two-draft configuration and 262,144 context. Compare target and draft loading
 separately, then run correctness, full-window retrieval and single/concurrent
