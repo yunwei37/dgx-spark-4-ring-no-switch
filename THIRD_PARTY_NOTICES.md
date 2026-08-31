@@ -30,6 +30,15 @@ above, whose repository-level license was not declared when recorded; the OCI
 license label therefore remains `NOASSERTION` rather than implying a license
 for the complete image.
 
+The optional formal GLM-5.3 DFlash2 image additionally incorporates Apache-2.0
+code from vLLM at commit `660a446fc93ebb780144585b3fdc34ed96fa755c`, the
+community port at
+`tonyd2wild/GLM-5.3-Int4-Int8Mix-TP4-4x-DGX-Spark@a1806cb82493aa6f28709f77acf59c1937bdf756`,
+and an Apache-2.0 reconstruction published in that repository's issue #1.
+The DFlash2 draft checkpoint is not copied into the image. Its upstream model
+card currently declares CC BY-NC-ND 4.0; operators must review that license
+before downloading or using the separate weights.
+
 The Qwen3.8 Flash Next NVFP4 package uses
 `lmsysorg/sglang@sha256:12d3392bdc8be8d35e9a95f191df6aef99c5114bdbefd41bfdc7e760e6d25ec1`
 as its immutable runtime base and applies only the source-hash-guarded

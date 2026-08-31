@@ -21,7 +21,10 @@ required = (
     "Dockerfile.sglang-qwen38",
     "Dockerfile.sglang-glm53",
     "Dockerfile.vllm-glm53-intmix-nvfp4",
+    "Dockerfile.vllm-glm53-intmix-nvfp4-dflash2",
     "images/runtime/apply_glm53_router_fp32.py",
+    "images/runtime/apply_dflash2_swa_under_mla.py",
+    "images/runtime/dsa_block.py",
     "profiles/glm52-int4-int8mix.sh",
     "profiles/qwen38-flash-next-nvfp4.sh",
     "scripts/launch-ring.sh",
@@ -133,6 +136,25 @@ for required_text in (
 ):
     if required_text not in intmix_nvfp4_dockerfile:
         fail(f"GLM-5.3 IntMix NVFP4 Dockerfile missing {required_text}")
+
+dflash2_dockerfile = (
+    ROOT / "Dockerfile.vllm-glm53-intmix-nvfp4-dflash2"
+).read_text(encoding="utf-8")
+for required_text in (
+    "@sha256:52b289baf653bcb550194822f1c1381275601731d4882fefe7c0413513a99cae",
+    "a1806cb82493aa6f28709f77acf59c1937bdf756",
+    "660a446fc93ebb780144585b3fdc34ed96fa755c",
+    "--checksum=sha256:c2fd1bc93957c8a534b03cc83d9d6c28cf7238a9a8ab7113b919f7e013e37c42",
+    "--checksum=sha256:83b8e8df6f513a7da661c3eb24a14c6f4892626f67a5d50599f10e892ee2cb63",
+    "apply_dflash2_swa_under_mla.py",
+    "verify_dflash2.py",
+):
+    if required_text not in dflash2_dockerfile:
+        fail(f"GLM-5.3 DFlash2 Dockerfile missing {required_text}")
+if "EXPECTED_SHA256" not in (
+    ROOT / "images/runtime/apply_dflash2_swa_under_mla.py"
+).read_text(encoding="utf-8"):
+    fail("DFlash2 SWA patch must retain its source hash guard")
 
 readme = (ROOT / "README.md").read_text(encoding="utf-8")
 if "60,469" not in readme or "unsafe" not in readme:
