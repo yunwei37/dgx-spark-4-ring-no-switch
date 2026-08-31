@@ -503,3 +503,43 @@ recovered hosts. The failed verifier Job/container and transient assembly
 rootfs were cleaned; downloaded checkpoints and original service images remain.
 The inaccessible host's test container/tag and full service restoration are
 still pending. Do not treat partial cleanup as successful rollback.
+
+At14:50UTC the affected host returned on its existing boot; no reboot, power
+cycle or remote process kill caused the return. All four GPUs/host services
+and original-service checkpoint boundary reads passed. The final test image
+tag was removed at14:51UTC and the original test container was already absent.
+Four storage owners and the failed mixed-quantization shard's exact failing
+range were readable again. Original-service distributed restart validation
+remained in progress; these checks alone are not successful rollback.
+
+New kernel evidence includes global Linux OOM kills of monitoring/device-plugin
+processes and an Xid31 at14:46:05UTC. At14:46:03UTC active+inactive anonymous
+memory was8.42GiB, unreclaimable slab2.28GiB, but active+inactive file cache only
+1744KiB. The OOM snapshot is much later than initial weight loading and does
+not reconstruct its peak. It disproves a simple claim that a large reclaimable
+file cache alone explains the continued outage. Existing swap still had over
+15GiB free; no swap setting was changed. CPU/non-Torch memory, memory-zone
+availability and driver allocation must be measured alongside Torch, not
+treated as covered by the constructor's allocator cap.
+
+At15:01-15:05UTC the original service was verified restored: all four ranks
+Ready, backend and public authenticated minimal generation returned200 with
+the correct answer; missing/invalid credentials returned401. Original Pods
+were recreated through their unchanged owners, preserving model data and
+other workspaces. All test-only tags/containers are absent. **Outcome:
+failed-restored; formal GLM-5.3 NVFP4 still has0 successful requests.**
+
+Restoration startup itself logged106/49/29/67 driver allocation warnings
+across the four machines, with no Linux OOM or Xid. All warnings stopped
+before API Ready; no matching allocation error, Linux OOM or Xid appeared
+from15:00:30 through15:05:32UTC. Available memory was13.57-14.49GiB.
+This is a bounded recovery check, not a long-term stability claim. A separate
+public request client received edge403; the original external client passed
+the full authentication/generation check. No access policy was changed.
+
+The unique mixed-quantization checksum-only process resumed against the same
+downloaded bytes at15:01UTC, with a fixed18:31UTC cutoff. At15:05UTC it was
+reading shard4; full verification and publication are still pending. No
+second download or copy was started. The native serial-loader candidate has
+not yet been applied or benchmarked; CPU/pinned/driver peak measurements
+must precede another near-capacity full NVFP4 attempt.
