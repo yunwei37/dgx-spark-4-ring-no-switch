@@ -21,7 +21,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && install -m 0755 /src/mesh/libnccl-net.so /opt/nccl-mesh/lib/ \
     && ln -s libnccl.so.2.29.7 /opt/nccl-mesh/lib/libnccl.so.2 \
     && ln -s libnccl.so.2 /opt/nccl-mesh/lib/libnccl.so \
-    && ln -s libnccl-net.so /opt/nccl-mesh/lib/libnccl-net-mesh.so
+    && ln -s libnccl-net.so /opt/nccl-mesh/lib/libnccl-net-mesh.so \
+    && rm -rf /src/nccl /src/mesh
 
 FROM ${DFLASH2_SOURCE_IMAGE} AS dflash2-source
 
