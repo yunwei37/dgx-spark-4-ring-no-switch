@@ -6,7 +6,7 @@ from importlib.metadata import distribution
 from pathlib import Path
 
 EXPECTED_SHA256 = "19bdaed6fd26261eeab00ab0cf374f0ac6adbe5bc25a3d15941e694885b8804e"
-EXPECTED_PATCHED_SHA256 = "36499d7ca463d39d8c010ce57820ece1b3b5672d7f8db718f2ce6c0bb8949fbc"
+EXPECTED_PATCHED_SHA256 = "5bed0a369aeb511f14ffc4cb2b7b8c0b18782a3887b544f6916f99b73ac39152"
 IMPORT_ANCHOR = "import os\n"
 CLOSE_ANCHOR = (
     '            with TimingContext("fb.close", self._log_message, batch.batch_id) as timer:\n'

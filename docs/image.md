@@ -90,7 +90,12 @@ found that the base uses a Python virtual environment, not `/usr/local/lib`.
 The package patch now resolves the installed distribution's file location
 instead of assuming a system installation path. The exact unmodified and
 patched SHA-256 checks are unchanged. This packaging failure happened before
-any model load and is not an inference result.
+any model load and is not an inference result. A second real build exposed a
+stale expected output hash. An isolated container diff verified that the only
+changes to the exact original source are `import torch`, two explanatory comment
+lines and `torch.cuda.empty_cache()` after `batch.fb.close()`. The expected
+patched hash is now the measured `5bed0a36...39152`; the original source guard
+remains unchanged. No check was removed to make the build pass.
 
 The earlier four-rank run proved NCCL Mesh startup and reached ModelOpt FP4
 loading, but exhausted unified memory before serving a request. It does not
