@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "outcome": "passed-bounded-experiment",
+  "scope": "single-layer constructor and post-load scale equivalence; NOT full inference",
+  "model": "LibertAIDAI/GLM-5.3-NVFP4",
+  "model_revision": "653d98214a487d78c1b2a37167b56764b6240080",
+  "runtime_source": "f609d677b",
+  "tested_image_config_id": "sha256:dd2c0dc94073644d6fe4455e1b80ebac4cd64b620b9f93da9b81da1e8e95ded9",
+  "backend": "flashinfer_cutlass",
+  "hardware": "one NVIDIA GB10, one GPU",
+  "layer": {"global_experts": 256, "local_experts": 64, "hidden_size": 6144, "intermediate_size_per_partition": 2048, "group_size": 16},
+  "limits": {"cuda_allocator_fraction": 0.05, "container_memory_GiB": 8, "deadline_seconds": 180},
+  "baseline": {"constructor_allocated_bytes": 1509953536, "constructor_peak_bytes": 1560281088, "constructor_reserved_bytes": 1562378240, "final_allocated_bytes": 1358985728, "peak_bytes": 1711308288},
+  "deferred": {"constructor_allocated_bytes": 1358958592, "constructor_peak_bytes": 1358958592, "constructor_reserved_bytes": 1361051648, "final_allocated_bytes": 1358985728, "peak_bytes": 1560313344},
+  "measured_per_layer_saved_bytes": 150994944,
+  "calculated_75_layer_saved_GiB_per_rank": 10.546875,
+  "equivalence": {"final_scale_hashes_equal": true, "scale_aliases_preserved": true, "packed_test_weights_unchanged": true, "w13_scale_sha256": "1e2ee63a9d693404436d0423420f3852c71eaf133b5728b9d1cfde69cd6dea90", "w2_scale_sha256": "341dbeb5b5166c7dca1670e640f0ed705372d10b1d71aa21d8ba53b9444f5e35"},
+  "limitations": ["Synthetic one-layer values, not checkpoint inference", "No MoE kernel output or accuracy comparison yet", "Whole-model savings are calculated from verified model geometry", "Constructor timing excluded: single cold/warm samples are not a matched speed benchmark"],
+  "preceding_full_tp4_attempt": {"image_source": "1642ff5ea03bd7bc51f5ad00e6cb779cb5540b24", "status": "failed-unsafe", "completed_inference_requests": 0, "failure": "host unified memory exhausted during startup before Load weight end", "test_removed": true, "hosts_recovered": true, "previous_service_restored": false},
+  "temporary_diagnostic_container_removed": true,
+  "ghcr_publication": "pending",
+  "full_corrected_model_inference": "not measured"
+}

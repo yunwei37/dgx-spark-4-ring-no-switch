@@ -111,6 +111,7 @@ if "fastsafetensors==0.3.3" not in glm53_dockerfile:
 for patch_name in (
     "apply_fastsafetensors_033_batch_release.py",
     "apply_sglang_fastsafetensors_local_device.py",
+    "apply_sglang_nvfp4_deferred_scales.py",
 ):
     if patch_name not in glm53_dockerfile:
         fail(f"GLM-5.3 Dockerfile must apply {patch_name}")

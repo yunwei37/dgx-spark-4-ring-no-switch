@@ -79,11 +79,16 @@ Target image:
 
 Repository validation: passed
 
-ARM64 image build: pending
+ARM64 image build: passed at `1642ff5ea03bd7bc51f5ad00e6cb779cb5540b24`.
+Image config ID: `sha256:dd2c0dc94073644d6fe4455e1b80ebac4cd64b620b9f93da9b81da1e8e95ded9`.
+Identical image imports and source/library hashes passed on all four nodes.
 
 GHCR publication and digest: pending
 
-Four-rank full-checkpoint inference smoke: pending
+Four-rank full-checkpoint inference smoke: **failed, unsafe; zero requests**.
+All ranks reached Mesh initialization and weight loading, but available host
+memory collapsed before any rank completed loading. The test was removed and
+the nodes recovered; the preceding service remains paused for active diagnosis.
 
 The first actual ARM64 build on 2026-08-31 installed 0.3.3 successfully but
 found that the base uses a Python virtual environment, not `/usr/local/lib`.
@@ -97,8 +102,24 @@ lines and `torch.cuda.empty_cache()` after `batch.fb.close()`. The expected
 patched hash is now the measured `5bed0a36...39152`; the original source guard
 remains unchanged. No check was removed to make the build pass.
 
-The earlier four-rank run proved NCCL Mesh startup and reached ModelOpt FP4
-loading, but exhausted unified memory before serving a request. It does not
-validate this assembled image. Publication and serving results must remain
-pending until the full image is built and a request completes without a node,
-SSH, kubelet, or storage regression.
+The 2026-08-31 assembled-image run repeated the memory failure; prebuilding and
+completed-batch release alone were insufficient. This is distinct from the
+2026-08-29 attempt, and neither is an inference pass.
+
+### CUTLASS constructor scale duplication
+
+Inspection of the pinned runtime found two unused swizzled scale placeholders
+allocated for every NVFP4 MoE layer before any checkpoint tensor loads. Normal
+post-load processing already recomputes those values and aliases them to source
+scale storage. `apply_sglang_nvfp4_deferred_scales.py` extends the existing
+TRTLLM deferral to CUTLASS only; it changes neither kernels nor post-load logic.
+The exact upstream file hash must match before applying the image-local patch.
+
+A bounded GPU A/B measured **144 MiB saved per local 64-expert layer**, hence
+**10.546875 GiB per rank** across the full model's 75 MoE layers. Final scale
+hashes, aliases and synthetic packed weights matched. See
+[the diagnostic record](../benchmarks/glm53-nvfp4-constructor-2026-08-31.json).
+The single-layer test is not a full-model or kernel-output correctness claim.
+The image containing this additional patch still needs full allocation sizing,
+real TP4 inference and stability validation; no corrected serving result or
+GHCR publication is claimed.

@@ -36,13 +36,17 @@ COPY --from=mesh-runtime /opt/nccl-mesh /opt/nccl-mesh
 RUN python3 -m pip install --no-cache-dir --no-deps fastsafetensors==0.3.3
 COPY images/runtime/apply_fastsafetensors_033_batch_release.py /tmp/
 COPY images/runtime/apply_sglang_fastsafetensors_local_device.py /tmp/
+COPY images/runtime/apply_sglang_nvfp4_deferred_scales.py /tmp/
 RUN python3 /tmp/apply_fastsafetensors_033_batch_release.py \
     && python3 /tmp/apply_sglang_fastsafetensors_local_device.py \
+    && python3 /tmp/apply_sglang_nvfp4_deferred_scales.py \
     && python3 -m py_compile \
       "$(python3 -c 'import fastsafetensors.parallel_loader as loader; print(loader.__file__)')" \
       /sgl-workspace/sglang/python/sglang/srt/model_loader/weight_utils.py \
+      /sgl-workspace/sglang/python/sglang/srt/layers/quantization/modelopt_quant.py \
     && test "$(python3 -c 'import importlib.metadata; print(importlib.metadata.version("fastsafetensors"))')" = "0.3.3" \
     && rm /tmp/apply_fastsafetensors_033_batch_release.py \
-          /tmp/apply_sglang_fastsafetensors_local_device.py
+          /tmp/apply_sglang_fastsafetensors_local_device.py \
+          /tmp/apply_sglang_nvfp4_deferred_scales.py
 
 ENV LD_LIBRARY_PATH=/opt/nccl-mesh/lib:/usr/local/cuda/lib64:/usr/local/lib/python3.12/dist-packages/nvidia/nccl/lib
