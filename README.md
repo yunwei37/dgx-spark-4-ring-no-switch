@@ -142,6 +142,9 @@ remain incomplete. They are not successful formal GLM inference evidence.
   retained non-default to evidence.
 - [`docs/loader-memory-results.md`](docs/loader-memory-results.md) records the
   tested loader alternatives.
+- [`docs/glm53-community-experiments.md`](docs/glm53-community-experiments.md)
+  audits external formal GLM-5.3 experiments, including switchless-ring reports,
+  and separates them from our own results and unvalidated recipes.
 - [`docs/blog/2026-08-25-glm52-on-four-dgx-sparks.md`](docs/blog/2026-08-25-glm52-on-four-dgx-sparks.md)
   is the experiment narrative.
 
