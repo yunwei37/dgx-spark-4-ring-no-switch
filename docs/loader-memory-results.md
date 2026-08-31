@@ -45,6 +45,27 @@ GLM-5.2 loader result to this different runtime or blame SeaweedFS for a
 constructor allocation failure. Direct-iterator buffer lifetime and final
 full-model memory headroom remain separate validation items.
 
+The existing four-rank shape audit also bounds what another cache cleanup can
+achieve. These are unique registered storages, with aliases counted once:
+
+| Corrected NVFP4 storage, per rank | GiB |
+| --- | ---: |
+| Packed routed-expert weights (uint8) | 84.375000 |
+| Routed-expert block scales (float8) | 10.546875 |
+| Attention, shared experts, vocabulary and remaining tensors | 11.110318 |
+| Total | 106.032193 |
+
+The first two rows account for89.52% of static storage. They are retained model
+tensors, not free allocator cache; another `empty_cache()` cannot remove them.
+The scale row is still required after removing the redundant constructor
+placeholders. This calculation does not prove there is no further optimization,
+but it rules out claiming that the measured106.03GiB is all reclaimable staging.
+Loading, communication, KV and inference workspaces require additional room.
+In the refreshed admission check, one node had only105.15GiB available to the
+scheduler after pausing the original model, because unrelated work was retained.
+Lowering the new Pod request would not make the same static model fit that
+reservation boundary. No new NVFP4 full-load attempt was started for this audit.
+
 ## Formal GLM-5.3 INT4/INT8: file staging is separate from model size
 
 The fixed `Tech2wild/GLM-5.3-Int4-Int8Mix` revision
