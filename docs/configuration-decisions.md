@@ -19,3 +19,10 @@ are retained here.
 Swap, periodic drop-cache loops, OOM daemons, floating autotuning parameters,
 host firewall changes, and topology reconcilers are not retained. The available
 evidence does not justify adding those entities to a reusable serving recipe.
+
+The optional Qwen MTP file-view helper is a tested, bounded experiment, not a
+new default profile. Native draft loading fell to 19–20s versus the historical
+839–842s, with strict 262K retrieval passing; this was not matched-cache A/B.
+The target stays complete/read-only and no model data is copied. Runtime JIT
+warning and reduced effective token/concurrency pool remain disclosed in the
+[experiment](blog/2026-08-31-qwen-mtp-file-selection.md).

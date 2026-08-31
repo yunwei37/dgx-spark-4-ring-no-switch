@@ -61,9 +61,11 @@ GHCR publication: blocked. Authentication succeeded, but the current GitHub CLI
 token lacks the registry's required `write:packages` scope. The temporary Docker
 credential directory was deleted after the refused push.
 
-Same-hardware full-image inference smoke: pending. The exact base image, patches,
-Mesh runtime and selected profile have each passed in the active four-rank run;
-this does not substitute for launching all four ranks from the assembled image.
+Assembled-image TP2 inference: passed with this exact config ID in the native
+262K test on 2026-08-28 and the MTP file-view test on 2026-08-31. The latter
+passed strict final-key retrieval and measured 40.20/102.19 tokens/s single /
+four-concurrent synthetic completion. It does not prove assembled-image TP4,
+production stability, or GHCR publication. See the dated benchmark records.
 
 ## Formal GLM-5.3 NVFP4 package
 
@@ -91,7 +93,8 @@ GHCR publication and digest: pending
 Four-rank full-checkpoint inference smoke: **failed, unsafe; zero requests**.
 All ranks reached Mesh initialization and weight loading, but available host
 memory collapsed before any rank completed loading. The test was removed and
-the nodes recovered; the preceding service remains paused for active diagnosis.
+the nodes recovered; the preceding service was paused during diagnosis and
+subsequently restored as documented at the end of this section.
 
 The first actual ARM64 build on 2026-08-31 installed 0.3.3 successfully but
 found that the base uses a Python virtual environment, not `/usr/local/lib`.

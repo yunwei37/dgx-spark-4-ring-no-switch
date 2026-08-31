@@ -88,7 +88,43 @@ Machine-readable inputs:
 - [`qwen38-flash-next-nvfp4-2026-08-27.json`](../benchmarks/qwen38-flash-next-nvfp4-2026-08-27.json)
 - [`qwen38-flash-next-nvfp4-tp2-context-2026-08-28.json`](../benchmarks/qwen38-flash-next-nvfp4-tp2-context-2026-08-28.json)
 
-## SeaweedFS ConnectX storage baseline
+## Qwen TP2 MTP file view, 2026-08-31
+
+The identical complete target checkpoint with a temporary three-file native
+draft view passed two short arithmetic cases and strict final-key retrieval
+at 261888 input tokens plus a 256-token budget. Target loads were 1215.30/1209.90s;
+MTP loads were 19.00/20.23s. Single/four-concurrent synthetic completion measured
+40.20/102.19 tokens/s. Native CUDA graphs remained enabled. The historical
+comparison is not matched-cache A/B; the old conflicting long-response fixture
+is not counted as a strict final-output pass. The TileLang JIT checker warning
+is retained as unresolved, and total token pool/concurrency changed to 308416/9.
+
+See [the full result](../benchmarks/qwen38-mtp-view-tp2-2026-08-31.json),
+[loading-stage chart](assets/qwen38-mtp-load-stages.svg), and
+[profile and explanation](blog/2026-08-31-qwen-mtp-file-selection.md).
+
+## Recorded matrix and node count
+
+The 2026-08-31 user summary was checked against the original 2026-08-27/29
+measurements, not rerun or treated as interchangeable workloads:
+
+| Complete model | Nodes | Measured result | Qualification |
+| --- | ---: | --- | --- |
+| Qwen3.8 Flash Next NVFP4 + MTP | 4 | 48.81399 tok/s full-depth natural output; 262K retrieval | 261824 cached prompt tokens in this decode measurement; cold prefill measured separately above |
+| Qwen3.8 Flash Next BF16 | 4 | 25.8662 tok/s short request | Cold 32768-input retrieval passed; 32769 failed with repeated token0. Smaller chunks and disabling radix did not fix quality |
+| GLM-5.3 Flash FP8 | 4 | 20.162 tok/s, 512-token single stream | 240000-input retrieval passed; pool252352, not the advertised1M window |
+| GLM-5.3 Flash FP8 MTP5 | 4 | 25.56635 tok/s forced512; 24.76421 natural256 | MTP acceptance37.75% forced; pool78528; 78000-input retrieval passed |
+| Qwen NVFP4 + native MTP file view | 2 | 40.20 tok/s single; 102.19 aggregate4; strict262K passed | See dated 2026-08-31 result; not a matched throughput comparison to TP4 |
+
+Original private evidence filenames are `qwen38-bf16-tp4-serving-20260829.json`,
+`glm53-fp8-tp4-20260829.json`, and `glm53-fp8-tp4-mtp5-20260829.json`; public
+sanitized matrix data preserves their model/runtime and measurement boundaries.
+Use two nodes where complete-model correctness, capacity and performance allow;
+do not run four solely to fill a matrix cell. Formal GLM-5.3 remains separate
+and unpassed. Its ~465GB NVFP4 and ~405GB INT4/INT8 formats require more than
+two128GB nodes for full accelerator residency before runtime/KV overhead.
+
+## SeaweedFS ConnectX storage measurements
 
 With rank 2 offline, the remaining three-node storage path wrote a temporary
 4 GiB file through the existing CSI/FUSE mount in 3.135 seconds. Simultaneous

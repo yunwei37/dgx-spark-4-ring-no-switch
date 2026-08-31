@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "outcome": "passed-restored",
+  "recorded_at": "2026-08-31",
+  "model": "RadixArk/Qwen3.8-Flash-Next-NVFP4",
+  "revision": "7b719225242aacd3dbd3f9407468c2ee9a9d2594",
+  "runtime_config_id": "sha256:c13c7345095ad010c0b11e68e36707ea9cb109427171e2ebb92d4b7cf5cd50c0",
+  "sglang_revision": "d91c3682b",
+  "parallelism": "TP2/EP2",
+  "context_length": 262144,
+  "mtp": {
+    "algorithm": "EAGLE",
+    "steps": 1,
+    "topk": 1,
+    "draft_tokens": 2
+  },
+  "candidate": "native speculative draft path to temporary three-file symlink view; original full target unchanged",
+  "startup": {
+    "target_seconds": [
+      1215.3,
+      1209.9
+    ],
+    "draft_seconds": [
+      19,
+      20.23
+    ],
+    "target_memory_gb_reported": [
+      75.62,
+      76
+    ],
+    "draft_load_memory_delta_gb_reported": [
+      4.44,
+      4.4
+    ],
+    "rank0_container_start_utc": "2026-08-31T07:21:51Z",
+    "api_ready_log_utc": "2026-08-31T07:44:12Z",
+    "container_start_to_ready_seconds": 1341,
+    "token_capacity": 308416,
+    "effective_max_running_requests": 9,
+    "full_cuda_graphs": true
+  },
+  "historical_reference": {
+    "target_seconds": [
+      1221.11,
+      1235.79
+    ],
+    "draft_seconds": [
+      839.12,
+      842.44
+    ],
+    "tokenizer_ready_seconds": 2140.59,
+    "matched_cache_state_ab": false
+  },
+  "short_arithmetic": {
+    "cases": 2,
+    "exact_answers_passed": 2
+  },
+  "throughput": {
+    "workload": "synthetic 512-token completion, forced length, fresh nonce; not an agent benchmark",
+    "single_completion_tokens": 512,
+    "single_e2e_seconds": 12.737370546999955,
+    "single_e2e_tokens_per_second": 40.196679378271824,
+    "single_decode_tokens_per_second": 40.603826396248216,
+    "single_mtp_accept_rate": 0.8315412186379928,
+    "four_request_completion_tokens": 2048,
+    "four_request_e2e_seconds": 20.04021490699961,
+    "aggregate_e2e_tokens_per_second": 102.1945128584763,
+    "four_request_accept_rates": [
+      0.8091872791519434,
+      0.7560137457044673,
+      0.7534246575342466,
+      0.7322033898305085
+    ]
+  },
+  "strict_context": {
+    "passed": true,
+    "exact_final_answer": true,
+    "prompt_tokens_requested": 261888,
+    "prompt_tokens_reported": 261888,
+    "output_budget": 256,
+    "completion_tokens": 17,
+    "native_window_budget": 262144,
+    "marker_token_offset": 130944,
+    "cached_tokens": 0,
+    "ttft_seconds": 94.16470658400067,
+    "e2e_seconds": 94.54059303599934,
+    "prefill_tokens_per_second": 2781.1693945690777,
+    "spec_accept_rate": 1,
+    "chat_template": "checkpoint template with request-local enable_thinking=false",
+    "forced_ignore_eos": false,
+    "output_sha256": "a447a230765023a8673348cf5ac918fb49d63cb0c04d83a1a8c00949e32330f1"
+  },
+  "legacy_fixture": {
+    "marker_recovered": true,
+    "final_answer_contract_passed": false,
+    "prompt_tokens": 261888,
+    "completion_tokens": 254,
+    "ttft_seconds": 95.64068252499965,
+    "decode_tokens_per_second": 40.97959296277528,
+    "limitation": "The old long-response fixture contains contradictory output instructions; the marker appeared in thinking text. This is not an exact final-answer pass."
+  },
+  "health": {
+    "test_pod_restarts": [
+      0,
+      0
+    ],
+    "cgroup_oom_kills": [
+      0,
+      0
+    ],
+    "cgroup_memory_max_events": [
+      0,
+      0
+    ],
+    "host_boots_unchanged": true,
+    "final_memavailable_gib": [
+      22.2978515625,
+      24.396484375
+    ]
+  },
+  "cleanup": {
+    "test_pods_removed": true,
+    "temporary_configmap_removed": true,
+    "source_checkpoint_modified": false,
+    "weight_bytes_copied": 0,
+    "entry_service_restoration": "verified: four original ranks Ready, zero restarts; private/public correct generation HTTP200 and missing/invalid HTTP401 at 2026-08-31T08:10:40Z; Flux Ready"
+  },
+  "qualifications": [
+    "TileLang emitted a data-race-checker warning during JIT; no checker was disabled. These finite tests do not resolve that warning.",
+    "Historical throughput uses different prompts and the startup comparison is not a controlled same-cache A/B.",
+    "The real per-rank target load remains about twenty minutes; this is not a one-minute startup result.",
+    "The first strict client invocation had a syntax error before any GPU request; the corrected client produced the recorded exact-answer pass.",
+    "This is not a formal GLM-5.3, full matrix, production stability or real development-agent benchmark pass."
+  ]
+}

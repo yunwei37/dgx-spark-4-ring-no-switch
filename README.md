@@ -16,6 +16,18 @@ weights or modify host management networking.
 | `0xSero/GLM-5.2-504B-Nvidia` | PP=4 | 32,005 | 4.40 tok/s | passed and restored |
 | `RadixArk/Qwen3.8-Flash-Next-NVFP4` + MTP | TP=4 | 262,144 native window | 1,505.59 prefill tok/s | exact mid-context retrieval passed; experiment active |
 | same checkpoint, MTP | TP=2/EP=2 | 262,144 native window | 37.60 tok/s single; 99.66 tok/s at 4 requests | exact mid-context retrieval passed and cleaned up |
+| same full checkpoint, MTP file view | TP=2/EP=2 | 262,144 native window | 40.20 tok/s single; 102.19 tok/s at 4 requests | strict final-key retrieval passed; bounded trial |
+| `Qwen/Qwen3.8-Flash-Next` BF16 | TP=4/EP=4 | 32,768 cold input passed; 32,769 failed | 25.87 tok/s short request | long-context correctness failure, not full-window success |
+| `zai-org/GLM-5.3-Flash` FP8 | TP=4/EP=4 | 240,000 input retrieval passed | 20.16 tok/s single | bounded inference passed |
+| same Flash FP8, MTP=5 | TP=4/EP=4 | 78,000 input retrieval passed | 25.57 tok/s forced 512-token decode | bounded pass; less KV capacity, not formal GLM-5.3 |
+
+Formal **GLM-5.3 (not Flash)** remains the first priority and has **zero**
+successful local inference requests. NVFP4 constructor savings are diagnostics,
+not inference. The requested INT4/INT8 variant is being prepared separately.
+Prefer two nodes when the complete checkpoint, context, correctness and memory
+reserve fit; node count is not a success criterion. The formal ~465GB NVFP4 and
+~405GB INT4/INT8 checkpoints do not fit entirely in two 128GB nodes.
+See the [evidence summary](docs/benchmarks.md#recorded-matrix-and-node-count).
 
 The INT4 MTP mixed-prompt runs measured 16.37-23.71 tok/s. The NVFP4 60,469
 token attempt was unsafe: unified-memory pressure affected the management plane
@@ -35,9 +47,11 @@ The bounded Qwen TP2 native-window run recovered its mid-prompt marker with
 after a 258,048-token cache hit. Its 35-minute cold start remains an explicit
 loader bottleneck, not a production-ready startup result.
 
-The [MTP file-selection investigation](docs/blog/2026-08-31-qwen-mtp-file-selection.md)
-has verified the complete checkpoint and a zero-weight-copy draft view. Its
-preflight is published separately from the still-unverified GPU loading candidate.
+The [MTP file-selection experiment](docs/blog/2026-08-31-qwen-mtp-file-selection.md)
+subsequently reduced native draft loading from the historical 839–842 seconds
+to 19–20 seconds, with strict 262K final-key retrieval passing. Full target
+loading still took about 20 minutes; total container-start-to-ready was 22m21s.
+This is a historical comparison, not a matched-cache A/B or one-minute startup.
 
 The matched Qwen full-depth natural-output run decoded at 48.81 tok/s with
 86.86% MTP acceptance. A 3-step/4-draft candidate appeared faster at 63.67
@@ -106,9 +120,10 @@ Docker launcher is `scripts/launch-sglang-ring.sh`. The image contains the
 runtime and compatibility fixes, never the model weights.
 
 `Dockerfile.sglang-glm53` packages the exact SGLang digest used by the formal
-GLM-5.3 NVFP4 loader experiment, `fastsafetensors 0.3.3`, NCCL Mesh, and the two
-source-hash-guarded loader fixes. Its build, publication and four-rank inference
-smoke remain pending and are not reported as successful benchmark evidence.
+GLM-5.3 NVFP4 loader experiment, `fastsafetensors 0.3.3`, NCCL Mesh, and the
+source-hash-guarded fixes. Experimental builds and constructor diagnostics are
+recorded in `docs/image.md`; GHCR publication and corrected full TP4 inference
+remain incomplete. They are not successful formal GLM inference evidence.
 
 ## Documentation
 

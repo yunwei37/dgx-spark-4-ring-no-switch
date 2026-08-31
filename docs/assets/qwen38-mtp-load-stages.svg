@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="490" viewBox="0 0 960 490" role="img" aria-labelledby="t d">
+<title id="t">Qwen TP2 rank-zero weight loading stages</title>
+<desc id="d">Historical target 1221.11 seconds and MTP 839.12 seconds. Draft file view target 1215.30 seconds and MTP 19.00 seconds. Same runtime, historical comparison rather than matched-cache A/B.</desc>
+<rect width="960" height="490" fill="#fff"/>
+<g font-family="Arial,sans-serif">
+<text x="30" y="44" font-size="26" font-weight="700" fill="#182b3a">The MTP rescan is gone; target loading remains</text>
+<text x="30" y="78" font-size="17" fill="#546e7a">Qwen NVFP4 TP2 / EP2 · rank 0 · weight-loading stages only</text>
+<rect x="30" y="107" width="18" height="18" fill="#507a9a"/><text x="56" y="123" font-size="16">Target weights</text>
+<rect x="215" y="107" width="18" height="18" fill="#087e8b"/><text x="241" y="123" font-size="16">Built-in MTP</text>
+<text x="30" y="183" font-size="18">Historical</text><text x="30" y="207" font-size="14" fill="#546e7a">2026-08-28</text>
+<rect x="170" y="161" width="390.76" height="50" fill="#507a9a"/><rect x="560.76" y="161" width="268.52" height="50" fill="#087e8b"/>
+<text x="285" y="192" font-size="18" fill="#fff">1,221.11 s</text><text x="634" y="192" font-size="18" fill="#fff">839.12 s</text>
+<text x="30" y="267" font-size="18">Draft file view</text><text x="30" y="291" font-size="14" fill="#546e7a">2026-08-31</text>
+<rect x="170" y="245" width="388.90" height="50" fill="#507a9a"/><rect x="558.90" y="245" width="6.08" height="50" fill="#087e8b"/>
+<text x="285" y="276" font-size="18" fill="#fff">1,215.30 s</text><text x="578" y="276" font-size="18" fill="#087e8b">19.00 s MTP</text>
+<line x1="170" y1="329" x2="874" y2="329" stroke="#78909c"/>
+<text x="170" y="353" text-anchor="middle" font-size="14" fill="#546e7a">0</text>
+<text x="330" y="353" text-anchor="middle" font-size="14" fill="#546e7a">500</text>
+<text x="490" y="353" text-anchor="middle" font-size="14" fill="#546e7a">1000</text>
+<text x="650" y="353" text-anchor="middle" font-size="14" fill="#546e7a">1500</text>
+<text x="810" y="353" text-anchor="middle" font-size="14" fill="#546e7a">2000</text>
+<text x="889" y="353" font-size="14" fill="#546e7a">s</text>
+<text x="30" y="396" font-size="17" fill="#263238">Unchanged full checkpoint; temporary draft view selects 3 files instead of 206.</text>
+<text x="30" y="426" font-size="15" fill="#546e7a">Historical comparison, not matched-cache A/B. Warmup and API startup are excluded.</text>
+<text x="30" y="455" font-size="15" fill="#546e7a">Strict 262K-window retrieval passed; this does not establish production readiness.</text>
+</g></svg>
