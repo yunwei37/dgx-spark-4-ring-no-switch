@@ -1,5 +1,27 @@
 # Loader and memory results
 
+### Full-runtime integration preflight (18:38-18:50 UTC)
+
+The two-line serial-pread/synchronous-consumer candidate remains unintegrated
+and has not passed full-model GPU inference. A bounded non-GPU source preflight
+checked two proposed shortcuts against the actual cached runtime:
+
+- Native `LayeredModelLoader` requires `load_weights_to_module`; the installed
+  DeepSeek implementation (`c78b4ad7`), native consumer (`51ea4fe5`) and cached
+  GLM subclass variants have no such method. It is not a drop-in loader choice.
+- The actual patched NVFP4 implementation (`c6abd52b`) already uses the native
+  source/derived scale alias helper (`5d3b3d71`). Compatible scales reuse source
+  storage, consistent with the earlier GPU alias test. Removing a second
+  attribute does not establish any additional storage saving.
+
+No full model, new image or runtime modification was made. The temporary CPU
+container was deleted and independently confirmed absent; the original service
+stayed Ready. Full constructor, CPU staging, non-Torch driver allocations,
+native postprocessing and KV memory must still be tested together. The existing
+component RSS saving is not a complete-model capacity guarantee, and the old
+deferred-scale saving must not be counted twice. Formal GLM-5.3 NVFP4 remains
+at **zero successful full-model inference requests**.
+
 ### Native consumer and quantization post-load ABBA (17:36-17:38 UTC)
 
 This one-GPU test goes beyond tensor copies: it constructs real layer3 with
