@@ -1,9 +1,58 @@
 # Loader and memory results
 
+### Full native serial-pread/synchronous load (19:12 UTC)
+
+The candidate was assembled into a fixed image and **actually run with the full
+formal GLM-5.3 NVFP4 checkpoint on four GPUs**. It did not finish loading or
+produce any inference request. All78layers/256experts remained present, using
+native TP1/EP1/PP4 partitions21/19/19/19 and `flashinfer_cutlass`; no eager mode,
+extra quantization, cropped-model fixture or foreign-workspace eviction.
+
+![Full-model memory floor failure](assets/glm53-native-full-sync.svg)
+
+| PP rank | Constructor Torch GiB | Host available after constructor GiB | Sampled minimum GiB | Parent elapsed to exit s | Driver allocation warning lines |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 0 | 102.379 | 6.163 | 2.928 | 50.55 | 26 |
+| 1 | 103.827 | 6.023 | 2.843 | 41.84 | 40 |
+| 2 | 103.827 | 6.227 | 2.954 | 46.04 | 78 |
+| 3 | 105.582 | 4.575 | 2.784 | 47.57 | 80 |
+
+The full native constructors returned in5.97-7.54seconds. During initial
+weight reads every rank crossed the unchanged3GiB MemAvailable floor and
+its tested parent terminated only its own process group with SIGTERM.
+Each child exited-15 and parent75. NVIDIA `NV_ERR_NO_MEMORY` lines occurred
+19:12:47-51UTC; no Linux OOM kill, Xid, reboot or new systemd core was observed
+during the test. Warning-line counts are not distinct failed allocations.
+Requested100ms sampling stops after a crossing and cannot guarantee that3GiB
+remains reserved. Orderly cleanup is not a passing memory-safety result.
+
+The previous1.777GiB component RSS saving was real but insufficient for full
+loading. Non-final ranks logged `lm_head.weight not found in params_dict`
+after reading an output tensor they do not own. Moving ownership filtering
+before CPU tensor materialization is a concrete next hypothesis, **not yet a
+validated fix**; the final rank still needs its output tensor. Do not attribute
+all memory pressure to this one tensor or rerun this unchanged recipe.
+
+The389120byte OCI delta reused82verified existing base blobs; four imports
+took0.48-0.53seconds. This is incremental reuse of an existing large image,
+not a complete installation benchmark or a published working serving image.
+[Exact sanitized measurements](assets/glm53-native-full-sync.json) include
+image hashes, sampling, unchanged bounds and all four constructor/stop events.
+The build container, four test containers and exact candidate image tags were
+removed. Original-service four ranks were Ready/zero restarts19:20:49UTC.
+Backend health200 and missing/invalid401/authenticated correct200 passed
+19:21:37UTC; an independent external client passed401/401/200 at19:22:06-07UTC.
+All hosts retained their boots, SSH/services/GPUs and fresh Leases; four storage
+owners registered. Restore startup logged47/16/34/73driver warning lines in
+physical-node order, no Linux OOM/Xid. Post-Ready matching counts remained0
+through19:22:09UTC. No new core files. This is bounded recovery, not long-term
+stability. Candidate outcome: **failed-restored**.
+**Full GLM-5.3 NVFP4 inference remains0; throughput is not measured.**
+
 ### Full-runtime integration preflight (18:38-18:50 UTC)
 
-The two-line serial-pread/synchronous-consumer candidate remains unintegrated
-and has not passed full-model GPU inference. A bounded non-GPU source preflight
+At this earlier checkpoint the candidate was still unintegrated
+and had not passed full-model GPU inference. A bounded non-GPU source preflight
 checked two proposed shortcuts against the actual cached runtime:
 
 - Native `LayeredModelLoader` requires `load_weights_to_module`; the installed

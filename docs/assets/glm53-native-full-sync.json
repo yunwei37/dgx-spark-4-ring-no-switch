@@ -1,0 +1,519 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-31",
+  "window_utc": "19:11:56–19:12:56",
+  "outcome": "failed-restored",
+  "restoration": {
+    "test_containers_absent_utc": "2026-08-31T19:14:13Z",
+    "test_image_tags_absent": true,
+    "original_service_four_ranks_ready_utc": "2026-08-31T19:20:49Z",
+    "restarts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "backend": {
+      "utc": "2026-08-31T19:21:37Z",
+      "health": 200,
+      "missing": 401,
+      "invalid": 401,
+      "allowed": 200,
+      "correct": true
+    },
+    "external_client": {
+      "utc": "2026-08-31T19:22:06–19:22:07Z",
+      "missing": 401,
+      "invalid": 401,
+      "allowed": 200,
+      "correct": true
+    },
+    "all_host_boots_unchanged": true,
+    "all_ssh_services_gpu_healthy": true,
+    "all_cluster_nodes_ready_and_fresh": true,
+    "storage_owners": 4,
+    "storage_replication": "000",
+    "filer_http": 200,
+    "post_ready_until_utc": "2026-08-31T19:22:09Z",
+    "post_ready_driver_oom_xid_warning_lines": 0,
+    "startup_driver_warning_lines_physical_nodes": [
+      47,
+      16,
+      34,
+      73
+    ],
+    "notes": "Startup driver warnings occurred; bounded recovery is not long-term stability."
+  },
+  "model": "LibertAIDAI/GLM-5.3-NVFP4",
+  "revision": "653d98214a487d78c1b2a37167b56764b6240080",
+  "checkpoint_shards": 282,
+  "checkpoint_bytes": 464822689680,
+  "architecture": {
+    "layers": 78,
+    "experts": 256,
+    "tp": 1,
+    "ep": 1,
+    "pp": 4,
+    "partition": [
+      21,
+      19,
+      19,
+      19
+    ]
+  },
+  "image": {
+    "manifest": "sha256:ed01760226eb0ad93576f8c915ec349165f846bc89d068b93e5403ec83e44006",
+    "config": "sha256:5cc45f71cabec52855feb9a40291bcd7d1ed817d4b789e706cd5a2e319827e75",
+    "publication": "temporary additive import only; not a working published serving image"
+  },
+  "candidate": {
+    "reader": "serial safetensors pread",
+    "consumer": "synchronous native Deepseek",
+    "quantization_backend": "flashinfer_cutlass",
+    "context": 2048,
+    "mem_fraction_static": 0.985,
+    "disable_shared_experts_fusion": true,
+    "max_running_requests": 1,
+    "chunked_prefill_size": 256,
+    "torch_caps_gib": [
+      105,
+      107.5,
+      107.5,
+      107.5
+    ],
+    "host_floor_bytes": 3221225472,
+    "sampling_ms": 100,
+    "logging_ms": 5000,
+    "parent_timeout_seconds": 2650,
+    "pod_deadline_seconds": 2700
+  },
+  "inference_requests": 0,
+  "tokens_per_second": null,
+  "full_load_seconds": null,
+  "ranks": [
+    {
+      "rank": 0,
+      "constructor": {
+        "allocated_bytes": 109928457728,
+        "checkpoint_loaded": false,
+        "constructor_returned": true,
+        "elapsed_seconds": 7.513042899998254,
+        "host_available_bytes": 6617878528,
+        "peak_bytes": 109928457728,
+        "pp_rank": 0,
+        "reserved_bytes": 109934804992
+      },
+      "stop": {
+        "reason": "host_available_below_3GiB",
+        "child_exit": -15,
+        "elapsed": 50.55451023999922,
+        "host_available_min": 3143561216
+      },
+      "child_exit": -15,
+      "parent_exit": 75,
+      "signal_selftest_passed": true,
+      "full_loaded_marker": false,
+      "driver_allocation_warning_lines": 26,
+      "linux_oom_kills": 0,
+      "xid": 0,
+      "core_files": 0,
+      "host_samples": [
+        {
+          "elapsed": 0.0000467690042569302,
+          "available": 123085111296,
+          "minimum": 123085111296,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 5.018221247002657,
+          "available": 122995830784,
+          "minimum": 122966913024,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 10.032268064998789,
+          "available": 122825957376,
+          "minimum": 122825957376,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 15.045491851000406,
+          "available": 122648752128,
+          "minimum": 122648752128,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 20.09618875900196,
+          "available": 121952944128,
+          "minimum": 121952944128,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 25.11034224100149,
+          "available": 119755145216,
+          "minimum": 119755145216,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 30.13148568700126,
+          "available": 119401541632,
+          "minimum": 119400103936,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 35.16171807700448,
+          "available": 119409680384,
+          "minimum": 119400103936,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 40.1866536689995,
+          "available": 110136455168,
+          "minimum": 110136455168,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 45.216955864998454,
+          "available": 8885460992,
+          "minimum": 8885460992,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 50.23735487700469,
+          "available": 3143561216,
+          "minimum": 3143561216,
+          "floor": 3221225472,
+          "reason": "host_available_below_3GiB"
+        }
+      ]
+    },
+    {
+      "rank": 1,
+      "constructor": {
+        "allocated_bytes": 111483175424,
+        "checkpoint_loaded": false,
+        "constructor_returned": true,
+        "elapsed_seconds": 5.970374028998776,
+        "host_available_bytes": 6467117056,
+        "peak_bytes": 111483175424,
+        "pp_rank": 1,
+        "reserved_bytes": 111486697472
+      },
+      "stop": {
+        "reason": "host_available_below_3GiB",
+        "child_exit": -15,
+        "elapsed": 41.841449684994586,
+        "host_available_min": 3052421120
+      },
+      "child_exit": -15,
+      "parent_exit": 75,
+      "signal_selftest_passed": true,
+      "full_loaded_marker": false,
+      "driver_allocation_warning_lines": 40,
+      "linux_oom_kills": 0,
+      "xid": 0,
+      "core_files": 0,
+      "host_samples": [
+        {
+          "elapsed": 0.00010641599510563537,
+          "available": 123199717376,
+          "minimum": 123199717376,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 5.060426956995798,
+          "available": 122748596224,
+          "minimum": 122748596224,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 10.099576953994983,
+          "available": 122638761984,
+          "minimum": 122638761984,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 15.141079064000223,
+          "available": 122573230080,
+          "minimum": 122572296192,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 20.182335887999216,
+          "available": 121870196736,
+          "minimum": 121870196736,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 25.208594333998917,
+          "available": 121158094848,
+          "minimum": 121157832704,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 30.2257493329962,
+          "available": 120117612544,
+          "minimum": 120109207552,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 35.245505967999634,
+          "available": 50412175360,
+          "minimum": 50412175360,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 40.270938887995726,
+          "available": 4953980928,
+          "minimum": 4845891584,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 41.575720233995526,
+          "available": 3052421120,
+          "minimum": 3052421120,
+          "floor": 3221225472,
+          "reason": "host_available_below_3GiB"
+        }
+      ]
+    },
+    {
+      "rank": 2,
+      "constructor": {
+        "allocated_bytes": 111483175424,
+        "checkpoint_loaded": false,
+        "constructor_returned": true,
+        "elapsed_seconds": 7.536258585998439,
+        "host_available_bytes": 6686113792,
+        "peak_bytes": 111483175424,
+        "pp_rank": 2,
+        "reserved_bytes": 111486697472
+      },
+      "stop": {
+        "reason": "host_available_below_3GiB",
+        "child_exit": -15,
+        "elapsed": 46.04331932600326,
+        "host_available_min": 3172118528
+      },
+      "child_exit": -15,
+      "parent_exit": 75,
+      "signal_selftest_passed": true,
+      "full_loaded_marker": false,
+      "driver_allocation_warning_lines": 78,
+      "linux_oom_kills": 0,
+      "xid": 0,
+      "core_files": 0,
+      "host_samples": [
+        {
+          "elapsed": 0.00005968000186840072,
+          "available": 122909360128,
+          "minimum": 122909360128,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 5.012258134003787,
+          "available": 122651869184,
+          "minimum": 122649759744,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 10.043987205004669,
+          "available": 122586198016,
+          "minimum": 122585423872,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 15.057310582000355,
+          "available": 122466816000,
+          "minimum": 122465767424,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 20.138082645004033,
+          "available": 121806372864,
+          "minimum": 121806372864,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 25.16163967600005,
+          "available": 121293840384,
+          "minimum": 121293840384,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 30.200317375005397,
+          "available": 120794275840,
+          "minimum": 120789917696,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 35.227524114001426,
+          "available": 119891984384,
+          "minimum": 119891984384,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 40.253143875001115,
+          "available": 12738465792,
+          "minimum": 12738465792,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 45.27514960800181,
+          "available": 4730912768,
+          "minimum": 4472446976,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 45.77776944899961,
+          "available": 3172118528,
+          "minimum": 3172118528,
+          "floor": 3221225472,
+          "reason": "host_available_below_3GiB"
+        }
+      ]
+    },
+    {
+      "rank": 3,
+      "constructor": {
+        "allocated_bytes": 113367608832,
+        "checkpoint_loaded": false,
+        "constructor_returned": true,
+        "elapsed_seconds": 6.778138243003923,
+        "host_available_bytes": 4912529408,
+        "peak_bytes": 113367608832,
+        "pp_rank": 3,
+        "reserved_bytes": 113374134272
+      },
+      "stop": {
+        "reason": "host_available_below_3GiB",
+        "child_exit": -15,
+        "elapsed": 47.57108612899901,
+        "host_available_min": 2988888064
+      },
+      "child_exit": -15,
+      "parent_exit": 75,
+      "signal_selftest_passed": true,
+      "full_loaded_marker": false,
+      "driver_allocation_warning_lines": 80,
+      "linux_oom_kills": 0,
+      "xid": 0,
+      "core_files": 0,
+      "host_samples": [
+        {
+          "elapsed": 0.00005238399899099022,
+          "available": 123104411648,
+          "minimum": 123104411648,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 5.012821365999116,
+          "available": 122930917376,
+          "minimum": 122930917376,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 10.02732241400372,
+          "available": 122776805376,
+          "minimum": 122775408640,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 15.047050875000423,
+          "available": 122630701056,
+          "minimum": 122630701056,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 20.068845515001158,
+          "available": 121875410944,
+          "minimum": 121875410944,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 25.093747397004336,
+          "available": 121171890176,
+          "minimum": 121171890176,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 30.115677611000137,
+          "available": 120893669376,
+          "minimum": 120893407232,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 35.14340117500251,
+          "available": 120908214272,
+          "minimum": 120893407232,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 40.1705109550021,
+          "available": 112557625344,
+          "minimum": 112557625344,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 45.19741994400101,
+          "available": 8289202176,
+          "minimum": 8289202176,
+          "floor": 3221225472,
+          "reason": null
+        },
+        {
+          "elapsed": 47.30662627600395,
+          "available": 2988888064,
+          "minimum": 2988888064,
+          "floor": 3221225472,
+          "reason": "host_available_below_3GiB"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Constructor return is not checkpoint load or inference.",
+    "Sampled floor stops after crossing; it does not guarantee 3GiB is reserved.",
+    "Native driver allocation failures occurred before termination; no Linux OOM kill/Xid was observed during test.",
+    "Non-final ranks logged unowned lm_head.weight after materialization. Pre-read ownership filtering is a next hypothesis, not a validated fix.",
+    "No host, cache-drop, swap, firewall or foreign-workspace changes."
+  ]
+}
