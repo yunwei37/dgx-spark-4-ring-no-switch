@@ -66,6 +66,37 @@ scheduler after pausing the original model, because unrelated work was retained.
 Lowering the new Pod request would not make the same static model fit that
 reservation boundary. No new NVFP4 full-load attempt was started for this audit.
 
+### Alternative NVFP4 checkpoint inspection, 2026-08-31
+
+A fresh read-only Hub metadata/config inspection found the following full
+GLM-5.3 artifacts, all declaring78target layers and256routed experts. Sizes
+sum safetensors file metadata; they are not measured GPU residency or a full
+download/hash verification of these alternatives.
+
+| Publisher | Pinned revision | Shards | Safetensors bytes |
+| --- | --- | ---: | ---: |
+| [RadixArk](https://huggingface.co/RadixArk/GLM-5.3-NVFP4/tree/363e8f086905afd83db356a620f9aa401c23800a) | 363e8f086905afd83db356a620f9aa401c23800a | 47 | 464,823,042,096 |
+| [Inferact](https://huggingface.co/Inferact/GLM-5.3-NVFP4/tree/ce67b36f3669192b5bb233819f0fda6c8a9837f8) | ce67b36f3669192b5bb233819f0fda6c8a9837f8 | 88 | 464,822,832,448 |
+| [incoai](https://huggingface.co/incoai/GLM-5.3-NVFP4/tree/54e52520606f96b3d9fc84088ad22882a61648ac) | 54e52520606f96b3d9fc84088ad22882a61648ac | 87 | 464,822,872,912 |
+| [underlabs](https://huggingface.co/underlabs/GLM-5.3-NVFP4/tree/88b9cfb6d170d31a84e58333c5658b325b5187c0) | 88b9cfb6d170d31a84e58333c5658b325b5187c0 | 88 | 450,931,568,496 |
+
+The first three do not offer a materially smaller byte layout; inspected
+attention projection entries remain excluded from NVFP4. The underlabs card
+attributes its smaller size to MTP quantization only, with target weights
+unchanged from Inferact. It is therefore not evidence of lower target-model
+residency for our current no-MTP baseline. No additional weight copy was
+downloaded and no alternative was run. This inspected set does not establish
+that no other suitable artifact can exist.
+
+An important naming distinction in the
+[community INTmix recipe](https://github.com/tonyd2wild/GLM-5.3-Int4-Int8Mix-TP4-4x-DGX-Spark/tree/a1806cb82493aa6f28709f77acf59c1937bdf756):
+its NVFP4-KV/DFlash2 performance lane still uses INT4/INT8 model weights.
+Its reported51.03tok/s structured-output result is not an NVFP4-weight result
+or our measurement. The recipe also assumes recurring cache drops, swap and
+sub-GiB available memory; those host changes are not imported into our test.
+For future A/B, separate weight format, KV format, drafter and workload before
+comparing numbers. Full NVFP4-weight inference remains unpassed here.
+
 ## Formal GLM-5.3 INT4/INT8: file staging is separate from model size
 
 The fixed `Tech2wild/GLM-5.3-Int4-Int8Mix` revision
