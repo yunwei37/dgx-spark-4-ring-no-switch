@@ -85,6 +85,13 @@ GHCR publication and digest: pending
 
 Four-rank full-checkpoint inference smoke: pending
 
+The first actual ARM64 build on 2026-08-31 installed 0.3.3 successfully but
+found that the base uses a Python virtual environment, not `/usr/local/lib`.
+The package patch now resolves the installed distribution's file location
+instead of assuming a system installation path. The exact unmodified and
+patched SHA-256 checks are unchanged. This packaging failure happened before
+any model load and is not an inference result.
+
 The earlier four-rank run proved NCCL Mesh startup and reached ModelOpt FP4
 loading, but exhausted unified memory before serving a request. It does not
 validate this assembled image. Publication and serving results must remain
