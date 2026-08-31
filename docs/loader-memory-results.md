@@ -134,3 +134,36 @@ and the separate [retention report94](https://github.com/foundation-model-stack/
 were still open when checked. Neither an upgrade nor this microprobe proves
 a safe full GLM load. A real-checkpoint copier A/B remains necessary before
 retaining a performance choice; formal GLM-5.3 still has zero successful requests.
+
+## Checkpoint download transport is not GPU loader throughput
+
+During2026-08-31 formal INT4/INT8 preparation, a native SeaweedFS4.44 FUSE
+mount on a non-GPU control node uploaded the fixed405GB snapshot through
+ordinary Kubernetes addresses. One attempt failed with Filer connection
+cancellation followed by write/flushEIO. Same-directory resume preserved
+partial bytes and progressed; full checksums were still pending. This was
+not a model OOM or a successful inference run.
+
+Read-only sampling under that live upload isolated internal TCP peers:
+
+| Measured boundary | Observation |
+| --- | --- |
+| Volume TCP connections | 165 established across four servers |
+| Median TCP RTT by volume server | 1,071 / 352 / 349 / 342 ms |
+| Matched sockets over 10.064 seconds | 433,952,785 bytes sent; 10,979,850 retransmitted |
+| Filer gRPC | Three sockets; median RTT 329.525 ms |
+| Direct Tailscale campus peers | Ping 343–352 ms; no DERP path observed |
+| Ordinary campus IP ping | Two peers averaged 0.412 / 0.217 ms, three replies each |
+| Following 10.002-second tunnel sample | 493,709,320 TX bytes; 8,576 additional TX drops |
+
+These observations show substantial overlay-path delay/loss under bulk upload,
+not intrinsically slow FUSE or NVMe. The ping probes differ and were sampled
+sequentially, not as a controlled throughput A/B. Counters do not identify the
+exact internal drop site or sole cause of the earlier gRPC cancellation.
+The downloader's2Gi cgroup recorded limit hits but no OOM/kill and2.285seconds
+cumulative memory pressure; we do not infer a memory cause from working set.
+
+No host network, tunnel, CSI, offload, queue or memory policy was changed.
+The progressing downloader was not restarted. Spark-side bulk model loading
+uses the separate ConnectX volume-server path, so these download observations
+cannot replace a full-checkpoint loader profile or inference benchmark.
