@@ -111,10 +111,33 @@ The attempt reused physical cycle order 0/1/2/3. Its TP pairs (0,1) and
 observed TP connection followed by PP failure is consistent with this rank
 mapping error. A proposed 0/1/3/2 logical order maps both kinds of pair to
 existing direct links, without changing any cable, route or host setting.
-That correction is prepared but not yet tested; capacity and performance
-remain unknown. It cannot stand in for the unresolved optimized TP4 cell.
+That correction was subsequently tested below. It cannot stand in for the
+unresolved optimized TP4 cell.
 The diagnostic was removed and the original four-rank service was verified
 Ready with zero restarts and an authenticated correct response at 12:01 UTC.
+
+At12:12UTC the corrected0/1/3/2 mapping completed native NCCL initialization
+and produced all four constructor reports. No cable, route or host setting
+changed. The42/36 allocation measured109.269445GiB of static tensor storage
+per first-stage rank and99.863876GiB per second-stage rank. The head reported
+110.50GiB available before construction, leaving only1.23GiB for everything
+outside these tensors. That does not establish enough loader/KV/runtime margin.
+Actual Torch allocation was about71.38MiB/rank because this was a FakeTensor
+audit; all78layers were represented, but no weights or requests were loaded.
+The diagnostic Job was removed. At12:21UTC the original four-rank service
+was Ready with zero restarts, fresh node Leases and correct authenticated
+generation. This is passed-restored for the bounded constructor diagnostic,
+not a passing real-model capacity, loading or inference result.
+
+There is a further loader boundary: the
+[pinned SGLang iterator](https://github.com/sgl-project/sglang/blob/f609d677b/python/sglang/srt/model_loader/weight_utils.py)
+uses the global WORLD group, not the tensor-parallel subgroup. In the inspected
+fastsafetensors0.3.3 source, get_tensor performs a group broadcast. The new
+logical grid therefore still needs a loader-group validation, even though
+native TP/PP initialization passed. The iterator also lacks an explicit
+FilesBufferOnDevice close; possible retained buffers must be measured, not
+assumed fixed by a patch to the unused ParallelLoader path. No new loader
+patch, real-weight trial or inference performance is claimed for this run.
 
 ## Formal GLM-5.3 INT4/INT8: file staging is separate from model size
 

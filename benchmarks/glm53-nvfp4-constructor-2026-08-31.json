@@ -57,10 +57,69 @@
     "temporary_job_removed": true,
     "interpretation": "Native PP groups [0,2] and [1,3] select non-neighbor nodes on the physical ring. TP communicator connected; PP warm-up all_reduce failed. Group-to-link mapping is the next test hypothesis, not a proven library fault.",
     "next_candidate_logical_order": [0, 1, 3, 2],
-    "next_candidate_tested": false,
+    "next_candidate_tested": true,
     "restoration": {
       "observed_utc": "2026-08-31T12:01:26Z",
       "outcome": "failed-restored",
+      "four_original_ranks_ready": true,
+      "restarts": [0, 0, 0, 0],
+      "authenticated_http": 200,
+      "correct_arithmetic_response": true,
+      "diagnostic_job_and_pods_remaining": 0
+    }
+  },
+  "corrected_tp2_pp2_capacity_diagnostic": {
+    "observed_utc": "2026-08-31T12:12:44Z",
+    "logical_order_relative_to_physical_cycle": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "tp": 2,
+    "ep": 2,
+    "pp": 2,
+    "layers_by_stage": [
+      42,
+      36
+    ],
+    "all_78_layers_retained": true,
+    "native_nccl_init_passed_ranks": 4,
+    "constructor_reports": 4,
+    "unique_registered_storage_bytes_by_rank": [
+      117327172768,
+      117327172768,
+      107228020288,
+      107228020288
+    ],
+    "actual_torch_allocated_bytes_by_rank": [
+      74857472,
+      74857472,
+      74845184,
+      74845184
+    ],
+    "distributed_init_reported_memory_GiB": [
+      0.9,
+      0.95,
+      0.99,
+      0.92
+    ],
+    "preload_reported_available_GiB": [
+      110.5,
+      112.08,
+      111.92,
+      112.08
+    ],
+    "static_storage_scope": "FakeTensor storage, not real allocation or full loading",
+    "adequate_runtime_margin_established": false,
+    "checkpoint_loaded": false,
+    "completed_inference_requests": 0,
+    "temporary_job_removed": true,
+    "remaining_loader_risk": "Pinned fastsafetensors iterator uses WORLD, not the TP subgroup. Constructor success does not validate later broadcasts for this logical grid.",
+    "restoration": {
+      "observed_utc": "2026-08-31T12:21:28Z",
+      "outcome": "passed-restored",
+      "scope": "native group initialization and bounded constructor audit only",
       "four_original_ranks_ready": true,
       "restarts": [0, 0, 0, 0],
       "authenticated_http": 200,
