@@ -33,6 +33,7 @@ required = (
     "images/runtime/apply_sglang_nvfp4_gated_tp.py",
     "images/runtime/apply_sglang_qwen_sm121.py",
     "images/runtime/apply_fastsafetensors_033_batch_release.py",
+    "images/runtime/apply_fastsafetensors_completed_file_release.py",
     "images/runtime/apply_sglang_fastsafetensors_local_device.py",
     "benchmarks/glm52-int4-int8mix-2026-08-24.json",
     "benchmarks/glm52-nvfp4-2026-08-25.json",
@@ -152,6 +153,7 @@ for required_text in (
     "LD_LIBRARY_PATH=/opt/nccl-mesh/lib:",
     "apply_dflash2_swa_under_mla.py",
     "apply_fastsafetensors_cache_release.py",
+    "apply_fastsafetensors_completed_file_release.py",
     "verify_dflash2.py",
 ):
     if required_text not in dflash2_dockerfile:
@@ -160,6 +162,10 @@ if "EXPECTED_SHA256" not in (
     ROOT / "images/runtime/apply_dflash2_swa_under_mla.py"
 ).read_text(encoding="utf-8"):
     fail("DFlash2 SWA patch must retain its source hash guard")
+if "EXPECTED_SHA256" not in (
+    ROOT / "images/runtime/apply_fastsafetensors_completed_file_release.py"
+).read_text(encoding="utf-8"):
+    fail("completed-file release patch must retain its source hash guard")
 
 readme = (ROOT / "README.md").read_text(encoding="utf-8")
 if "60,469" not in readme or "unsafe" not in readme:
