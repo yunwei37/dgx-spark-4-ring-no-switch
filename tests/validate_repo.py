@@ -151,6 +151,7 @@ for required_text in (
     "MESH_COMMIT=19924dcc7c571d6e260953724d394ae50bad82cf",
     "LD_LIBRARY_PATH=/opt/nccl-mesh/lib:",
     "apply_dflash2_swa_under_mla.py",
+    "apply_fastsafetensors_cache_release.py",
     "verify_dflash2.py",
 ):
     if required_text not in dflash2_dockerfile:
