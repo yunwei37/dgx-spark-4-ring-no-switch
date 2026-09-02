@@ -214,6 +214,34 @@ does not prove long-term stability or the native1,048,576-token context. The
 test resources were removed; checkpoint storage and credentials were retained.
 See the [sanitized pass record](../benchmarks/glm53-intmix-native-allocator-pass-2026-08-31.json).
 
+## Formal GLM-5.3 Int4/Int8 near-200K safety failure, 2026-09-02
+
+A materially smaller-cache follow-up tested whether the same full checkpoint
+could safely approach 200K with filesystem KV offload. The candidate used
+TP4, a 200,000-token server limit, 6.82 GB explicit NVFP4 MLA KV per rank,
+32 MiB CPU staging and the existing process-local filesystem secondary tier.
+It loaded all 282 shards in 532.40 seconds, became ready in 543.37 seconds,
+reported 95.53 GiB model memory and 200,704 KV tokens, and passed an exact
+short request with zero rank restarts.
+
+The server counted the long structured request as 199,489 input tokens. It
+entered prefill with a 256-token output budget but did not return a response or
+recover its marker. Head `MemAvailable` fell from 2,774,544 KiB through the
+declared 1.5 GiB abort line. Stopping the client did not promptly cancel server
+prefill; while the engine reported that it could not store additional blocks,
+availability reached 367,564 KiB. The serving workload was then stopped.
+
+No rank restarted and no node became NotReady. After the model processes
+exited, every rank recovered to 118,468,760-118,702,504 KiB available memory.
+The candidate was removed and the inactive baseline restored. This is a
+`failed-restored` safety result: filesystem offload can retain completed prefix
+blocks, but it did not make the active near-200K request fit. No decode or
+marker-correctness throughput is reported.
+
+Machine-readable evidence:
+
+- [`glm53-intmix-200k-2026-09-02.json`](../benchmarks/glm53-intmix-200k-2026-09-02.json)
+
 ## SeaweedFS ConnectX storage measurements
 
 With rank 2 offline, the remaining three-node storage path wrote a temporary

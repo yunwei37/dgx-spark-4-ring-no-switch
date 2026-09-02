@@ -21,6 +21,7 @@ weights or modify host management networking.
 | `zai-org/GLM-5.3-Flash` FP8 | TP=4/EP=4 | 240,000 input retrieval passed | 20.16 tok/s single | bounded inference passed |
 | same Flash FP8, MTP=5 | TP=4/EP=4 | 78,000 input retrieval passed | 25.57 tok/s forced 512-token decode | bounded pass; less KV capacity, not formal GLM-5.3 |
 | `Tech2wild/GLM-5.3-Int4-Int8Mix` | TP=4 | 8,192 bounded baseline | 12.90 tok/s mean across 3 trials | formal GLM-5.3 loaded and answered real requests; full 1M context not yet passed |
+| same formal Int4/Int8Mix checkpoint | TP=4 | 199,489 input attempted | not measured | startup and short request passed; near-200K prefill crossed the memory safety floor and was stopped |
 
 Formal **GLM-5.3 (not Flash)** remains the first priority. The fixed
 `Tech2wild/GLM-5.3-Int4-Int8Mix` revision now completes TP4 loading,
@@ -65,6 +66,15 @@ Prefer two nodes when the complete checkpoint, context, correctness and memory
 reserve fit; node count is not a success criterion. The formal ~465GB NVFP4 and
 ~405GB INT4/INT8 checkpoints do not fit entirely in two 128GB nodes.
 See the [evidence summary](docs/benchmarks.md#recorded-matrix-and-node-count).
+
+The later 200K fit candidate loaded all 282 shards in 532.40 seconds, exposed
+200,704 KV tokens and passed an exact short request. Its 199,489-token request
+did not complete: active-request memory pressure reduced head
+`MemAvailable` from 2.65 GiB to 359 MiB after client cancellation lagged. All
+four nodes remained Ready and the candidate was removed. Disk KV offload is
+therefore useful for completed reusable prefixes, but it is not evidence that
+active 200K KV fits. See the
+[sanitized failed-run record](benchmarks/glm53-intmix-200k-2026-09-02.json).
 
 The INT4 MTP mixed-prompt runs measured 16.37-23.71 tok/s. The NVFP4 60,469
 token attempt was unsafe: unified-memory pressure affected the management plane

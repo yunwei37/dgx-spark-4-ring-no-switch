@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-09-02",
+  "outcome": "failed-restored",
+  "hardware": {
+    "nodes": 4,
+    "platform": "NVIDIA DGX Spark",
+    "interconnect": "direct ConnectX ring without a switch"
+  },
+  "checkpoint": {
+    "repository": "Tech2wild/GLM-5.3-Int4-Int8Mix",
+    "revision": "206507bbb047d8223964a0414cd83230c59428f9"
+  },
+  "runtime": {
+    "image_digest": "sha256:b6330ce7cf1c8bcc8ee16aef6c30a60412229c33dd9de2521dba6d9a2de57c98",
+    "vllm": "0.23.1rc1.dev190+gab6660699.d20260705",
+    "parallelism": "TP4",
+    "model_load_format": "native_safetensors",
+    "max_model_length": 200000,
+    "gpu_memory_utilization": 0.89,
+    "kv_cache_dtype": "nvfp4_ds_mla",
+    "kv_cache_bytes_per_rank": 6820000000,
+    "cpu_offload_staging_bytes": 33554432,
+    "filesystem_offload": true,
+    "mtp": false,
+    "enforce_eager": false
+  },
+  "startup": {
+    "checkpoint_shards_loaded": 282,
+    "weight_load_seconds": 532.40,
+    "total_model_load_seconds": 543.37,
+    "model_memory_gib_per_rank": 95.53,
+    "reported_kv_token_capacity": 200704,
+    "reported_maximum_concurrency_at_200k": 1.0,
+    "pod_restarts_before_long_request": 0
+  },
+  "correctness": {
+    "authorized_short_request_http": 200,
+    "short_request_exact_match": true,
+    "long_prompt_input_tokens": 199489,
+    "long_prompt_output_budget": 256,
+    "long_marker_recovered": false,
+    "long_request_completed": false
+  },
+  "safety": {
+    "head_available_memory_kib_before_long_request": 2774544,
+    "declared_abort_line_kib": 1572864,
+    "head_available_memory_kib_at_client_abort": 1496036,
+    "head_available_memory_kib_after_delayed_server_cancellation": 367564,
+    "rank_restarts": 0,
+    "nodes_became_not_ready": 0,
+    "available_memory_kib_after_workload_stop_range": [118468760, 118702504]
+  },
+  "measurement_boundary": [
+    "The full checkpoint loaded and a short request passed, but the 199489-token request did not complete and is not a context pass.",
+    "Filesystem KV offload retained completed prompt blocks; it did not make active-request KV fit in host memory.",
+    "Client disconnect did not promptly cancel server prefill, so the service was stopped at the safety boundary.",
+    "The bounded candidate was removed, all four nodes remained Ready, and the inactive baseline was restored."
+  ]
+}
