@@ -1,0 +1,471 @@
+{
+    "label":  "gmu083-verify",
+    "model":  "deepseek-v4.1-flash",
+    "revision":  "dba1be0a40aa45a94ad051997016db3960a90277",
+    "prompt_set":  "v1",
+    "started":  "2026-09-11T09:06:48Z",
+    "finished":  "2026-09-11T09:12:09Z",
+    "headline":  [
+                     {
+                         "level":  "C1",
+                         "agg_tok_s":  44.21,
+                         "per_stream_tok_s":  50.14,
+                         "ttft_mean_s":  0.376
+                     },
+                     {
+                         "level":  "C2",
+                         "agg_tok_s":  69.13,
+                         "per_stream_tok_s":  39.51,
+                         "ttft_mean_s":  0.373
+                     },
+                     {
+                         "level":  "C4",
+                         "agg_tok_s":  99.13,
+                         "per_stream_tok_s":  28.44,
+                         "ttft_mean_s":  0.476
+                     },
+                     {
+                         "level":  "C6",
+                         "agg_tok_s":  124.35,
+                         "per_stream_tok_s":  23.84,
+                         "ttft_mean_s":  0.59
+                     },
+                     {
+                         "level":  "C8",
+                         "agg_tok_s":  144.71,
+                         "per_stream_tok_s":  21.08,
+                         "ttft_mean_s":  0.638
+                     }
+                 ],
+    "batches":  [
+                    {
+                        "c":  1,
+                        "category":  "coding",
+                        "agg_tok_s":  61.54,
+                        "per_stream_tok_s":  68.06,
+                        "ttft_mean_s":  0.326,
+                        "tokens":  200,
+                        "wall_s":  3.25
+                    },
+                    {
+                        "c":  1,
+                        "category":  "json",
+                        "agg_tok_s":  48.4,
+                        "per_stream_tok_s":  58.2,
+                        "ttft_mean_s":  0.305,
+                        "tokens":  83,
+                        "wall_s":  1.715
+                    },
+                    {
+                        "c":  1,
+                        "category":  "narrative",
+                        "agg_tok_s":  27.5,
+                        "per_stream_tok_s":  29.57,
+                        "ttft_mean_s":  0.38,
+                        "tokens":  136,
+                        "wall_s":  4.946
+                    },
+                    {
+                        "c":  1,
+                        "category":  "prose",
+                        "agg_tok_s":  26.2,
+                        "per_stream_tok_s":  28.26,
+                        "ttft_mean_s":  0.389,
+                        "tokens":  127,
+                        "wall_s":  4.848
+                    },
+                    {
+                        "c":  1,
+                        "category":  "math",
+                        "agg_tok_s":  62.06,
+                        "per_stream_tok_s":  68.36,
+                        "ttft_mean_s":  0.311,
+                        "tokens":  200,
+                        "wall_s":  3.223
+                    },
+                    {
+                        "c":  1,
+                        "category":  "reasoning",
+                        "agg_tok_s":  49.87,
+                        "per_stream_tok_s":  53.78,
+                        "ttft_mean_s":  0.31,
+                        "tokens":  200,
+                        "wall_s":  4.011
+                    },
+                    {
+                        "c":  1,
+                        "category":  "summary",
+                        "agg_tok_s":  27.32,
+                        "per_stream_tok_s":  31.31,
+                        "ttft_mean_s":  0.564,
+                        "tokens":  114,
+                        "wall_s":  4.173
+                    },
+                    {
+                        "c":  1,
+                        "category":  "format",
+                        "agg_tok_s":  50.77,
+                        "per_stream_tok_s":  63.61,
+                        "ttft_mean_s":  0.421,
+                        "tokens":  102,
+                        "wall_s":  2.009
+                    },
+                    {
+                        "c":  1,
+                        "category":  "ceiling_count",
+                        "agg_tok_s":  71.59,
+                        "per_stream_tok_s":  79.55,
+                        "ttft_mean_s":  0.346,
+                        "tokens":  239,
+                        "wall_s":  3.338
+                    },
+                    {
+                        "c":  2,
+                        "category":  "coding",
+                        "agg_tok_s":  106.49,
+                        "per_stream_tok_s":  58.46,
+                        "ttft_mean_s":  0.302,
+                        "tokens":  400,
+                        "wall_s":  3.756
+                    },
+                    {
+                        "c":  2,
+                        "category":  "json",
+                        "agg_tok_s":  60.28,
+                        "per_stream_tok_s":  36.89,
+                        "ttft_mean_s":  0.356,
+                        "tokens":  170,
+                        "wall_s":  2.82
+                    },
+                    {
+                        "c":  2,
+                        "category":  "narrative",
+                        "agg_tok_s":  36.54,
+                        "per_stream_tok_s":  18.97,
+                        "ttft_mean_s":  0.288,
+                        "tokens":  285,
+                        "wall_s":  7.8
+                    },
+                    {
+                        "c":  2,
+                        "category":  "prose",
+                        "agg_tok_s":  42.59,
+                        "per_stream_tok_s":  22.4,
+                        "ttft_mean_s":  0.277,
+                        "tokens":  244,
+                        "wall_s":  5.729
+                    },
+                    {
+                        "c":  2,
+                        "category":  "math",
+                        "agg_tok_s":  90.54,
+                        "per_stream_tok_s":  50.9,
+                        "ttft_mean_s":  0.342,
+                        "tokens":  400,
+                        "wall_s":  4.418
+                    },
+                    {
+                        "c":  2,
+                        "category":  "reasoning",
+                        "agg_tok_s":  74.74,
+                        "per_stream_tok_s":  40.0,
+                        "ttft_mean_s":  0.335,
+                        "tokens":  400,
+                        "wall_s":  5.352
+                    },
+                    {
+                        "c":  2,
+                        "category":  "summary",
+                        "agg_tok_s":  40.52,
+                        "per_stream_tok_s":  24.37,
+                        "ttft_mean_s":  0.701,
+                        "tokens":  224,
+                        "wall_s":  5.529
+                    },
+                    {
+                        "c":  2,
+                        "category":  "format",
+                        "agg_tok_s":  101.34,
+                        "per_stream_tok_s":  64.11,
+                        "ttft_mean_s":  0.385,
+                        "tokens":  204,
+                        "wall_s":  2.013
+                    },
+                    {
+                        "c":  2,
+                        "category":  "ceiling_count",
+                        "agg_tok_s":  133.92,
+                        "per_stream_tok_s":  72.1,
+                        "ttft_mean_s":  0.267,
+                        "tokens":  478,
+                        "wall_s":  3.569
+                    },
+                    {
+                        "c":  4,
+                        "category":  "coding",
+                        "agg_tok_s":  147.31,
+                        "per_stream_tok_s":  40.52,
+                        "ttft_mean_s":  0.365,
+                        "tokens":  800,
+                        "wall_s":  5.431
+                    },
+                    {
+                        "c":  4,
+                        "category":  "json",
+                        "agg_tok_s":  91.52,
+                        "per_stream_tok_s":  29.06,
+                        "ttft_mean_s":  0.405,
+                        "tokens":  341,
+                        "wall_s":  3.726
+                    },
+                    {
+                        "c":  4,
+                        "category":  "narrative",
+                        "agg_tok_s":  49.58,
+                        "per_stream_tok_s":  13.95,
+                        "ttft_mean_s":  0.318,
+                        "tokens":  562,
+                        "wall_s":  11.336
+                    },
+                    {
+                        "c":  4,
+                        "category":  "prose",
+                        "agg_tok_s":  57.53,
+                        "per_stream_tok_s":  15.6,
+                        "ttft_mean_s":  0.319,
+                        "tokens":  481,
+                        "wall_s":  8.36
+                    },
+                    {
+                        "c":  4,
+                        "category":  "math",
+                        "agg_tok_s":  141.3,
+                        "per_stream_tok_s":  38.03,
+                        "ttft_mean_s":  0.395,
+                        "tokens":  800,
+                        "wall_s":  5.662
+                    },
+                    {
+                        "c":  4,
+                        "category":  "reasoning",
+                        "agg_tok_s":  101.08,
+                        "per_stream_tok_s":  27.82,
+                        "ttft_mean_s":  0.408,
+                        "tokens":  800,
+                        "wall_s":  7.915
+                    },
+                    {
+                        "c":  4,
+                        "category":  "summary",
+                        "agg_tok_s":  54.11,
+                        "per_stream_tok_s":  16.25,
+                        "ttft_mean_s":  1.075,
+                        "tokens":  441,
+                        "wall_s":  8.15
+                    },
+                    {
+                        "c":  4,
+                        "category":  "format",
+                        "agg_tok_s":  150.58,
+                        "per_stream_tok_s":  46.3,
+                        "ttft_mean_s":  0.526,
+                        "tokens":  408,
+                        "wall_s":  2.709
+                    },
+                    {
+                        "c":  4,
+                        "category":  "ceiling_count",
+                        "agg_tok_s":  183.03,
+                        "per_stream_tok_s":  49.15,
+                        "ttft_mean_s":  0.343,
+                        "tokens":  956,
+                        "wall_s":  5.223
+                    },
+                    {
+                        "c":  6,
+                        "category":  "coding",
+                        "agg_tok_s":  197.88,
+                        "per_stream_tok_s":  35.89,
+                        "ttft_mean_s":  0.429,
+                        "tokens":  1200,
+                        "wall_s":  6.064
+                    },
+                    {
+                        "c":  6,
+                        "category":  "json",
+                        "agg_tok_s":  107.74,
+                        "per_stream_tok_s":  22.67,
+                        "ttft_mean_s":  0.523,
+                        "tokens":  512,
+                        "wall_s":  4.752
+                    },
+                    {
+                        "c":  6,
+                        "category":  "narrative",
+                        "agg_tok_s":  62.71,
+                        "per_stream_tok_s":  11.51,
+                        "ttft_mean_s":  0.36,
+                        "tokens":  845,
+                        "wall_s":  13.474
+                    },
+                    {
+                        "c":  6,
+                        "category":  "prose",
+                        "agg_tok_s":  68.57,
+                        "per_stream_tok_s":  13.03,
+                        "ttft_mean_s":  0.343,
+                        "tokens":  724,
+                        "wall_s":  10.558
+                    },
+                    {
+                        "c":  6,
+                        "category":  "math",
+                        "agg_tok_s":  168.39,
+                        "per_stream_tok_s":  30.87,
+                        "ttft_mean_s":  0.431,
+                        "tokens":  1200,
+                        "wall_s":  7.126
+                    },
+                    {
+                        "c":  6,
+                        "category":  "reasoning",
+                        "agg_tok_s":  120.26,
+                        "per_stream_tok_s":  21.68,
+                        "ttft_mean_s":  0.444,
+                        "tokens":  1200,
+                        "wall_s":  9.979
+                    },
+                    {
+                        "c":  6,
+                        "category":  "summary",
+                        "agg_tok_s":  57.98,
+                        "per_stream_tok_s":  12.72,
+                        "ttft_mean_s":  1.707,
+                        "tokens":  645,
+                        "wall_s":  11.124
+                    },
+                    {
+                        "c":  6,
+                        "category":  "format",
+                        "agg_tok_s":  211.26,
+                        "per_stream_tok_s":  42.38,
+                        "ttft_mean_s":  0.485,
+                        "tokens":  612,
+                        "wall_s":  2.897
+                    },
+                    {
+                        "c":  6,
+                        "category":  "ceiling_count",
+                        "agg_tok_s":  252.11,
+                        "per_stream_tok_s":  45.92,
+                        "ttft_mean_s":  0.361,
+                        "tokens":  1434,
+                        "wall_s":  5.688
+                    },
+                    {
+                        "c":  8,
+                        "category":  "coding",
+                        "agg_tok_s":  232.43,
+                        "per_stream_tok_s":  31.65,
+                        "ttft_mean_s":  0.411,
+                        "tokens":  1600,
+                        "wall_s":  6.884
+                    },
+                    {
+                        "c":  8,
+                        "category":  "json",
+                        "agg_tok_s":  130.84,
+                        "per_stream_tok_s":  20.26,
+                        "ttft_mean_s":  0.509,
+                        "tokens":  683,
+                        "wall_s":  5.22
+                    },
+                    {
+                        "c":  8,
+                        "category":  "narrative",
+                        "agg_tok_s":  70.56,
+                        "per_stream_tok_s":  10.34,
+                        "ttft_mean_s":  0.372,
+                        "tokens":  1118,
+                        "wall_s":  15.846
+                    },
+                    {
+                        "c":  8,
+                        "category":  "prose",
+                        "agg_tok_s":  86.01,
+                        "per_stream_tok_s":  11.9,
+                        "ttft_mean_s":  0.35,
+                        "tokens":  976,
+                        "wall_s":  11.348
+                    },
+                    {
+                        "c":  8,
+                        "category":  "math",
+                        "agg_tok_s":  214.07,
+                        "per_stream_tok_s":  30.05,
+                        "ttft_mean_s":  0.493,
+                        "tokens":  1600,
+                        "wall_s":  7.474
+                    },
+                    {
+                        "c":  8,
+                        "category":  "reasoning",
+                        "agg_tok_s":  136.83,
+                        "per_stream_tok_s":  18.57,
+                        "ttft_mean_s":  0.466,
+                        "tokens":  1600,
+                        "wall_s":  11.693
+                    },
+                    {
+                        "c":  8,
+                        "category":  "summary",
+                        "agg_tok_s":  76.31,
+                        "per_stream_tok_s":  12.29,
+                        "ttft_mean_s":  1.877,
+                        "tokens":  913,
+                        "wall_s":  11.965
+                    },
+                    {
+                        "c":  8,
+                        "category":  "format",
+                        "agg_tok_s":  210.59,
+                        "per_stream_tok_s":  33.6,
+                        "ttft_mean_s":  0.626,
+                        "tokens":  819,
+                        "wall_s":  3.889
+                    },
+                    {
+                        "c":  8,
+                        "category":  "ceiling_count",
+                        "agg_tok_s":  305.72,
+                        "per_stream_tok_s":  40.53,
+                        "ttft_mean_s":  0.333,
+                        "tokens":  1912,
+                        "wall_s":  6.254
+                    }
+                ],
+    "prefill":  [
+                    {
+                        "target":  2000,
+                        "prompt_tokens":  2950,
+                        "ttft_s":  2.152,
+                        "prefill_tok_s":  1371.1
+                    },
+                    {
+                        "target":  32000,
+                        "prompt_tokens":  46810,
+                        "ttft_s":  29.439,
+                        "prefill_tok_s":  1590.0
+                    }
+                ],
+    "needle":  [
+                   {
+                       "target":  1000000,
+                       "prompt_tokens":  993435,
+                       "depth":  0.5,
+                       "ttft_s":  982.4,
+                       "prefill_tok_s":  1011.2,
+                       "pass":  true
+                   }
+               ]
+}

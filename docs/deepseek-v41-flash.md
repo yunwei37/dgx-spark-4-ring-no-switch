@@ -65,6 +65,42 @@ warmup at 8,192 tokens exhausted host memory: two nodes stopped reporting to
 the cluster and the trial ranks were evicted. Do not use gmu 0.88 with an
 8,192-token batch on GB10.
 
-### gmu 0.85 with a filesystem prefix-cache tier
+### Filesystem prefix-cache tier: not supported on this tree
 
-In progress.
+vLLM's `OffloadingConnector` with a `TieringOffloadingSpec` filesystem tier
+was tried at gmu 0.85, 0.83 and 0.80. It needs `--enable-cumem-allocator`
+(it rejects `expandable_segments` otherwise) and `--prefix-match-unit 8`
+(V4.1 has an 8-token KV group), after which the offload scheduler still
+asserts `FullAttentionSpec` for V4.1's `CircularBufferSpec` compressor ring:
+one reused block per request that is not prefix-cacheable. Supporting it
+needs a connector change that skips such scratch groups, validated by a
+cached-versus-cold greedy comparison. At gmu 0.83 the tier's extra host
+allocations also left the head node with about 3 GiB available.
+
+### Verified serving configuration (gmu 0.83, GPU prefix cache)
+
+Same flags as above, re-run with a host-memory guard:
+
+- KV pool 2,058,026 tokens (1.96x at 1M); idle MemAvailable 6 GiB on the head
+  node, 8 GiB on the others; benchmark lows 3 GiB (head) and 4 GiB.
+- 512-token code answer: TTFT 0.37 s, 59.9 tok/s.
+- ([raw metrics](../benchmarks/deepseek-v41-flash-tp4-1m-gmu083-verify-2026-09-11.json)):
+
+| C | aggregate tok/s | per-stream tok/s | mean TTFT (s) |
+|---|---:|---:|---:|
+| 1 | 44.21 | 50.14 | 0.376 |
+| 2 | 69.13 | 39.51 | 0.373 |
+| 4 | 99.13 | 28.44 | 0.476 |
+| 6 | 124.35 | 23.84 | 0.590 |
+| 8 | 144.71 | 21.08 | 0.638 |
+
+  Coding 68.06 and math 68.36 tok/s at C1. Prefill 1,371-1,590 tok/s.
+- Needle at depth 0.5: 993,435 prompt tokens, TTFT 982.4 s (1,011 tok/s),
+  correct answer.
+- Prefix caching is enabled but produced zero hits: an identical
+  115,519-token prompt sent twice kept a ~59 s TTFT and
+  `vllm:prefix_cache_hits_total` stayed 0. Open issue on this day-0 tree.
+
+The published deployment uses gmu 0.80 (the recipe's value) to keep more host
+memory on the head node, which also runs the API server; decode speed does not
+depend on KV size.
