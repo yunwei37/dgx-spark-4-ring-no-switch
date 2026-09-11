@@ -20,6 +20,8 @@ weights or modify host management networking.
 | `Qwen/Qwen3.8-Flash-Next` BF16 | TP=4/EP=4 | 32,768 cold input passed; 32,769 failed | 25.87 tok/s short request | long-context correctness failure, not full-window success |
 | `zai-org/GLM-5.3-Flash` FP8 | TP=4/EP=4 | 240,000 input retrieval passed | 20.16 tok/s single | bounded inference passed |
 | same Flash FP8, MTP=5 | TP=4/EP=4 | 78,000 input retrieval passed | 25.57 tok/s forced 512-token decode | bounded pass; less KV capacity, not formal GLM-5.3 |
+| `deepseek-ai/DeepSeek-V4.1-Flash` + DSpark k=5, gmu 0.83 | TP=4 | 1,048,576 max model length; 1,955,534-token KV pool | 48.42 tok/s C1 mean (code 67.57); 146.81 tok/s at 8 requests | served; long-context retrieval not yet measured ([record](docs/deepseek-v41-flash.md)) |
+| same, gmu 0.88 | TP=4 | 3,819,333-token KV pool | not measured | unsafe: 8,192-token warmup exhausted host memory |
 | `Tech2wild/GLM-5.3-Int4-Int8Mix` | TP=4 | 8,192 bounded baseline | 12.90 tok/s mean across 3 trials | formal GLM-5.3 loaded and answered real requests; full 1M context not yet passed |
 | same formal Int4/Int8Mix checkpoint | TP=4 | 199,489 input attempted | not measured | startup and short request passed; near-200K prefill crossed the memory safety floor and was stopped |
 
