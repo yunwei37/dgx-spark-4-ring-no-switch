@@ -97,13 +97,52 @@ Same flags as above, re-run with a host-memory guard:
   Coding 68.06 and math 68.36 tok/s at C1. Prefill 1,371-1,590 tok/s.
 - Needle at depth 0.5: 993,435 prompt tokens, TTFT 982.4 s (1,011 tok/s),
   correct answer.
-- Prefix caching is enabled but produced zero hits: an identical
-  115,519-token prompt sent twice kept a ~59 s TTFT and
-  `vllm:prefix_cache_hits_total` stayed 0. Open issue on this day-0 tree.
+- A synthetic prefix probe (an identical 115,519-token prompt sent twice)
+  kept a ~59 s TTFT with `vllm:prefix_cache_hits_total` at 0. Production
+  traffic contradicts it as a general result: after deployment, 87-92% of
+  prompt tokens hit the GPU prefix cache, and agent turns of 130-164K tokens
+  reached their first token in 0.9-3.8 s against 65-83 s when the prefix
+  changed. The probe's miss is unexplained and specific to that workload.
 
 The published deployment uses gmu 0.80 (the recipe's value) to keep more host
 memory on the head node, which also runs the API server; decode speed does not
-depend on KV size. Its post-deployment check: all ranks ready about seven
+depend on KV size.
+
+### Per-node NVMe prefix-cache tier
+
+vLLM's `TieringOffloadingSpec` cannot serve this layout: its secondary-tier
+I/O runs in the scheduler process through that node's `/dev/shm` staging
+region, which holds only rank 0's slice when every TP rank is on a different
+node. [`images/runtime/deepseek41/dsv41_kv_nvme.py`](../images/runtime/deepseek41/)
+replaces it: the scheduler keeps vLLM's CPU LRU manager as a slot allocator,
+and every worker copies its own KV slice between device memory and a
+preallocated file on its node's NVMe. The connector subclass skips V4.1's
+compressor ring (`CircularBufferSpec`), which the GPU prefix cache also
+excludes. [`profiles/deepseek-v41-flash-tp4.sh`](../profiles/deepseek-v41-flash-tp4.sh)
+adds `--enable-cumem-allocator` (required with `expandable_segments`) and the
+connector configuration.
+
+Checks at gmu 0.80 with a 64 GiB file per node (GPU pool 1,237,719 tokens):
+
+| Check | Result |
+| --- | --- |
+| 69,289-token prompt, cold | TTFT 39.5 s |
+| Same prompt after resetting only the GPU prefix cache | TTFT 0.7 s, 871 MiB read from NVMe, identical greedy answer |
+| 230,806-token prompt, cold | TTFT 143.9 s |
+| Same prompt after GPU reset | TTFT 1.0 s, 2,868 MiB read, identical greedy answer |
+| Follow-up turns after a reset | 0.7 s and 1.0 s, correct |
+| 512-token decode | 62.4 tok/s (60.2 without the tier) |
+
+Every offloaded group stores a full block per slot, about 40 KB per token per
+rank, so a 64 GiB file holds roughly 1.7M tokens of prefix per node.
+
+### Reasoning effort levels
+
+V4.1 names four effort levels (low 25, high 50, xhigh 75, max 100) and
+rejects others with HTTP 400. The patched tokenizer in
+`images/runtime/deepseek41/` also accepts `medium` (budget 37) and
+`minimal` (low), so OpenAI-style clients can send any of low, medium, high,
+xhigh and max. Thinking stays off unless the request enables it. Its post-deployment check: all ranks ready about seven
 minutes after start, idle MemAvailable 6 GiB on the head node and 8-9 GiB on
 the others, `max_model_len` 1,048,576, and a 512-token code answer at TTFT
 0.40 s and 60.2 tok/s decode.

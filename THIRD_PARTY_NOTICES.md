@@ -42,6 +42,18 @@ The DFlash2 draft checkpoint is not copied into the image. Its upstream model
 card currently declares CC BY-NC-ND 4.0; operators must review that license
 before downloading or using the separate weights.
 
+The DeepSeek-V4.1-Flash recipe runs on the vLLM day-0 image
+`vllm/vllm-openai@sha256:d84a123255b822fc22508635218000187221794f59c0694c33b0650d1e377d58`
+with the overlay chain and seven bind-mounted patch files of
+`tonyd2wild/DeepSeek-V4.1-Flash-vLLM-DGX-Spark@592540c69853a8ce9285236ebfd6e54dfc83a013`,
+under that repository's MIT license (copyright Tech2wild). This repository
+publishes only files it changed or added, under `images/runtime/deepseek41/`:
+`engram.py` is the recipe's file plus a `gather_engram_hashes` compatibility
+function (MIT, recipe copyright retained); `deepseek_v41_tokenizer.py` is
+vLLM's `vllm/tokenizers/deepseek_v41.py` from that image with an effort-level
+alias table (Apache-2.0, vLLM notice retained); `dsv41_kv_nvme.py` is new and
+subclasses vLLM's offloading connector (Apache-2.0).
+
 The Qwen3.8 Flash Next NVFP4 package uses
 `lmsysorg/sglang@sha256:12d3392bdc8be8d35e9a95f191df6aef99c5114bdbefd41bfdc7e760e6d25ec1`
 as its immutable runtime base and applies only the source-hash-guarded

@@ -1,4 +1,6 @@
 {
+    "schema_version":  1,
+    "outcome":  "passed-bounded-experiment",
     "label":  "trial4",
     "model":  "deepseek-v4.1-flash",
     "prompt_set":  "v1",

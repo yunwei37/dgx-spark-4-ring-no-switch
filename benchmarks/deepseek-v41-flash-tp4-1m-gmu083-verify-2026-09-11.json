@@ -1,4 +1,6 @@
 {
+    "schema_version":  1,
+    "outcome":  "passed-bounded-experiment",
     "label":  "gmu083-verify",
     "model":  "deepseek-v4.1-flash",
     "revision":  "dba1be0a40aa45a94ad051997016db3960a90277",
