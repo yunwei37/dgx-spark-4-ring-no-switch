@@ -103,4 +103,7 @@ Same flags as above, re-run with a host-memory guard:
 
 The published deployment uses gmu 0.80 (the recipe's value) to keep more host
 memory on the head node, which also runs the API server; decode speed does not
-depend on KV size.
+depend on KV size. Its post-deployment check: all ranks ready about seven
+minutes after start, idle MemAvailable 6 GiB on the head node and 8-9 GiB on
+the others, `max_model_len` 1,048,576, and a 512-token code answer at TTFT
+0.40 s and 60.2 tok/s decode.
