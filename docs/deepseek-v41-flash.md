@@ -34,8 +34,11 @@ physical ring order. This is a recorded trial, not a promoted profile.
 TP4, `--block-size 128`, `--max-num-seqs 8`, `--max-num-batched-tokens 8192`,
 FP8 KV (default), DSpark k=5 (`probabilistic` draft, `block` rejection,
 adaptive verification off), `FULL_AND_PIECEWISE` graphs at the exact k and
-k+1 multiples, `--language-model-only`, deepseek_v41 tool and reasoning
-parsers, Engram rows staged from disk before the forward (32 threads).
+k+1 multiples, `--limit-mm-per-prompt '{"image": 4}'` (the vision tower
+is served, bounded to four images per prompt; the earlier
+`--language-model-only` builds stubbed it out), deepseek_v41 tool and
+reasoning parsers, Engram rows staged from disk before the forward
+(32 threads).
 
 ## Results
 
