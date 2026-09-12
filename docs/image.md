@@ -10,13 +10,48 @@ per tag:
 
 | Tag | Workflow | Status |
 | --- | --- | --- |
-| `deepseek-v41-flash-20260911` | `build-deepseek-v41-flash.yml` | dispatch pending |
-| `qwen38-flash-next-nvfp4-20260827` | `build-qwen38-nvfp4.yml` | dispatch pending |
-| `glm53-nvfp4-loader-20260829` | `build-glm53-nvfp4-loader.yml` | dispatch pending |
-| `int4-int8mix-20260824` | `build-int4-int8mix.yml` | dispatch pending |
-| `glm53-intmix-router-<sha>` | `build-int4-int8mix.yml` (second stage) | dispatch pending |
+| `deepseek-v41-flash-20260911` | `build-deepseek-v41-flash.yml` | published, `sha256:2f8e2a70e73541eacf8c71a8990e907fa18fcd8b2a8d02cd0d54a7c81382a13c` |
+| `qwen38-flash-next-nvfp4-20260827` | `build-qwen38-nvfp4.yml` | published, `sha256:5823a60b6b5ce2cd927c1881bb9c4bf17ae8400f092047f260648430b34f4422` |
+| `glm53-nvfp4-loader-20260829` | `build-glm53-nvfp4-loader.yml` | published, `sha256:f5f8d9e9dc4925bd6f4fea6b0ba4ac36f31becbbc2dedc2b71f501e1d6276331` |
+| `int4-int8mix-20260824` | `build-int4-int8mix.yml` | published, `sha256:de17ff1d442fe41d461bf23c7d11213ac54afe7cc52a5f42a9489d434ec4db33` (source-`Dockerfile` CI build; the locally assembled package ID below is separate component evidence) |
+| `glm53-intmix-router-<sha>` | `build-int4-int8mix.yml` (second stage) | published at `glm53-intmix-router-adb99cf6b93b1a1b2666e7a2f72a40536d875190`, `sha256:11f0b8cc4484a672115796e845af17e52b3f671f3ca56974c31739d157b5b09d` |
 | `glm53-intmix-nvfp4-dcp4-<sha>` | `build-glm53-intmix-nvfp4.yml` | published |
 | `glm53-intmix-nvfp4-dflash2-<sha>` | `build-glm53-intmix-nvfp4-dflash2.yml` | published |
+
+## DeepSeek-V4.1-Flash runtime (newest)
+
+`Dockerfile.deepseek-v41-flash` reproduces the tested serving image chain from
+the pinned MIT recipe `tonyd2wild/DeepSeek-V4.1-Flash-vLLM-DGX-Spark@592540c`:
+the vLLM day-0 image at digest
+`sha256:d84a123255b822fc22508635218000187221794f59c0694c33b0650d1e377d58`,
+then overlay3 (FlashInfer 0.7.0rc1 `07869c61` with pinned cutlass/cccl/spdlog),
+overlay4 (`mxfp8_gemm_cutlass_sm120` prebuilt for sm_121a) and overlay5
+(`sparse_mla_sm120` rebuilt under the launcher's exact JIT environment via the
+vendored `images/runtime/deepseek41/prewarm5.py`). The recipe's overlay3
+prewarm is intentionally not repeated: overlay5 rebuilds that module under the
+runtime environment, which is why the recipe introduced overlay5. The seven
+recipe patch files and the `images/runtime/deepseek41/` serving files stay
+bind-mounted exactly as [`deepseek-v41-flash.md`](deepseek-v41-flash.md)
+records; no serving patch is baked in.
+
+Target image:
+`ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:deepseek-v41-flash-20260911`
+
+Published digest:
+`sha256:2f8e2a70e73541eacf8c71a8990e907fa18fcd8b2a8d02cd0d54a7c81382a13c`
+(revision `9a07e93`, ARM64, `ubuntu-24.04-arm` runner)
+
+Build notes: overlay3 completed in 96 s on the ARM64 runner. The first run
+lost its runner while nvcc compiled `mxfp8_gemm_cutlass_sm120` (overlay4) —
+disk was fine at 109 GiB free, so the 16 GiB runner RAM is the limit, and the
+recipe itself documents that compile wedging memory on real nodes. The
+workflow now adds a 48 GiB build swapfile; the successful run completed in
+about 16 minutes. CI has no GPU, so overlay5's load step raising without one
+is expected and recorded by the script; the GPU-side verification ran on the
+fleet during the trial.
+
+This publication reproduces the image recipe. It does not add any new
+inference claim beyond the trial record.
 
 Target package:
 
@@ -31,9 +66,11 @@ the libraries into the image. This avoids compiling on inference nodes. Both
 paths apply the loader change only when the upstream source file matches the
 tested SHA-256.
 
-Publication status: pending (`write:packages` authorization required)
-
-Published digest: pending
+Publication status: published by `build-int4-int8mix.yml` from the source
+`Dockerfile` as `int4-int8mix-20260824` at digest
+`sha256:de17ff1d442fe41d461bf23c7d11213ac54afe7cc52a5f42a9489d434ec4db33`
+(revision `adb99cf`). The locally assembled package recorded below is separate
+component evidence, not this registry digest.
 
 Repository validation: passed
 
@@ -75,9 +112,14 @@ Uncompressed image size: 30,409,004,170 bytes
 Static package checks: passed (both NCCL Mesh runtime hashes, all four patched
 source hashes, Python compilation, architecture, revision label)
 
-GHCR publication: blocked. Authentication succeeded, but the current GitHub CLI
-token lacks the registry's required `write:packages` scope. The temporary Docker
-credential directory was deleted after the refused push.
+GHCR publication: published by `build-qwen38-nvfp4.yml` as
+`qwen38-flash-next-nvfp4-20260827` at digest
+`sha256:5823a60b6b5ce2cd927c1881bb9c4bf17ae8400f092047f260648430b34f4422`
+(revision `ce15f56`, `sbom: false`). The direct push path stays closed because
+the repository push token has no `write:packages` scope; the workflow's job
+`GITHUB_TOKEN` publishes instead. The first run solved the image and then
+failed only at the SBOM attestation (`sbom.spdx.json exceeds 41943040
+bytes`), so the re-dispatch builds the same content with `sbom: false`.
 
 Assembled-image TP2 inference: passed with this exact config ID in the native
 262K test on 2026-08-28 and the MTP file-view test on 2026-08-31. The latter
@@ -106,7 +148,12 @@ ARM64 image build: passed at `1642ff5ea03bd7bc51f5ad00e6cb779cb5540b24`.
 Image config ID: `sha256:dd2c0dc94073644d6fe4455e1b80ebac4cd64b620b9f93da9b81da1e8e95ded9`.
 Identical image imports and source/library hashes passed on all four nodes.
 
-GHCR publication and digest: pending
+GHCR publication: published by `build-glm53-nvfp4-loader.yml` as
+`glm53-nvfp4-loader-20260829` at digest
+`sha256:f5f8d9e9dc4925bd6f4fea6b0ba4ac36f31becbbc2dedc2b71f501e1d6276331`
+(revision `ce15f56`, after the same SBOM-attestation size limit as the Qwen
+package). The recorded local build evidence above predates this registry
+publication and stays separate from it.
 
 Four-rank full-checkpoint inference smoke: **failed, unsafe; zero requests**.
 All ranks reached Mesh initialization and weight loading, but available host
@@ -236,7 +283,12 @@ local tag: ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:glm53-intmix-router-d6cf8
 config: sha256:71ef93e62e5ad7f76821f25632e2df9c3840f1bcb1df1ad268b8618a40031ab2
 manifest: sha256:65cfb227b40f92709bed00d49bb502772ad6948ba31dbaf3b09fbbb3b6c41a3d
 patched source: d6cf87377e530c878b7f4a12b1517c08ba4213f320caa337b5e9c1462db4e24e
-GHCR publication: pending
+GHCR publication: published by the second stage of build-int4-int8mix.yml as
+  glm53-intmix-router-adb99cf6b93b1a1b2666e7a2f72a40536d875190 at
+  sha256:11f0b8cc4484a672115796e845af17e52b3f671f3ca56974c31739d157b5b09d,
+  built from Dockerfile.vllm-glm53-intmix over the published
+  int4-int8mix-20260824 base; the locally assembled candidate above remains
+  a separate, recipe-unverified record
 full-checkpoint inference smoke: not run
 ```
 
