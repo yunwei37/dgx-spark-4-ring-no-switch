@@ -1,5 +1,23 @@
 # Runtime image
 
+All images are `linux/arm64`, built from digest-pinned bases, and published
+to `ghcr.io/yunwei37/dgx-spark-4-ring-no-switch` by the `workflow_dispatch`
+workflows under `.github/workflows/` (the repository push token has no
+`write:packages` scope; the workflows use the job's `GITHUB_TOKEN`). Every
+workflow also pushes a `<name>-<source-sha>` alias next to the documented
+content tag, and records the digest in its run summary. Publication status
+per tag:
+
+| Tag | Workflow | Status |
+| --- | --- | --- |
+| `deepseek-v41-flash-20260911` | `build-deepseek-v41-flash.yml` | dispatch pending |
+| `qwen38-flash-next-nvfp4-20260827` | `build-qwen38-nvfp4.yml` | dispatch pending |
+| `glm53-nvfp4-loader-20260829` | `build-glm53-nvfp4-loader.yml` | dispatch pending |
+| `int4-int8mix-20260824` | `build-int4-int8mix.yml` | dispatch pending |
+| `glm53-intmix-router-<sha>` | `build-int4-int8mix.yml` (second stage) | dispatch pending |
+| `glm53-intmix-nvfp4-dcp4-<sha>` | `build-glm53-intmix-nvfp4.yml` | published |
+| `glm53-intmix-nvfp4-dflash2-<sha>` | `build-glm53-intmix-nvfp4-dflash2.yml` | published |
+
 Target package:
 
 `ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:int4-int8mix-20260824`

@@ -14,6 +14,10 @@
   serving recipe. Such mechanisms may appear only as explicit experimental
   candidates until a bounded test demonstrates a material benefit without a
   stability or management-plane regression.
+- Order tested results newest first: the most recently tested checkpoint
+  leads every results table and README section, older generations follow in
+  descending test date, and superseded model narratives move to `docs/`
+  history instead of staying featured.
 - Treat `partial`, `failed`, `unsafe`, and `not measured` as distinct from zero
   or success. Published performance numbers must name the exact model revision,
   image, profile, workload, and measurement boundary.

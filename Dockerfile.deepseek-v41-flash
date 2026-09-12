@@ -1,0 +1,57 @@
+# DeepSeek-V4.1-Flash serving runtime image.
+#
+# Reproduces the tested image chain from
+# tonyd2wild/DeepSeek-V4.1-Flash-vLLM-DGX-Spark@592540c (MIT):
+#   day-0  vllm/vllm-openai pinned digest (replaces the recipe's overlay1)
+#   +overlay3  FlashInfer 0.7.0rc1 (07869c61) with pinned cutlass/cccl/spdlog
+#   +overlay4  mxfp8_gemm_cutlass_sm120 prebuilt for sm_121a
+#   +overlay5  sparse_mla_sm120 rebuilt under the launcher's runtime env
+# The recipe's overlay3 prewarm is intentionally not repeated here: overlay5
+# rebuilds that module under the exact runtime environment, making the
+# overlay3 debug-env cache stale by construction.
+#
+# The seven recipe patch files and images/runtime/deepseek41/ stay
+# bind-mounted at runtime exactly as docs/deepseek-v41-flash.md records;
+# no serving patch is baked into this image.
+ARG DAY0_IMAGE=vllm/vllm-openai@sha256:d84a123255b822fc22508635218000187221794f59c0694c33b0650d1e377d58
+
+FROM ${DAY0_IMAGE} AS overlay3
+ARG FI_SHA=07869c61ba581e6d6b8ad8d142f4a6c89b707cc1
+ARG CUTLASS_SHA=b46b16d003484063bca4ed365e44095c4c6ed633
+ARG CCCL_SHA=16bd510c9b712e82b0ab6cbb630d8e29ba1f7116
+ARG SPDLOG_SHA=c3aed4b68373955e1cc94307683d44dca1515d2b
+RUN pip uninstall -y -q flashinfer-jit-cache flashinfer-cubin flashinfer-python || true \
+ && mkdir -p /opt/fi-src \
+ && curl -sL -m 900 "https://codeload.github.com/flashinfer-ai/flashinfer/tar.gz/${FI_SHA}" | tar xz -C /opt/fi-src --strip-components=1 \
+ && mkdir -p /opt/fi-src/3rdparty/cutlass /opt/fi-src/3rdparty/cccl /opt/fi-src/3rdparty/spdlog \
+ && curl -sL -m 900 "https://codeload.github.com/NVIDIA/cutlass/tar.gz/${CUTLASS_SHA}" | tar xz -C /opt/fi-src/3rdparty/cutlass --strip-components=1 \
+ && curl -sL -m 900 "https://codeload.github.com/NVIDIA/cccl/tar.gz/${CCCL_SHA}" | tar xz -C /opt/fi-src/3rdparty/cccl --strip-components=1 \
+ && curl -sL -m 900 "https://codeload.github.com/gabime/spdlog/tar.gz/${SPDLOG_SHA}" | tar xz -C /opt/fi-src/3rdparty/spdlog --strip-components=1 \
+ && ls /opt/fi-src/3rdparty/cutlass/include/cutlass/cutlass.h /opt/fi-src/3rdparty/cccl/README.md /opt/fi-src/3rdparty/spdlog/include/spdlog/spdlog.h >/dev/null \
+ && cd /opt/fi-src \
+ && BUILD_NVEP=0 FLASHINFER_BUILD_NO_PIP=1 MAX_JOBS="$(nproc)" FLASHINFER_NVCC_THREADS=2 \
+    pip install --no-deps --no-build-isolation -q . \
+ && pip list 2>/dev/null | grep -iE '^flashinfer|nvidia-nccl' \
+ && python3 -c "import flashinfer; from flashinfer.mla import supported_sparse_mla_sm120_configs as f; c=f()['dsv4']; assert c.supports_decode(num_heads=16, topk=1152); print('overlay3 python ok', flashinfer.__version__)" \
+ && rm -rf /opt/fi-src
+ENV VLLM_HAS_FLASHINFER_CUBIN=1
+
+FROM overlay3 AS overlay4
+RUN FLASHINFER_CUDA_ARCH_LIST=12.1a MAX_JOBS=4 FLASHINFER_NVCC_THREADS=1 \
+    timeout 3000 python3 -c "from flashinfer.jit.gemm import gen_gemm_sm120_module_cutlass_mxfp8 as gen; spec = gen(); b = getattr(spec, 'build', None); (b(verbose=True) if b else spec.build_and_load()); print('MXFP8-SM120-BUILT')"
+
+FROM overlay4 AS overlay5
+COPY images/runtime/deepseek41/prewarm5.py /tmp/prewarm5.py
+RUN FLASHINFER_CUDA_ARCH_LIST=12.1a TORCH_CUDA_ARCH_LIST=12.1a \
+    FLASHINFER_DISABLE_VERSION_CHECK=1 VLLM_HAS_FLASHINFER_CUBIN=1 \
+    FLASHINFER_NVCC_THREADS=1 MAX_JOBS=4 \
+    timeout 3000 python3 /tmp/prewarm5.py \
+ && rm /tmp/prewarm5.py
+
+FROM overlay5
+ARG VCS_REF=unknown
+LABEL org.opencontainers.image.title="DGX Spark four-ring DeepSeek-V4.1-Flash runtime" \
+      org.opencontainers.image.description="Pinned vLLM day-0 image plus the recipe overlay3/4/5 FlashInfer chain; serving patches stay bind-mounted" \
+      org.opencontainers.image.source="https://github.com/yunwei37/dgx-spark-4-ring-no-switch" \
+      org.opencontainers.image.revision="${VCS_REF}" \
+      org.opencontainers.image.licenses="MIT"

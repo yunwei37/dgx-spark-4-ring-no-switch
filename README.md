@@ -1,113 +1,57 @@
 # Four DGX Sparks, one direct ring, no switch
 
-Reproducible GLM and Qwen inference on four NVIDIA DGX Spark systems connected
-as a direct ConnectX ring. This repository publishes only configurations and
-results that were exercised on the four-node ring. It does not ship model
-weights or modify host management networking.
+Reproducible large-model inference on four NVIDIA DGX Spark systems (GB10,
+sm_121, 128 GB unified memory each) wired as a direct ConnectX ring with no
+switch. The repository publishes the serving profiles, ring launchers,
+pinned ARM64 runtime images, benchmark records and configuration decisions
+for every layout exercised on that ring. It ships no model weights and
+modifies no host management networking.
 
-![Measured GLM-5.2 decode throughput](docs/assets/glm52-decode-throughput.svg)
+Tested results are always ordered **newest first**: the most recently tested
+checkpoint leads, older generations follow in descending test date, and
+superseded narratives move to `docs/` history.
 
-## Tested results
+## Tested results — newest first
 
-| Checkpoint | Layout | Context | Stable decode | Result |
-| --- | --- | ---: | ---: | --- |
-| `QuantTrio/GLM-5.2-Int4-Int8Mix` | TP=4 | 8,192 | 12.99 tok/s | passed and restored |
-| same checkpoint, MTP=4 | TP=4 | 8,192 | 33.42 tok/s fixed workload | passed; low memory reserve |
-| `0xSero/GLM-5.2-504B-Nvidia` | PP=4 | 32,005 | 4.40 tok/s | passed and restored |
-| `RadixArk/Qwen3.8-Flash-Next-NVFP4` + MTP | TP=4 | 262,144 native window | 48.81 tok/s short cached natural output | exact mid-context retrieval passed; separate decode workload, restored |
-| same checkpoint, MTP | TP=2/EP=2 | 262,144 native window | 37.60 tok/s single; 99.66 tok/s at 4 requests | exact mid-context retrieval passed and cleaned up |
-| same full checkpoint, MTP file view | TP=2/EP=2 | 262,144 native window | 40.20 tok/s single; 102.19 tok/s at 4 requests | strict final-key retrieval passed and restored |
-| `Qwen/Qwen3.8-Flash-Next` BF16 | TP=4/EP=4 | 32,768 cold input passed; 32,769 failed | 25.87 tok/s short request | long-context correctness failure, not full-window success |
-| `zai-org/GLM-5.3-Flash` FP8 | TP=4/EP=4 | 240,000 input retrieval passed | 20.16 tok/s single | bounded inference passed |
-| same Flash FP8, MTP=5 | TP=4/EP=4 | 78,000 input retrieval passed | 25.57 tok/s forced 512-token decode | bounded pass; less KV capacity, not formal GLM-5.3 |
-| `deepseek-ai/DeepSeek-V4.1-Flash` + DSpark k=5, gmu 0.83 | TP=4 | 993,435-token needle passed (1,048,576 max model length; 2,058,026-token KV pool) | 50.14 tok/s C1 mean (code 68.06); 144.71 tok/s at 8 requests | passed; 87-92% production prefix-cache hit rate ([record](docs/deepseek-v41-flash.md)) |
-| same, gmu 0.88 | TP=4 | 3,819,333-token KV pool | not measured | unsafe: 8,192-token warmup exhausted host memory |
-| same + filesystem prefix-cache tier | TP=4 | not reached | not measured | unsupported: offload scheduler rejects V4.1's compressor ring KV group |
-| `Tech2wild/GLM-5.3-Int4-Int8Mix` | TP=4 | 8,192 bounded baseline | 12.90 tok/s mean across 3 trials | formal GLM-5.3 loaded and answered real requests; full 1M context not yet passed |
-| same formal Int4/Int8Mix checkpoint | TP=4 | 199,489 input attempted | not measured | startup and short request passed; near-200K prefill crossed the memory safety floor and was stopped |
+Every number names its measurement boundary; `partial`, `failed`, `unsafe`
+and `not measured` stay distinct from success.
 
-Formal **GLM-5.3 (not Flash)** remains the first priority. The fixed
-`Tech2wild/GLM-5.3-Int4-Int8Mix` revision now completes TP4 loading,
-initialization and authenticated generation with the experiment-added CUDA
-allocator cap removed. All four ranks loaded94.5GiB in480-545seconds. A real
-arithmetic request returned the exact expected answer, and a code-review request
-identified and fixed the supplied defect. Three200-token repeats measured
-12.84-12.96tok/s, mean12.90tok/s. The strict counting-output format failed and
-is retained as a failure rather than counted as a correctness pass. This is an
-8K functional baseline, **not** the requested1,048,576-token result. See the
-[sanitized pass record](benchmarks/glm53-intmix-native-allocator-pass-2026-08-31.json).
+| Tested | Checkpoint | Layout | Context boundary | Stable decode | Result |
+| --- | --- | --- | --- | ---: | --- |
+| 2026-09-11 | `deepseek-ai/DeepSeek-V4.1-Flash` + DSpark k=5, gmu 0.83 | TP=4 | 993,435-token needle correct at 1,048,576 max model length (2,058,026-token KV pool) | 50.14 tok/s C1 mean, 68.06 code; 144.71 tok/s at 8 requests | passed and deployed; 87–92% production prefix-cache hit rate ([record](docs/deepseek-v41-flash.md)) |
+| 2026-09-11 | same, gmu 0.88 | TP=4 | 3,819,333-token KV pool | not measured | unsafe: the 8,192-token autotune warmup exhausted host memory |
+| 2026-09-11 | same + vLLM filesystem prefix-cache tier | TP=4 | not reached | not measured | unsupported: the offload scheduler rejects V4.1's compressor-ring KV group; the per-node NVMe tier replaces it |
+| 2026-09-02 | `Tech2wild/GLM-5.3-Int4-Int8Mix` | TP=4 | 199,489-token input attempted | not measured | startup and short requests passed; near-200K prefill crossed the memory safety floor and was stopped |
+| 2026-08-31 | same formal Int4/Int8Mix checkpoint | TP=4 | 8,192 bounded baseline | 12.90 tok/s mean across 3 trials | formal GLM-5.3 loaded and answered real requests; full 1M context not yet passed |
+| 2026-08-29 | `zai-org/GLM-5.3-Flash` FP8 | TP=4/EP=4 | 240,000-input retrieval passed | 20.16 tok/s single stream | bounded inference passed |
+| 2026-08-29 | same Flash FP8, MTP=5 | TP=4/EP=4 | 78,000-input retrieval passed | 25.57 tok/s forced 512-token decode | bounded pass with a smaller KV pool; not formal GLM-5.3 |
+| 2026-08-31 | `RadixArk/Qwen3.8-Flash-Next-NVFP4` + MTP file view | TP=2/EP=2 | 262,144 native window | 40.20 tok/s single; 102.19 tok/s at 4 requests | strict final-key retrieval passed and restored |
+| 2026-08-28 | same checkpoint, MTP | TP=2/EP=2 | 262,144 native window | 37.60 tok/s single; 99.66 tok/s at 4 requests | exact mid-context retrieval passed and cleaned up |
+| 2026-08-27 | same checkpoint, MTP | TP=4 | 262,144 native window | 48.81 tok/s short cached natural output | exact mid-context retrieval passed; separate decode workload, restored |
+| 2026-08-29 | `Qwen/Qwen3.8-Flash-Next` BF16 | TP=4/EP=4 | 32,768 cold input passed; 32,769 failed | 25.87 tok/s short request | long-context correctness failure, not a full-window success |
 
-Formal NVFP4 **weights** remain separate and unsuccessful. August31 native
-NVFP4 loading failed during initial reads. A follow-up pre-read
-ownership/sliced-vocabulary patch saved about1.74GiB RSS in a byte-identical GPU
-component but loaded more slowly; the actual full-model follow-up still hit the
-host-memory floor on its final pipeline rank. [Failure data and
-graphs](docs/loader-memory-results.md) are published; constructor or component
-savings are not inference.
-The requested INT4/INT8 checkpoint finished full upstream
-checksum/index/size verification on August31; its temporary verifier was removed.
-It has not completed local inference;
-its [four-rank router/capacity preflight](docs/benchmarks.md#formal-glm-53-int4int8-preflight-2026-08-31)
-measured 94.65 GiB/rank of static tensors with the FP32-router candidate, not a
-full checkpoint load or serving peak. The first actual TP4 attempt at21:05UTC
-then failed at fastsafetensors' initial4.65GiB GPU file-buffer allocation after
-94.91GiB Torch allocation; its97GiB test cap cannot fit that combination.
-All four ranks had joined; no API/inference completed. Original service was
-restored and authenticated generation passed. See
-[the full-load failure record](benchmarks/glm53-intmix-first-load-2026-08-31.json).
-A subsequent native `safetensors` run completed all weights and postprocessing
-on all four ranks in477-536seconds, using94.5GiB each. Initialization then
-failed on an896MiB MLA profiling workspace rejected by our97GiB test allocator
-limit. This limit is not an upstream requirement; it is being removed rather
-than promoted as a serving default. One driver allocation warning is retained.
-Removing that artificial cap produced the bounded formal-model pass above, but
-there is still no full-context result.
-See [the native-loader evidence](benchmarks/glm53-intmix-native-load-2026-08-31.json).
-The requested final context is the checkpoint's native1,048,576tokens;
-the8K diagnostic and community200K/300K configurations are not that result.
-Prefer two nodes when the complete checkpoint, context, correctness and memory
-reserve fit; node count is not a success criterion. The formal ~465GB NVFP4 and
-~405GB INT4/INT8 checkpoints do not fit entirely in two 128GB nodes.
-See the [evidence summary](docs/benchmarks.md#recorded-matrix-and-node-count).
+Formal **GLM-5.3 (not Flash)** remains the first open priority: the bounded
+8K pass above is a functional baseline, not the requested 1,048,576-token
+result, and formal NVFP4 weights have never completed a load. Prefer two
+nodes whenever the complete checkpoint, context, correctness and memory
+reserve fit — node count is not a success criterion. See the
+[evidence summary](docs/benchmarks.md#recorded-matrix-and-node-count).
 
-The later 200K fit candidate loaded all 282 shards in 532.40 seconds, exposed
-200,704 KV tokens and passed an exact short request. Its 199,489-token request
-did not complete: active-request memory pressure reduced head
-`MemAvailable` from 2.65 GiB to 359 MiB after client cancellation lagged. All
-four nodes remained Ready and the candidate was removed. Disk KV offload is
-therefore useful for completed reusable prefixes, but it is not evidence that
-active 200K KV fits. See the
-[sanitized failed-run record](benchmarks/glm53-intmix-200k-2026-09-02.json).
+### Retained safety boundaries
 
-The INT4 MTP mixed-prompt runs measured 16.37-23.71 tok/s. The NVFP4 60,469
-token attempt was unsafe: unified-memory pressure affected the management plane
-and one rank had to reboot. That failure is retained as a limit, not reported as
-a successful 60K result. Qwen3.8 Flash Next exercised its full 262,144-token
-native window with 261,888 prompt tokens plus a 256-token output budget. Exact
-records are under [`benchmarks/`](benchmarks/).
+- The early NVFP4 60,469-token attempt was **unsafe**: unified-memory
+  pressure disturbed the management plane and one rank had to reboot. It is
+  retained as a limit in the
+  [2026-08-25 record](benchmarks/glm52-nvfp4-2026-08-25.json), never reported
+  as a successful 60K result.
+- gmu 0.88 with an 8,192-token batch is unsafe on GB10 (table above).
+- Correctness gates are exact-token retrieval or verbatim answers, never
+  sole throughput. Exact records live under [`benchmarks/`](benchmarks/).
 
-The exact-token retrieval client is
-[`scripts/max_context_probe.py`](scripts/max_context_probe.py). The two
-source-hash-guarded SGLang compatibility patches used by the Qwen run are under
-[`images/runtime/`](images/runtime/); they are test-scoped patches for the
-recorded immutable image, not host modifications.
-
-The bounded Qwen TP2 native-window run recovered its mid-prompt marker with
-2,249.41 prefill tok/s, 31.22 tok/s cold full-context decode, and 38.58 tok/s
-after a 258,048-token cache hit. Its 35-minute cold start remains an explicit
-loader bottleneck, not a production-ready startup result.
-
-The [MTP file-selection experiment](docs/blog/2026-08-31-qwen-mtp-file-selection.md)
-subsequently reduced native draft loading from the historical 839–842 seconds
-to 19–20 seconds, with strict 262K final-key retrieval passing. Full target
-loading still took about 20 minutes; total container-start-to-ready was 22m21s.
-This is a historical comparison, not a matched-cache A/B or one-minute startup.
-
-The matched Qwen full-depth natural-output run decoded at 48.81 tok/s with
-86.86% MTP acceptance. A 3-step/4-draft candidate appeared faster at 63.67
-tok/s but deterministically degenerated to repeated punctuation and failed
-retrieval twice, so the reusable profile keeps the passing 1-step/2-draft
-configuration.
+Older generation measurements, loader experiments and the full narrative are
+history under [`docs/benchmarks.md`](docs/benchmarks.md),
+[`docs/loader-memory-results.md`](docs/loader-memory-results.md) and
+[`docs/blog/`](docs/blog/); they are not featured results.
 
 ## Topology
 
@@ -122,78 +66,138 @@ Each node has two direct ConnectX neighbors. The repository assumes ordinary
 connected subnets already exist on those links. It installs no routes,
 dispatchers, timers, firewalls, DHCP overrides, or Tailscale configuration.
 
-## Reproduce the tested INT4 profile
+## Reproduce a tested layout
 
-Requirements:
+### Prerequisites (every profile)
 
-- four ARM64 DGX Spark nodes with Docker and NVIDIA Container Toolkit;
+- four ARM64 DGX Spark nodes with Docker, the NVIDIA Container Toolkit and
+  `/dev/infiniband` ConnectX devices present;
 - SSH using normal host-key verification;
-- the exact checkpoint revision mounted at the same path on every node;
-- a writable compilation-cache path on every node;
+- the exact checkpoint revision mounted at the same path on every node
+  (read-only) and a writable compilation-cache directory on every node;
 - NCCL socket interface/subnet selection appropriate for the current ring.
 
-Set the environment without committing it:
+### Newest profile — DeepSeek-V4.1-Flash, TP=4
+
+Driven by [`profiles/deepseek-v41-flash-tp4.sh`](profiles/deepseek-v41-flash-tp4.sh),
+one rank per node in physical ring order. The full measurement record and
+checkpoint pins are in [`docs/deepseek-v41-flash.md`](docs/deepseek-v41-flash.md).
+
+Per node (rank `i` = 0..3) the serving container needs:
+
+| Input | Value |
+| --- | --- |
+| Environment | `NODE_RANK=i`, `MASTER_ADDR=<rank-0 address>`, optional `KV_OFFLOAD_BYTES` (default 64 GiB) |
+| Image | see the [runtime images](#runtime-images) table |
+| Mounts | `/models/DeepSeek-V4.1-Flash` (checkpoint, read-only); `/kv-offload` (local NVMe directory for the prefix-cache tier); the seven recipe patch files and [`images/runtime/deepseek41/`](images/runtime/deepseek41/) exactly as its README tables them |
+| Runtime env | `LD_LIBRARY_PATH=/opt/nccl-mesh/lib:/usr/local/cuda/lib64:...`, `PYTHONPATH=/opt/spark-manage/py` (or wherever `dsv41_kv_nvme.py` is mounted) |
+
+The script `exec`s `vllm serve` with the tested flags: TP4, DSpark k=5
+speculative decoding, `--max-model-len 1048576`, `--block-size 128`,
+`--max-num-seqs 8`, deepseek_v41 tool/reasoning parsers, and the
+`CacheableGroupsOffloadingConnector` NVMe tier. Reasoning effort accepts
+`low`, `medium`, `high`, `xhigh` and `max`; thinking stays off unless a
+request enables it. A 64 GiB tier file holds roughly 1.7M prefix tokens per
+node (~40 KB per token per rank).
+
+### Ring launchers — SGLang and vLLM profiles
+
+Both launchers SSH to the four nodes in `RING_NODES` order, start ranks
+1–3 first and rank 0 last, and support `--dry-run` and `--stop`.
+
+Required environment (never committed):
+
+| Variable | Meaning |
+| --- | --- |
+| `RING_NODES` | Four comma-separated SSH hosts in physical ring order |
+| `MASTER_ADDR` | Address reachable by every rank for rendezvous |
+| `SOCKET_IFNAME` | Management interface for rendezvous/control traffic |
+| `MODEL_HOST_PATH` | Identical existing model directory on every node |
+| `CACHE_HOST_PATH` | Existing writable cache directory on every node |
+| `VLLM_API_KEY` | vLLM launcher only: API key passed to each container |
+
+Optional: `SSH_USER` (default: current user), `IMAGE` (immutable tag or
+digest override).
 
 ```bash
+# SGLang profile (Qwen3.8 Flash Next NVFP4)
 export RING_NODES=rank0.example,rank1.example,rank2.example,rank3.example
 export MASTER_ADDR=192.0.2.10
 export SOCKET_IFNAME=management-interface
-export MODEL_HOST_PATH=/srv/models/GLM-5.2-Int4-Int8Mix
-export CACHE_HOST_PATH=/srv/cache/glm52-int4
+export MODEL_HOST_PATH=/srv/models/Qwen3.8-Flash-Next-NVFP4
+export CACHE_HOST_PATH=/srv/cache/qwen38-nvfp4
+./scripts/launch-sglang-ring.sh profiles/qwen38-flash-next-nvfp4.sh
+
+# vLLM profile
 export VLLM_API_KEY='replace-me'
 ./scripts/launch-ring.sh profiles/glm52-int4-int8mix.sh
-```
 
-Stop exactly these four containers with:
-
-```bash
+# Stop exactly the four containers of a profile
 ./scripts/launch-ring.sh --stop profiles/glm52-int4-int8mix.sh
 ```
 
-The launcher never downloads weights, changes host networking, creates swap,
-drops caches, installs an OOM daemon, or alters existing services. It is a
-portable Docker reproduction helper, not the production GitOps deployment.
+The launchers never download weights, change host networking, create swap,
+drop caches, install an OOM daemon, or alter existing services. They are
+portable Docker reproduction helpers, not the production GitOps deployment.
 
-## Container image
+### Profiles
 
-`ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:int4-int8mix-20260824`
+| Profile | Engine | Layout | Notes |
+| --- | --- | --- | --- |
+| [`deepseek-v41-flash-tp4.sh`](profiles/deepseek-v41-flash-tp4.sh) | vLLM | TP=4, 1M context, DSpark k=5 | newest; per-node NVMe prefix-cache tier |
+| [`qwen38-flash-next-nvfp4.sh`](profiles/qwen38-flash-next-nvfp4.sh) | SGLang | TP=4 (or TP=2/EP=2), 262K window | EAGLE MTP 1-step/2-draft; the passing configuration |
+| [`glm52-int4-int8mix.sh`](profiles/glm52-int4-int8mix.sh) | vLLM | TP=4, 8K | historical first profile; optional `MTP_TOKENS` |
 
-The image combines the exact tested INT4 base runtime with the pinned NCCL Mesh
-plugin and the one measured loader memory-lifetime fix. Publication digest and
-verification status are recorded in [`docs/image.md`](docs/image.md). Until that
-file says `inference smoke: passed`, the old benchmark data proves the component
-recipe, not the newly assembled package.
+Each profile defines `PROFILE_NAME`, `CONTAINER_NAME`, `IMAGE` (immutable
+tag, overridable), the model repository/revision and container path, the
+engine arguments, and the `CONTAINER_ENV` NCCL/Mesh environment. The Qwen
+SGLang compatibility patches are source-hash-guarded files under
+[`images/runtime/`](images/runtime/); they are test-scoped patches for the
+recorded immutable image, not host modifications.
 
-The Qwen SGLang package is built by `Dockerfile.sglang-qwen38`; the exact
-four-rank arguments are in `profiles/qwen38-flash-next-nvfp4.sh` and the bounded
-Docker launcher is `scripts/launch-sglang-ring.sh`. The image contains the
-runtime and compatibility fixes, never the model weights.
+## Runtime images
 
-`Dockerfile.sglang-glm53` packages the exact SGLang digest used by the formal
-GLM-5.3 NVFP4 loader experiment, `fastsafetensors 0.3.3`, NCCL Mesh, and the
-source-hash-guarded fixes. Experimental builds and constructor diagnostics are
-recorded in `docs/image.md`; GHCR publication and corrected full TP4 inference
-remain incomplete. They are not successful formal GLM inference evidence.
+All images are `linux/arm64`, built from digest-pinned bases with NCCL
+2.29.7 and the Mesh plugin at the exact tested commits, and published to
+`ghcr.io/yunwei37/dgx-spark-4-ring-no-switch` by the `workflow_dispatch`
+workflows under [`.github/workflows/`](.github/workflows/). Publication
+digests and verification status for every tag are recorded in
+[`docs/image.md`](docs/image.md).
+
+| Tag | Dockerfile | Serves |
+| --- | --- | --- |
+| `deepseek-v41-flash-20260911` | `Dockerfile.deepseek-v41-flash` | DeepSeek-V4.1-Flash (newest) |
+| `glm53-intmix-nvfp4-dflash2-<sha>` | `Dockerfile.vllm-glm53-intmix-nvfp4-dflash2` | formal GLM-5.3 IntMix NVFP4 DFlash2 experiments |
+| `glm53-intmix-nvfp4-dcp4-<sha>` | `Dockerfile.vllm-glm53-intmix-nvfp4` | formal GLM-5.3 IntMix NVFP4 experiments |
+| `glm53-intmix-router-<sha>` | `Dockerfile.vllm-glm53-intmix` | formal GLM-5.3 INT4/INT8 router candidate |
+| `glm53-nvfp4-loader-20260829` | `Dockerfile.sglang-glm53` | GLM-5.3 NVFP4 loader experiments |
+| `qwen38-flash-next-nvfp4-20260827` | `Dockerfile.sglang-qwen38` | Qwen3.8 Flash Next NVFP4 |
+| `int4-int8mix-20260824` | `Dockerfile` / `Dockerfile.package` | the first historical INT4 runtime |
+
+Images contain runtimes only, never model weights. Until
+[`docs/image.md`](docs/image.md) records an inference smoke for a tag, its
+benchmark data proves the component recipe, not the assembled package.
 
 ## Documentation
 
-- [`docs/architecture.md`](docs/architecture.md) explains the ring boundary.
-- [`docs/benchmarks.md`](docs/benchmarks.md) gives measurements and limitations.
-- [`docs/configuration-decisions.md`](docs/configuration-decisions.md) ties each
-  retained non-default to evidence.
-- [`docs/loader-memory-results.md`](docs/loader-memory-results.md) records the
-  tested loader alternatives.
+- [`docs/deepseek-v41-flash.md`](docs/deepseek-v41-flash.md) — newest
+  record: DeepSeek-V4.1-Flash inputs, deviations, measurements, NVMe tier.
+- [`docs/architecture.md`](docs/architecture.md) — the ring boundary.
+- [`docs/benchmarks.md`](docs/benchmarks.md) — measurements and limitations.
+- [`docs/configuration-decisions.md`](docs/configuration-decisions.md) —
+  every retained non-default tied to evidence.
+- [`docs/image.md`](docs/image.md) — image publication digests and status.
+- [`docs/loader-memory-results.md`](docs/loader-memory-results.md) — tested
+  loader alternatives.
 - [`docs/glm53-community-experiments.md`](docs/glm53-community-experiments.md)
-  audits external formal GLM-5.3 experiments, including switchless-ring reports,
-  and separates them from our own results and unvalidated recipes.
-- [`docs/blog/2026-08-25-glm52-on-four-dgx-sparks.md`](docs/blog/2026-08-25-glm52-on-four-dgx-sparks.md)
-  is the experiment narrative.
+  — external formal GLM-5.3 experiments audited separately from our results.
+- [`docs/blog/`](docs/blog/) — experiment narratives.
 
 ## Validate
 
 ```bash
 python3 tests/validate_repo.py
-bash -n scripts/launch-ring.sh profiles/*.sh
+bash -n scripts/launch-ring.sh scripts/launch-sglang-ring.sh profiles/*.sh
 ```
 
 Repository-authored files are MIT licensed. Third-party components keep

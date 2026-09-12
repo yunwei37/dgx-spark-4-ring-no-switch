@@ -52,7 +52,10 @@ publishes only files it changed or added, under `images/runtime/deepseek41/`:
 function (MIT, recipe copyright retained); `deepseek_v41_tokenizer.py` is
 vLLM's `vllm/tokenizers/deepseek_v41.py` from that image with an effort-level
 alias table (Apache-2.0, vLLM notice retained); `dsv41_kv_nvme.py` is new and
-subclasses vLLM's offloading connector (Apache-2.0).
+subclasses vLLM's offloading connector (Apache-2.0). `prewarm5.py` is vendored
+unchanged from the same recipe commit for the reproducible
+`Dockerfile.deepseek-v41-flash` overlay5 stage (MIT, recipe copyright
+retained).
 
 The Qwen3.8 Flash Next NVFP4 package uses
 `lmsysorg/sglang@sha256:12d3392bdc8be8d35e9a95f191df6aef99c5114bdbefd41bfdc7e760e6d25ec1`

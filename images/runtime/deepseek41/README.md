@@ -1,14 +1,17 @@
 # DeepSeek-V4.1-Flash runtime files
 
-Mounted over the vLLM day-0 image described in
-[`docs/deepseek-v41-flash.md`](../../../docs/deepseek-v41-flash.md); they are
-not baked into a published image. See `THIRD_PARTY_NOTICES.md` for licenses.
+Bind-mounted over the published overlay-chain image
+(`Dockerfile.deepseek-v41-flash`, see [`docs/image.md`](../../../docs/image.md))
+exactly as [`docs/deepseek-v41-flash.md`](../../../docs/deepseek-v41-flash.md)
+records; the serving patches are never baked into an image. See
+`THIRD_PARTY_NOTICES.md` for licenses.
 
 | File | Container path | Replaces | Why |
 | --- | --- | --- | --- |
 | `engram.py` | `vllm/models/deepseek_v4_1/common/engram.py` | the recipe's disk-backed `engram.py` | Adds `gather_engram_hashes`, which the day-0 `nvidia/model.py` imports; identity at Engram data-parallel size 1, raises above it |
 | `deepseek_v41_tokenizer.py` | `vllm/tokenizers/deepseek_v41.py` | image file, MD5 `1ffa7369593c525262f000641e956cef` | Accepts the fleet's effort levels: V4.1 names low (25), high (50), xhigh (75) and max (100); `medium` maps to budget 37 and `minimal` to low instead of HTTP 400 |
 | `dsv41_kv_nvme.py` | on `PYTHONPATH` (the profile uses `/opt/spark-manage/py`) | new | Per-node NVMe prefix-cache tier, loaded through `--kv-transfer-config` |
+| `prewarm5.py` | build-time only (`Dockerfile.deepseek-v41-flash` overlay5) | nothing at runtime | Vendored from the recipe commit; rebuilds `sparse_mla_sm120` under the launcher's exact JIT environment so the cache is not stale |
 
 The seven other patch files come unchanged from the recipe commit named in
 `THIRD_PARTY_NOTICES.md`; mount them as the recipe's `mounts` list describes.
