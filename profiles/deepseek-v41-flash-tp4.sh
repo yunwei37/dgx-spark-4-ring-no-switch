@@ -27,7 +27,10 @@ args=(
   --host 0.0.0.0 --port 8000
   --tokenizer-mode deepseek_v41
   --tensor-parallel-size 4
-  --gpu-memory-utilization 0.80
+  # 0.83 (validated on this hardware with CUDA graphs at 1M): the vision
+  # tower plus multimodal profiling needs 3.66 GiB KV per rank and 0.80
+  # left 3.44 GiB, failing the one-request 1M check.
+  --gpu-memory-utilization 0.83
   --max-model-len 1048576
   --max-num-seqs 8
   --max-num-batched-tokens 8192
