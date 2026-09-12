@@ -36,7 +36,7 @@ jobs:
           build-args: |
             VCS_REF=${{ github.sha }}
           provenance: mode=max
-          sbom: true
+          sbom: false
       - name: Record published digest
         run: |
           echo "image=ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:qwen38-flash-next-nvfp4-${GITHUB_SHA}" >> "${GITHUB_STEP_SUMMARY}"
