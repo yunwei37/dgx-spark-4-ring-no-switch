@@ -34,9 +34,8 @@ physical ring order. This is a recorded trial, not a promoted profile.
 TP4, `--block-size 128`, `--max-num-seqs 8`, `--max-num-batched-tokens 8192`,
 FP8 KV (default), DSpark k=5 (`probabilistic` draft, `block` rejection,
 adaptive verification off), `FULL_AND_PIECEWISE` graphs at the exact k and
-k+1 multiples, `--limit-mm-per-prompt '{"image": 5}'` (the vision tower
-is served, bounded to five images per prompt; the earlier
-`--language-model-only` builds stubbed it out), deepseek_v41 tool and
+k+1 multiples, the vision tower with vLLM's default multimodal input handling
+(the earlier `--language-model-only` builds stubbed it out), deepseek_v41 tool and
 reasoning parsers, Engram rows staged from disk before the forward
 (32 threads).
 
@@ -109,9 +108,9 @@ Same flags as above, re-run with a host-memory guard:
 
 The published deployment uses gmu 0.83. Vision profiling at 0.80 left too
 little KV capacity for one 1M-token request; 0.83 restored that capacity while
-keeping the measured head-node memory floor above 3 GiB. The multimodal limit
-is five images per prompt, matching the retained agent compaction input that
-exposed the previous four-image rejection.
+keeping the measured head-node memory floor above 3 GiB. The service uses
+vLLM's default multimodal item handling rather than a locally chosen
+per-prompt image count.
 
 ### Per-node NVMe prefix-cache tier
 

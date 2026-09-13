@@ -37,10 +37,7 @@ args=(
   --block-size 128
   --engram-config '{"cpu_offload": false}'
   # Vision: the checkpoint ships a vision tower (config.vision_config) and
-  # this runtime implements the full multimodal path. Bound the per-prompt
-  # image count so profiling stays close to the text-only profile; every
-  # other flag is unchanged.
-  --limit-mm-per-prompt '{"image": 5}'
+  # this runtime implements the full multimodal path.
   --default-chat-template-kwargs '{"thinking": false}'
   --tool-call-parser deepseek_v41 --enable-auto-tool-choice --reasoning-parser deepseek_v41
   --speculative-config '{"method":"dspark","num_speculative_tokens":5,"draft_sample_method":"probabilistic","rejection_sample_method":"block","enable_adaptive_verification":false}'
