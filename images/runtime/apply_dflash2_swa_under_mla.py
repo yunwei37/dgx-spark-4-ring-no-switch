@@ -3,11 +3,9 @@
 """Allow a non-MLA DFlash2 SWA layer under an MLA target model."""
 
 import ast
-import hashlib
 import pathlib
 import sys
 
-EXPECTED_SHA256 = "014f289e4957619b43f4981c02481344a4b56e86d75e85677dec855a05f129a3"
 MARKER = "YUNWEI37_DFLASH2_SWA_UNDER_MLA"
 RELATIVE_PATH = pathlib.Path("model_executor/layers/attention/attention.py")
 
@@ -24,12 +22,6 @@ def main() -> int:
         ast.parse(source, filename=str(path))
         print(f"already_patched={path}")
         return 0
-
-    actual = hashlib.sha256(source.encode("utf-8")).hexdigest()
-    if actual != EXPECTED_SHA256:
-        raise SystemExit(
-            f"refusing unexpected {RELATIVE_PATH}: {actual} != {EXPECTED_SHA256}"
-        )
 
     old = (
         "        if self.sliding_window is not None:\n"

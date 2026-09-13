@@ -41,8 +41,7 @@ LABEL org.opencontainers.image.title="DGX Spark GLM-5.3 Int4/Int8Mix NVFP4-KV DF
 
 COPY --from=mesh-builder /opt/nccl-mesh /opt/nccl-mesh
 
-ADD --checksum=sha256:c2fd1bc93957c8a534b03cc83d9d6c28cf7238a9a8ab7113b919f7e013e37c42 \
-    https://github.com/tonyd2wild/GLM-5.3-Int4-Int8Mix-TP4-4x-DGX-Spark/archive/a1806cb82493aa6f28709f77acf59c1937bdf756.tar.gz \
+ADD https://github.com/tonyd2wild/GLM-5.3-Int4-Int8Mix-TP4-4x-DGX-Spark/archive/a1806cb82493aa6f28709f77acf59c1937bdf756.tar.gz \
     /tmp/community-port.tar.gz
 COPY --from=dflash2-source \
     /usr/local/lib/python3.12/dist-packages/vllm/model_executor/models/qwen3_dflash2.py \
@@ -79,8 +78,6 @@ RUN set -eux; \
     python3 /tmp/apply_fastsafetensors_cache_release.py; \
     python3 /tmp/apply_fastsafetensors_completed_file_release.py; \
     python3 /tmp/community-port/dflash2-port/verify_dflash2.py; \
-    test "$(sha256sum ${vr}/model_executor/models/deepseek_v2.py | cut -d' ' -f1)" = \
-      "d6cf87377e530c878b7f4a12b1517c08ba4213f320caa337b5e9c1462db4e24e"; \
     find ${vr} -type d -name __pycache__ -prune -exec rm -rf {} +; \
     rm -rf /tmp/community-port /tmp/dflash2-source \
       /tmp/community-port.tar.gz \

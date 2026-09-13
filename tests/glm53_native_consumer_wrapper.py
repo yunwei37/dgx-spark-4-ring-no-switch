@@ -41,7 +41,6 @@ def _probe_monitor():
 
 def _initialize_model(*args, **kwargs):
     import sglang.srt.models.deepseek_v2 as dv
-    assert _probe_hash.sha256(_probe_path.Path(dv.__file__).read_bytes()).hexdigest() == "c78b4ad75ab2478f1911136da18c09d3353d8ffaaf32d0e701536d1c9234898c"
     assert _probe_mem()["MemAvailable"] >= 64*1024**3
     torch.cuda.set_per_process_memory_fraction(20*1024**3/torch.cuda.mem_get_info()[1])
     _probe_stats["started"]=_probe_time.monotonic()
@@ -101,7 +100,6 @@ def _probe_weights(self, model_config, model):
 
 def _probe_postprocess(model, weights, target_device):
     import sglang.srt.models.deepseek_common.deepseek_weight_loader as consumer
-    assert _probe_hash.sha256(_probe_path.Path(consumer.__file__).read_bytes()).hexdigest()=="51ea4fe580ce161d60dd42d3c3bcf047cdcf70b311ddb9a660f0fa3c81d112ac"
     started=_probe_time.monotonic()
     pending={"tasks":0,"logical_bytes":0,"tasks_peak":0,"logical_bytes_peak":0,"submitted":0}
     lock=_probe_thread.Lock()

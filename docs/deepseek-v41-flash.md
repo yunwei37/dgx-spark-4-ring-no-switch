@@ -14,6 +14,18 @@ physical ring order. This is a recorded trial, not a promoted profile.
 | Serving image | recipe overlay3/4/5 built on the day-0 image (FlashInfer 0.7.0rc1 `07869c61`; prebuilt `mxfp8_gemm_cutlass_sm120` and `sparse_mla_sm120`, `-O3 -DNDEBUG`) |
 | Transport | NCCL 2.29.7 (`b91894b`) + `autoscriptlabs/nccl-mesh-plugin@19924dcc`, `NCCL_ALGO=Ring`, runtime connect |
 
+Upstream deployment provenance: the
+[DeepSeek model card](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash)
+starts the model with `pip install vllm` and
+`vllm serve "deepseek-ai/DeepSeek-V4.1-Flash"`; the
+[vLLM Docker guide](https://docs.vllm.ai/en/latest/deployment/docker/) uses
+`vllm/vllm-openai` with the model passed as the container command. The
+four-Spark image and command derive from the
+[DGX Spark recipe](https://github.com/tonyd2wild/DeepSeek-V4.1-Flash-vLLM-DGX-Spark/blob/main/docs/RECIPE.md)
+at the revision recorded above. The current reusable command is
+`profiles/deepseek-v41-flash-tp4.sh`; the cluster-specific values and approval
+record remain in the infrastructure repository.
+
 ## Deviations from the recipe
 
 - Switchless ring: NCCL Mesh plugin over the direct links instead of the
@@ -146,7 +158,9 @@ V4.1 names four effort levels (low 25, high 50, xhigh 75, max 100) and
 rejects others with HTTP 400. The patched tokenizer in
 `images/runtime/deepseek41/` also accepts `medium` (budget 37) and
 `minimal` (low), so OpenAI-style clients can send any of low, medium, high,
-xhigh and max. Thinking stays off unless the request enables it. Its post-deployment check: all ranks ready about seven
+xhigh and max. The service follows the upstream chat template's default
+thinking behavior; clients can explicitly disable it with
+`reasoning_effort: none`. Its post-deployment check: all ranks ready about seven
 minutes after start, idle MemAvailable 6 GiB on the head node and 8-9 GiB on
 the others, `max_model_len` 1,048,576, and a 512-token code answer at TTFT
 0.40 s and 60.2 tok/s decode.

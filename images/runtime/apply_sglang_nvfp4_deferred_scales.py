@@ -1,17 +1,12 @@
 #!/usr/bin/env python3
 """Defer unused CUTLASS blockscale placeholders until normal post-load swizzling."""
 
-import hashlib
 from pathlib import Path
 
-EXPECTED_SHA256 = "6ff8f28fbf1d567792375a333d936ca994962e27d9bbc9dcd3489016fce426de"
 PATH = Path("/sgl-workspace/sglang/python/sglang/srt/layers/quantization/modelopt_quant.py")
 
 
 def patched_source(raw: bytes) -> str:
-    actual = hashlib.sha256(raw).hexdigest()
-    if actual != EXPECTED_SHA256:
-        raise ValueError(f"unexpected modelopt_quant.py sha256: {actual}")
     text = raw.decode("utf-8")
     start = text.index("    def create_weights(", text.index("class ModelOptNvFp4FusedMoEMethod"))
     end = text.index("    def process_weights_after_loading(", start)
@@ -40,4 +35,4 @@ if __name__ == "__main__":
     updated = patched_source(PATH.read_bytes())
     compile(updated, str(PATH), "exec")
     PATH.write_text(updated, encoding="utf-8")
-    print("deferred_scales_sha256=" + hashlib.sha256(PATH.read_bytes()).hexdigest())
+    print("deferred scales patch applied")

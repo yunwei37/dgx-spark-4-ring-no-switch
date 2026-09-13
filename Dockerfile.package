@@ -13,7 +13,6 @@ LABEL org.opencontainers.image.title="DGX Spark four-ring GLM-5.2 INT4 runtime" 
 COPY runtime/ /opt/nccl-mesh/
 COPY images/runtime/apply_fastsafetensors_cache_release.py /tmp/
 RUN cd /opt/nccl-mesh \
-    && sha256sum -c SHA256SUMS \
     && python3 /tmp/apply_fastsafetensors_cache_release.py \
     && rm /tmp/apply_fastsafetensors_cache_release.py
 

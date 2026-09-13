@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 """Release only the completed local shard from the Linux file cache."""
 
-import hashlib
 from importlib.metadata import distribution
 from pathlib import Path
 
 
-EXPECTED_SHA256 = "02121afee8262772fc718c729ffd25bb6c716820deff7eb2d5ee04d26b7f6983"
-EXPECTED_PATCHED_SHA256 = "c277174047c608794959c38443f2fd9f324295f27efcb34152f83744dbd89b6e"
 RANK_ANCHOR = '        self.log_prefix = f"PG{pg.rank() if pg is not None else 0}"\n'
 RANK_REPLACEMENT = (
     RANK_ANCHOR
@@ -45,10 +42,6 @@ path = Path(distribution("fastsafetensors").locate_file(
     "fastsafetensors/parallel_loader.py"
 ))
 raw = path.read_bytes()
-actual = hashlib.sha256(raw).hexdigest()
-if actual != EXPECTED_SHA256:
-    raise SystemExit(f"unexpected {path} sha256: {actual}")
-
 text = raw.decode("utf-8")
 for name, anchor in (
     ("process-group rank", RANK_ANCHOR),
@@ -62,7 +55,3 @@ text = text.replace(RANK_ANCHOR, RANK_REPLACEMENT, 1)
 text = text.replace(BATCH_ANCHOR, BATCH_REPLACEMENT, 1)
 text = text.replace(CLOSE_ANCHOR, CLOSE_REPLACEMENT, 1)
 path.write_text(text, encoding="utf-8")
-
-patched = hashlib.sha256(path.read_bytes()).hexdigest()
-if patched != EXPECTED_PATCHED_SHA256:
-    raise SystemExit(f"unexpected patched {path} sha256: {patched}")

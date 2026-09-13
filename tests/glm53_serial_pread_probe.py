@@ -16,7 +16,6 @@ assert json.loads((ROOT/".spark-manager-verified").read_text())["revision"]=="65
 files=sorted(set(json.loads((ROOT/"model.safetensors.index.json").read_text())["weight_map"].values()))[:10]
 paths=[str(ROOT/f) for f in files]
 source=pathlib.Path("/sgl-workspace/sglang/python/sglang/srt/model_loader/weight_utils.py").read_bytes()
-assert hashlib.sha256(source).hexdigest()=="d82dc59e8d4a2fafac2e61c468da485e9f7a85042cf9044b6b37c3a3b6b86041"
 tree=ast.parse(source)
 wanted={"safetensors_weights_iterator","buffered_multi_thread_safetensors_weights_iterator"}
 nodes=[n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name in wanted]

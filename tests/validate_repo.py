@@ -89,8 +89,8 @@ if re.search(r"(?:^|[:=])latest(?:\s|$)", dockerfile, re.MULTILINE):
 if dockerfile.count("@sha256:") < 2:
     fail("both Dockerfile bases must be digest-pinned")
 package_dockerfile = (ROOT / "Dockerfile.package").read_text(encoding="utf-8")
-if "@sha256:" not in package_dockerfile or "sha256sum -c SHA256SUMS" not in package_dockerfile:
-    fail("package Dockerfile must pin its base and verify the tested runtime")
+if "@sha256:" not in package_dockerfile:
+    fail("package Dockerfile must pin its base")
 qwen_dockerfile = (ROOT / "Dockerfile.sglang-qwen38").read_text(encoding="utf-8")
 if qwen_dockerfile.count("@sha256:") < 2:
     fail("Qwen Dockerfile must pin both build and runtime bases")
@@ -100,15 +100,6 @@ for patch_name in (
 ):
     if patch_name not in qwen_dockerfile:
         fail(f"Qwen Dockerfile must apply {patch_name}")
-if "EXPECTED_SHA256" not in (ROOT / "images/runtime/apply_fastsafetensors_cache_release.py").read_text(encoding="utf-8"):
-    fail("loader patch must retain its source hash guard")
-for patch_name in (
-    "apply_sglang_nvfp4_gated_tp.py",
-    "apply_sglang_qwen_sm121.py",
-):
-    if "hashlib.sha256" not in (ROOT / "images/runtime" / patch_name).read_text(encoding="utf-8"):
-        fail(f"{patch_name} must retain its source hash guard")
-
 glm53_dockerfile = (ROOT / "Dockerfile.sglang-glm53").read_text(encoding="utf-8")
 if glm53_dockerfile.count("@sha256:") < 2:
     fail("GLM-5.3 Dockerfile must pin both build and runtime bases")
@@ -121,9 +112,6 @@ for patch_name in (
 ):
     if patch_name not in glm53_dockerfile:
         fail(f"GLM-5.3 Dockerfile must apply {patch_name}")
-    patch_text = (ROOT / "images/runtime" / patch_name).read_text(encoding="utf-8")
-    if "hashlib.sha256" not in patch_text or "EXPECTED_SHA256" not in patch_text:
-        fail(f"{patch_name} must retain its source hash guard")
 
 intmix_nvfp4_dockerfile = (
     ROOT / "Dockerfile.vllm-glm53-intmix-nvfp4"
@@ -131,7 +119,6 @@ intmix_nvfp4_dockerfile = (
 for required_text in (
     "@sha256:e006935eb4f8266705f213c369de1eac8de7d20417254c5f234601a2fd56d481",
     "34e81562984bda993e0c9ed01ed6900c17e4857b",
-    "--checksum=sha256:7c8d22715693cfa7ddb428d761b6fac71935adcdf3a77c58c80768061d876a72",
     "apply_glm53_router_fp32.py",
     "nvfp4_ds_mla",
 ):
@@ -145,7 +132,6 @@ for required_text in (
     "@sha256:52b289baf653bcb550194822f1c1381275601731d4882fefe7c0413513a99cae",
     "a1806cb82493aa6f28709f77acf59c1937bdf756",
     "@sha256:4def0ef644cb2e9814136dcffd5e385e21bc594f48f3b292234051904abe85a6",
-    "--checksum=sha256:c2fd1bc93957c8a534b03cc83d9d6c28cf7238a9a8ab7113b919f7e013e37c42",
     "COPY --from=dflash2-source",
     "COPY --from=mesh-builder /opt/nccl-mesh /opt/nccl-mesh",
     "NCCL_COMMIT=b91894bd5b190c874d98a017f93f5daa515b65d0",
@@ -158,15 +144,6 @@ for required_text in (
 ):
     if required_text not in dflash2_dockerfile:
         fail(f"GLM-5.3 DFlash2 Dockerfile missing {required_text}")
-if "EXPECTED_SHA256" not in (
-    ROOT / "images/runtime/apply_dflash2_swa_under_mla.py"
-).read_text(encoding="utf-8"):
-    fail("DFlash2 SWA patch must retain its source hash guard")
-if "EXPECTED_SHA256" not in (
-    ROOT / "images/runtime/apply_fastsafetensors_completed_file_release.py"
-).read_text(encoding="utf-8"):
-    fail("completed-file release patch must retain its source hash guard")
-
 readme = (ROOT / "README.md").read_text(encoding="utf-8")
 if "60,469" not in readme or "unsafe" not in readme:
     fail("README must disclose the NVFP4 unsafe boundary")

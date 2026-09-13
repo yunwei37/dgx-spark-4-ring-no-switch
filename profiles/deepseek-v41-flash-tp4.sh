@@ -38,7 +38,6 @@ args=(
   --engram-config '{"cpu_offload": false}'
   # Vision: the checkpoint ships a vision tower (config.vision_config) and
   # this runtime implements the full multimodal path.
-  --default-chat-template-kwargs '{"thinking": false}'
   --tool-call-parser deepseek_v41 --enable-auto-tool-choice --reasoning-parser deepseek_v41
   --speculative-config '{"method":"dspark","num_speculative_tokens":5,"draft_sample_method":"probabilistic","rejection_sample_method":"block","enable_adaptive_verification":false}'
   --compilation-config '{"cudagraph_mode":"FULL_AND_PIECEWISE","cudagraph_capture_sizes":[5,6,10,12,15,18,20,24,25,30,35,36,40,42,48]}'

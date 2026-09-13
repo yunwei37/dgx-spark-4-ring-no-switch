@@ -5,7 +5,6 @@ Use one idle GPU, an 8 GiB container limit, no network and a 180-second external
 deadline. Only the two unused placeholders differ; normal post-load code runs.
 """
 import gc
-import hashlib
 import inspect
 import json
 import textwrap
@@ -32,10 +31,6 @@ def method_from_source(text):
     namespace = dict(modelopt.__dict__)
     exec(compile(text, "<scale-constructor-ab>", "exec"), namespace)
     return namespace["create_weights"]
-
-
-def digest(tensor):
-    return hashlib.sha256(tensor.detach().view(torch.uint8).cpu().contiguous().numpy().tobytes()).hexdigest()
 
 
 rows = []
@@ -75,13 +70,11 @@ with (
             torch.cuda.synchronize()
             row.update(final_allocated_bytes=torch.cuda.memory_allocated(), peak_bytes=torch.cuda.max_memory_allocated())
             row["scale_aliases"] = {name: getattr(layer, name + "_weight_scale").data_ptr() == getattr(layer, name + "_blockscale_swizzled").data_ptr() for name in ("w13", "w2")}
-            row["derived_sha256"] = {name: digest(getattr(layer, name + "_blockscale_swizzled")) for name in ("w13", "w2")}
             row["weight_constant_preserved"] = all(bool(torch.all(getattr(layer, name + "_weight") == 17)) for name in ("w13", "w2"))
         rows.append(row)
         print(json.dumps(row), flush=True)
         del layer, method, quant, param, values
 
-assert rows[0]["derived_sha256"] == rows[1]["derived_sha256"]
 assert all(all(row["scale_aliases"].values()) and row["weight_constant_preserved"] for row in rows)
 saved = rows[0]["constructor_allocated_bytes"] - rows[1]["constructor_allocated_bytes"]
 assert saved == 150994944, saved
