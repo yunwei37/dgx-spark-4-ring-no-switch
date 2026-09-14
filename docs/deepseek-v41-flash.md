@@ -43,7 +43,8 @@ record remain in the infrastructure repository.
 
 ## Serving flags
 
-TP4, `--block-size 128`, `--max-num-seqs 8`, `--max-num-batched-tokens 8192`,
+TP4, `--block-size 128`, the runtime-selected sequence count,
+`--max-num-batched-tokens 8192`,
 FP8 KV (default), DSpark k=5 (`probabilistic` draft, `block` rejection,
 adaptive verification off), `FULL_AND_PIECEWISE` graphs at the exact k and
 k+1 multiples, the vision tower with vLLM's default multimodal input handling

@@ -94,11 +94,11 @@ Per node (rank `i` = 0..3) the serving container needs:
 
 The script `exec`s `vllm serve` with the tested flags: TP4, DSpark k=5
 speculative decoding, `--max-model-len 1048576`, `--block-size 128`,
-`--max-num-seqs 8`, deepseek_v41 tool/reasoning parsers, and the
+the runtime-selected sequence count, deepseek_v41 tool/reasoning parsers, and the
 `CacheableGroupsOffloadingConnector` NVMe tier. Reasoning effort accepts
-`low`, `medium`, `high`, `xhigh` and `max`; thinking stays off unless a
-request enables it. A 64 GiB tier file holds roughly 1.7M prefix tokens per
-node (~40 KB per token per rank).
+`none`, `minimal`, `low`, `medium`, `high`, `xhigh` and `max`; thinking is on
+by default and `none` disables it per request. A 64 GiB tier file holds roughly
+1.7M prefix tokens per node (~40 KB per token per rank).
 
 ### Ring launchers — SGLang and vLLM profiles
 

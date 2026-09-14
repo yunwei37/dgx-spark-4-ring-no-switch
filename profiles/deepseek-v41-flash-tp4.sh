@@ -32,7 +32,6 @@ args=(
   # left 3.44 GiB, failing the one-request 1M check.
   --gpu-memory-utilization 0.83
   --max-model-len 1048576
-  --max-num-seqs 8
   --max-num-batched-tokens 8192
   --block-size 128
   --engram-config '{"cpu_offload": false}'
