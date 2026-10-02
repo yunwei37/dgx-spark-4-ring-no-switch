@@ -46,8 +46,9 @@ The DeepSeek-V4.1-Flash recipe runs on the vLLM day-0 image
 `vllm/vllm-openai@sha256:d84a123255b822fc22508635218000187221794f59c0694c33b0650d1e377d58`
 with the overlay chain and seven bind-mounted patch files of
 `tonyd2wild/DeepSeek-V4.1-Flash-vLLM-DGX-Spark@592540c69853a8ce9285236ebfd6e54dfc83a013`,
-under that repository's MIT license (copyright Tech2wild). This repository
-publishes only files it changed or added, under `images/runtime/deepseek41/`:
+under that repository's MIT license (copyright Tech2wild). The six unchanged recipe serving patches, `mounts.txt`, and their MIT
+license are included under `images/runtime/deepseek41/` alongside the files
+changed or added by this project:
 `engram.py` is the recipe's file plus a `gather_engram_hashes` compatibility
 function (MIT, recipe copyright retained); `deepseek_v41_tokenizer.py` is
 vLLM's `vllm/tokenizers/deepseek_v41.py` from that image with an effort-level

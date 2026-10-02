@@ -13,8 +13,12 @@ records; the serving patches are never baked into an image. See
 | `dsv41_kv_nvme.py` | on `PYTHONPATH` (the profile uses `/opt/spark-manage/py`) | new | Per-node NVMe prefix-cache tier, loaded through `--kv-transfer-config` |
 | `prewarm5.py` | build-time only (`Dockerfile.deepseek-v41-flash` overlay5) | nothing at runtime | Vendored from the recipe commit; rebuilds `sparse_mla_sm120` under the launcher's exact JIT environment so the cache is not stale |
 
-The seven other patch files come unchanged from the recipe commit named in
-`THIRD_PARTY_NOTICES.md`; mount them as the recipe's `mounts` list describes.
+The six other serving patches, `mounts.txt`, and the recipe MIT license are
+included here from the pinned recipe commit. The checked-in `engram.py` matches
+the September 10-11 tested compatibility patch; `mounts.txt` maps all seven
+files to their vLLM paths. `deepseek_v41_tokenizer.py` and `dsv41_kv_nvme.py`
+were added later and are not part of that historical run. The separate
+[NCCL Mesh runtime](../../nccl-mesh-runtime/README.md) supplies its libraries.
 
 ## `dsv41_kv_nvme.py`
 
