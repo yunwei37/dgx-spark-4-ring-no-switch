@@ -121,18 +121,20 @@ official October checkpoint 1bae0e1, frozen 73-prompt speedbench protocol,
 thinking off, temperature zero and 256 output tokens. Clients used the same
 direct private head endpoint during a drained maintenance window.
 
-| Measurement | NCCL 2.29.7 / Mesh | Native 2.30.7 / physical PCI / max4 |
-| --- | ---: | ---: |
-| C1 ALL decode geometric mean | 66.92 | 76.86 |
-| C1 code decode geometric mean | 85.74 | 95.91 |
-| C16 aggregate completion tok/s | 191.52 | 213.98 |
-| Cold 64K prefill tok/s | 5406.3 | 6055.3 |
-| 114-context frozen MMLU pilot, correct | 104 | 102 |
+| Measurement | Mesh / d | Native / d | Native + prefetch / e |
+| --- | ---: | ---: | ---: |
+| C1 ALL decode geometric mean | 66.92 | 76.86 | 78.16 |
+| C1 code decode geometric mean | 85.74 | 95.91 | 97.18 |
+| C16 whole-level block tok/s | 185.76 | 205.41 | 202.15 |
+| C16 window aggregate tok/s | 191.52 | 213.98 | 209.98 |
+| Cold 64K prefill tok/s | 5406.3 | 6055.3 | 6118.8 |
+| 114-context frozen MMLU pilot, correct | 104 | 102 | 102 |
 
 All 73 decode measurements, four sentinels and twelve long-context probes were
-valid in both arms, with zero request failures. Native C16's bin interval was
-191.28-235.30, so its point estimate exceeds 211 without establishing a lower
-bound above that target. C1 ALL/code still miss 89.3/112.2. Four pilot choices
+valid in both arms, with zero request failures. Correction: upstream's 211 is whole-level block throughput, including tail
+drain, and cannot be compared to the window-only aggregate of 213.98. The raw
+block values are 205.41 for native d and 202.15 for e; neither meets 211. The
+191.28-235.30 interval belongs to the window metric, not the block metric. C1 ALL/code still miss 89.3/112.2. Four pilot choices
 changed. The full frozen 14,042-context evaluation subsequently completed:
 native 12,073 correct (85.9778%) versus reference 12,077 (86.0063%), with 387
 changed choices. There were 157 reference-only and 153 native-only correct
@@ -166,3 +168,14 @@ ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:sglang-cfe3cfb-production-20261030e
 succeeded. All four serving hosts preloaded it; the additional image layer is
 71,680 bytes and changes only the two adapter modules and provenance above
 corrective image d. Publication and preload do not establish GPU acceptance.
+
+The e trial completed all 73 decode samples with zero errors and all twelve
+long-context probes; cold 4K prefill was 5455.0 tok/s and 64K 6118.8 tok/s.
+Actual bs=1 graphs learned 125 collectives and captured 162 prefetch branches.
+All 114 pilot score vectors exactly matched native d. Two longer controls
+did not retain identical content; the older controls also encountered renewed
+backend activity, so neither byte preservation nor their timing difference
+is established by that comparison. The small separate-session C1 gain
+(1.7%) and lower C16 block result do not justify retaining the extension.
+The bounded trial restores qualified image d; the source/image stay available
+as research artifacts, not an accepted production improvement.
