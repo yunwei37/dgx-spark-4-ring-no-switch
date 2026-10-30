@@ -113,3 +113,45 @@ token-ID producer and both consumers, including an empty requested-ID row.
 All four eager/delayed consumer cases failed before the fix and pass after it;
 the full ten-test CPU MMLU protocol suite passes. These tests do not establish
 GPU/model quality acceptance. Rerun the real pilot before the serving A/B.
+
+## Matched serving results and next prefetch candidate (2026-10-30)
+
+Both transport arms used the same corrective SGLang image 20261030d,
+official October checkpoint 1bae0e1, frozen 73-prompt speedbench protocol,
+thinking off, temperature zero and 256 output tokens. Clients used the same
+direct private head endpoint during a drained maintenance window.
+
+| Measurement | NCCL 2.29.7 / Mesh | Native 2.30.7 / physical PCI / max4 |
+| --- | ---: | ---: |
+| C1 ALL decode geometric mean | 66.92 | 76.86 |
+| C1 code decode geometric mean | 85.74 | 95.91 |
+| C16 aggregate completion tok/s | 191.52 | 213.98 |
+| Cold 64K prefill tok/s | 5406.3 | 6055.3 |
+| 114-context frozen MMLU pilot, correct | 104 | 102 |
+
+All 73 decode measurements, four sentinels and twelve long-context probes were
+valid in both arms, with zero request failures. Native C16's bin interval was
+191.28-235.30, so its point estimate exceeds 211 without establishing a lower
+bound above that target. C1 ALL/code still miss 89.3/112.2. Four pilot choices
+changed; full 14,042-context quality evaluation is running, and pilot differences
+must not be dismissed as unchanged quality. Native near-1M retrieval recovered
+all three needles with 1,039,058 input tokens and 13 output tokens in 196.342 s.
+
+A subsequent 32-step CPU/GPU trace captured mixed consumer/evaluation traffic;
+it is not an isolated C1 performance trial. Joining kernel correlation IDs to
+CUDA graph launches and their CPU stage annotations separated eleven bs=1
+verify replays per rank. Median graph windows were 43.59-43.71 ms and summed
+NCCL kernels 7.25-7.98 ms. Rank 0's dominant per-verify kernel sums were routed
+MoE phase1 12.27 ms, phase2 5.75 ms and two dense FP8 families 7.52/2.88 ms.
+Kernel sums can overlap and are not independent critical-path fractions.
+
+The pinned upstream recipe explicitly notes that its L2 prefetch adapter learns
+no collective plan when RoCEnante is disabled
+([switchless-ring.md](https://github.com/knapcio/DeepSeek-V4.1-Flash-4x-DGX-Spark-TP4/blob/cfe3cfb81e27675eaef69e1c65bfc6d63b7315aa/docs/switchless-ring.md#rocenante-on-the-ring-hardware-forwarded-opposite-node-paths)).
+The source candidate extends that same read-only, learned-weight prefetch to the
+native PyNcclCommunicator in-place/out-of-place AllReduce and AllGather paths.
+It reuses the existing main prefetch gate and stream resolver, leaves disabled
+communicators and RoCEnante unchanged, and preserves original calls/results.
+No new tuning flag, cache, controller or network path is introduced. CPU
+contracts pass; real CUDA-graph operation, identical outputs and matched
+performance remain required before deployment or an improvement claim.

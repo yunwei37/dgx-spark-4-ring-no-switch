@@ -89,3 +89,59 @@
  
  
  def _load_modules(model_mod):
+--- a/adapter/l2_prefetch.py
++++ b/adapter/l2_prefetch.py
+@@ -66,6 +66,7 @@
+ Microbench and go/no-go: sparks/diagnostics/dsv41-l2-pdl/RESULTS.md, sparks/diagnostics/dsv41-l2-v3/RESULTS.md.
+ """
+ import ctypes as C
++from functools import wraps
+ import logging
+ import os
+ import subprocess
+@@ -595,6 +596,31 @@
+     module.tiny_gemm_bf16 = tiny_gemm_bf16
+ 
+ 
++def install_nccl(module):
++    """Reuse the learned read-only prefetch plan on the switchless NCCL path."""
++    if (not _installed() or os.environ.get("SGLANG_ROCE_ALLREDUCE", "0").strip().lower()
++            not in ("", "0", "off", "false")):
++        return
++    cls = module.PyNcclCommunicator
++    if getattr(cls, "_dsv41_l2_prefetch", False):
++        return
++
++    def wrap(original, kind):
++        @wraps(original)
++        def collective(self, *args, **kwargs):
++            if not self.disabled:
++                _before_collective(kind, self._resolve_stream())
++            return original(self, *args, **kwargs)
++        return collective
++
++    for name, kind in (("all_reduce", "ar"), ("outplace_all_reduce", "ar"),
++                       ("all_gather", "ag")):
++        setattr(cls, name, wrap(getattr(cls, name), kind))
++    cls._dsv41_l2_prefetch = True
++    _lib()  # Compile/load before CUDA graph capture, as on the RoCEnante path.
++    logger.warning("DSV41_L2_PREFETCH: NCCL collectives prefetch the next weights into L2")
++
++
+ def install_roce(module):
+     """Patch b12x.comm.roce(_ring|_twoshot).roce_oneshot: launch the prefetch right before each collective."""
+     if not _installed():
+--- a/adapter/sitecustomize.py
++++ b/adapter/sitecustomize.py
+@@ -213,6 +213,11 @@
+                 from replicated_split import install as install_replicated_split
+                 install_replicated_split(module)
+         elif module.__name__ == 'sglang.srt.distributed.device_communicators.pynccl':
++            # NCCL-only ring: learn/fork the same existing L2 prefetch plan.
++            # Install before the optional RoCE gather wrapper so its fallback is hooked once.
++            if os.environ.get('DSV41_L2_PREFETCH', '0').strip() not in ('0', 'off', 'false', ''):
++                from l2_prefetch import install_nccl as install_l2_prefetch_nccl
++                install_l2_prefetch_nccl(module)
+             # Gated on DSV41_ROCE_GATHER=<max bytes per rank>: small TP all-gathers (the draft's
+             # vocab-parallel logits) take the RoCEnante one-shot kernel instead of NCCL.
+             if os.environ.get('DSV41_ROCE_GATHER', '0').strip() not in ('', '0'):
