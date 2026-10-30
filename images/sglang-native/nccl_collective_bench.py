@@ -16,6 +16,8 @@ parser.add_argument("--master-port", type=int, required=True)
 parser.add_argument("--library", required=True)
 parser.add_argument("--label", choices=["mesh", "native", "native-pci", "native-pci-min4"], required=True)
 parser.add_argument("--output", required=True)
+parser.add_argument("--collective-impl", choices=["nccl", "neighbor-pairs"], default="nccl",
+                    help="Finite four-rank cyclic-order comparison using upstream NCCL P2P")
 parser.add_argument("--cuda-graph", action="store_true", help="Capture each 32-operation block on a side stream")
 args = parser.parse_args()
 os.environ["SGLANG_NCCL_SO_PATH"] = args.library
@@ -112,11 +114,36 @@ try:
                 output = torch.empty(count * (4 if operation == "all_gather" else 1),
                                      dtype=torch.bfloat16, device="cuda")
                 stream.wait_stream(torch.cuda.current_stream())
+                # The declared four-rank physical cycle is also a two-dimensional
+                # hypercube in Gray-code order. XOR 1 and XOR 3 are both neighbours.
+                # Keep scratch allocations outside capture and the timed replay.
+                pair_first = torch.empty_like(source) if args.collective_impl == "neighbor-pairs" and operation == "all_reduce" else None
+                pair_second = torch.empty_like(source) if pair_first is not None else None
+                def exchange(send, receive, peer):
+                    comm.group_start()
+                    try:
+                        comm.send(send, peer)
+                        comm.recv(receive, peer)
+                    finally:
+                        comm.group_end()
                 def collective():
-                    if operation == "all_reduce":
-                        comm.outplace_all_reduce(source, output)
+                    if args.collective_impl == "nccl":
+                        if operation == "all_reduce":
+                            comm.outplace_all_reduce(source, output)
+                        else:
+                            comm.all_gather(output, source)
+                    elif operation == "all_reduce":
+                        exchange(source, pair_first, args.rank ^ 1)
+                        torch.add(source, pair_first, out=output)
+                        exchange(output, pair_second, args.rank ^ 3)
+                        torch.add(output, pair_second, out=output)
                     else:
-                        comm.all_gather(output, source)
+                        output[args.rank * count:(args.rank + 1) * count].copy_(source)
+                        exchange(source, output[(args.rank ^ 1) * count:((args.rank ^ 1) + 1) * count], args.rank ^ 1)
+                        local = (args.rank // 2) * 2 * count
+                        remote = (1 - args.rank // 2) * 2 * count
+                        exchange(output[local:local + 2 * count],
+                                 output[remote:remote + 2 * count], args.rank ^ 3)
                 for _ in range(8):
                     collective()
                 stream.synchronize()
@@ -164,6 +191,7 @@ try:
     result = {"execution": "cuda_graph" if args.cuda_graph else "eager", "mapped_nccl": mapped_nccl, "nccl_environment": {k: v for k, v in os.environ.items() if k.startswith("NCCL_")},
               "fabric_delta_bytes": {k: v - fabric_before[k] for k, v in fabric_after.items()},
               "rank": args.rank, "label": args.label, "library": args.library,
+              "collective_impl": args.collective_impl,
               "nccl_version": comm.nccl_version, "rows": rows}
     gathered = [None] * 4 if args.rank == 0 else None
     dist.gather_object(result, gathered, dst=0)

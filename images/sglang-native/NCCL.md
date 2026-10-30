@@ -261,3 +261,21 @@ All children exited zero. Raw results and all-rank route logs are archived
 privately and read back into the owning Workspace. The public aggregate is
 benchmarks/nccl-neighbour-tree-20261030.json. This is a failed performance
 candidate with successful numerical validation, not completion of the goal.
+
+## Neighbour-pair exchange: CPU prototype
+
+A four-rank physical cycle is a two-dimensional hypercube in Gray-code order.
+With the existing cyclic world-rank order, partners rank XOR 1 and rank XOR 3
+are both direct neighbours. The first exchange forms disjoint pairs (0,1) and
+(2,3); the second exchanges pair results over edges (0,3) and (1,2). Thus each
+rank receives every original contribution exactly once in two exchange phases.
+This needs no opposite-node route, new transport, kernel or JIT.
+
+The finite harness's optional collective-impl=neighbor-pairs uses upstream
+NCCL grouped Send/Recv and ordinary PyTorch addition for AllReduce. AllGather
+exchanges each rank's own slice, then its two-rank contiguous slice. Scratch
+allocation stays outside timed graph replay. The default remains nccl and no
+serving implementation/configuration changes. CPU syntax and a symbolic
+rank-contribution/neighbour proof pass; real eager/graph numerical checks and
+latency measurements are still pending. A component improvement would require
+separate integration and complete model quality/stability/context acceptance.
