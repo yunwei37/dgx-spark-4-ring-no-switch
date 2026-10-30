@@ -1,0 +1,26 @@
+From b85c5d9c4aa5b46c737d4eaf1940ee917d158e5f Mon Sep 17 00:00:00 2001
+From: Stanislav Bardyuk <6258615+kodlan@users.noreply.github.com>
+Date: Sun, 6 Sep 2026 19:07:24 +0000
+Subject: [PATCH] net_ib: Order CTS nreqs load after the idx check
+
+Backport of NVIDIA/nccl#2393 for the pinned NCCL v2.30.7-1 source.
+Apache-2.0; see the upstream NCCL repository and this repository's NOTICE.
+---
+ src/transport/net_ib/p2p.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/transport/net_ib/p2p.cc b/src/transport/net_ib/p2p.cc
+index 281061a65..7bc0d0cee 100644
+--- a/src/transport/net_ib/p2p.cc
++++ b/src/transport/net_ib/p2p.cc
+@@ -283,6 +283,8 @@ ncclResult_t ncclIbIsend(void* sendComm, void* data, size_t size, int tag, void*
+     *request = NULL;
+     return ncclSuccess;
+   }
++  // Order the nreqs load after the idx load above; on weakly ordered CPUs it could otherwise return a stale value.
++  std::atomic_thread_fence(std::memory_order_acquire);
+   nreqs = slots[0].nreqs;
+   // Wait until all data has arrived
+   for (int r = 1; r < nreqs; r++) {
+-- 
+2.50.1

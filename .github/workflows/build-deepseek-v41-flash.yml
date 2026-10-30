@@ -7,6 +7,10 @@ on:
         description: 'Publish an already-qualified OCI release; empty keeps the legacy build'
         required: false
         type: string
+      transport_release:
+        description: 'Publish an experimental NCCL carrier from a measured release'
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -22,7 +26,7 @@ jobs:
           sudo rm -rf /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
           df -h /
       - name: Add build swap for the large FlashInfer JIT compilations
-        if: inputs.qualified_release == ''
+        if: inputs.qualified_release == '' && inputs.transport_release == ''
         # The mxfp8/sparse-MLA CUTLASS compilations can exceed the 16 GiB
         # runner RAM; the recipe itself documented them wedging memory on
         # real nodes. Swap keeps the runner alive without changing the image.
@@ -34,14 +38,14 @@ jobs:
           sudo swapon /swapfile
           free -h
       - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
-        if: inputs.qualified_release == ''
+        if: inputs.qualified_release == '' && inputs.transport_release == ''
       - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and publish immutable ARM64 image
-        if: inputs.qualified_release == ''
+        if: inputs.qualified_release == '' && inputs.transport_release == ''
         id: build
         uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8
         with:
@@ -57,22 +61,33 @@ jobs:
           provenance: mode=max
           sbom: true
       - name: Record published digest
-        if: inputs.qualified_release == ''
+        if: inputs.qualified_release == '' && inputs.transport_release == ''
         run: |
           echo "image=ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:deepseek-v41-flash-${GITHUB_SHA}" >> "${GITHUB_STEP_SUMMARY}"
           echo "digest=${{ steps.build.outputs.digest }}" >> "${GITHUB_STEP_SUMMARY}"
 
       - name: Publish the exact qualified SGLang and NCCL images
-        if: inputs.qualified_release != ''
+        if: inputs.qualified_release != '' || inputs.transport_release != ''
         env:
           GH_TOKEN: ${{ github.token }}
           QUALIFIED_RELEASE: ${{ inputs.qualified_release }}
+          TRANSPORT_RELEASE: ${{ inputs.transport_release }}
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y skopeo
           assets="$RUNNER_TEMP/qualified-artifacts"
           layout="$RUNNER_TEMP/qualified-oci"
           mkdir -p "$assets"
+          if [ -n "$TRANSPORT_RELEASE" ]; then
+            gh release download "$TRANSPORT_RELEASE" -R "$GITHUB_REPOSITORY" --dir "$assets" --pattern 'nccl-native-*.oci.tar' --pattern nccl-transport.json
+            tag=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["image_tag"])' "$assets/nccl-transport.json")
+            archive=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["archive"])' "$assets/nccl-transport.json")
+            authfile="${DOCKER_CONFIG:-$HOME/.docker}/config.json"
+            image=ghcr.io/yunwei37/dgx-spark-4-ring-no-switch
+            skopeo copy --preserve-digests --dest-authfile "$authfile" "oci-archive:$assets/$archive" "docker://$image:$tag"
+            skopeo inspect --format '{{.Digest}}' "docker://$image:$tag" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
           gh release download "$QUALIFIED_RELEASE" -R "$GITHUB_REPOSITORY" --dir "$assets"             --pattern sglang-native-production-overlay.oci.tar             --pattern nccl-mesh-runtime-20261030.oci.tar
           skopeo copy --preserve-digests             docker://lmsysorg/sglang@sha256:b4a4745fab5393dc0aca573fe754b86477f57691c9e971390b21102d3d94ebf9             "oci:$layout:base"
           tar -xf "$assets/sglang-native-production-overlay.oci.tar" -C "$layout"

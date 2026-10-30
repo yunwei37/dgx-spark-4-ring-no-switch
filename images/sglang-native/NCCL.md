@@ -8,7 +8,7 @@ The serving service remains on NCCL 2.29.7 and Mesh while this candidate is test
 - NVIDIA NCCL v2.30.7-1: 73cf112295c33aee2b895f329f592f2a9b4b0f97.
 - Cumulative dual-PCI/subnet patch: FujitsuPolycom/sparkring,
   9932204d25ab857ec4a5a7c437f4dc0f5bddee2e,
-  spark_transport/nccl/ (see pinned DUAL_PCI_DOMAIN.md and cumulative patch).
+  spark_transport/nccl/nccl-2.30.7-dual-pci-domain.patch.
 - CTS acquire fence: NVIDIA/nccl#2393, as carried by the SGLang recipe
   knapcio/DeepSeek-V4.1-Flash-4x-DGX-Spark-TP4 at
   cfe3cfb81e27675eaef69e1c65bfc6d63b7315aa.
