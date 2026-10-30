@@ -1,0 +1,485 @@
+{
+  "status": "component_correct_no_tree_speedup",
+  "trials": [
+    {
+      "trial": "ring-interleaved-graph-20261030",
+      "execution": "cuda_graph",
+      "environment": {
+        "NCCL_SOCKET_IFNAME": "tailscale0",
+        "NCCL_IB_SUBNET_AWARE_ROUTING": "1",
+        "NCCL_MAX_NCHANNELS": "4",
+        "NCCL_ALGO": "Ring",
+        "NCCL_NVLS_ENABLE": "0",
+        "NCCL_IB_PRESERVE_PCI_DOMAIN": "1",
+        "NCCL_IGNORE_CPU_AFFINITY": "1",
+        "NCCL_SWITCHLESS_RING_ONLY": "1",
+        "NCCL_RUNTIME_CONNECT": "1",
+        "NCCL_CUMEM_ENABLE": "1",
+        "NCCL_NET": "IB",
+        "NCCL_VERSION": "2.28.3-1",
+        "NCCL_IB_EXTENDED_IPV4_GIDS": "1",
+        "NCCL_DEBUG": "INFO",
+        "NCCL_DEBUG_SUBSYS": "INIT,NET,GRAPH",
+        "NCCL_IB_ROUTE_DIAGNOSTICS": "1"
+      },
+      "rows": [
+        {
+          "op": "all_reduce",
+          "token_rows": 1,
+          "max_rank_median_us": 44.32100057601929,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_reduce",
+          "token_rows": 6,
+          "max_rank_median_us": 60.337500646710396,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_reduce",
+          "token_rows": 24,
+          "max_rank_median_us": 89.62399885058403,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_reduce",
+          "token_rows": 96,
+          "max_rank_median_us": 161.3609939813614,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 1,
+          "max_rank_median_us": 30.181000009179115,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 6,
+          "max_rank_median_us": 38.200998678803444,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 24,
+          "max_rank_median_us": 56.635500863194466,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 96,
+          "max_rank_median_us": 93.52250024676323,
+          "correct": true,
+          "pattern_rounds": 4
+        }
+      ]
+    },
+    {
+      "trial": "tree-interleaved-graph-20261030",
+      "execution": "cuda_graph",
+      "environment": {
+        "NCCL_SOCKET_IFNAME": "tailscale0",
+        "NCCL_IB_SUBNET_AWARE_ROUTING": "1",
+        "NCCL_MAX_NCHANNELS": "4",
+        "NCCL_ALGO": "Ring;allreduce:Tree",
+        "NCCL_NVLS_ENABLE": "0",
+        "NCCL_IB_PRESERVE_PCI_DOMAIN": "1",
+        "NCCL_IGNORE_CPU_AFFINITY": "1",
+        "NCCL_SWITCHLESS_RING_ONLY": "1",
+        "NCCL_RUNTIME_CONNECT": "1",
+        "NCCL_CUMEM_ENABLE": "1",
+        "NCCL_NET": "IB",
+        "NCCL_VERSION": "2.28.3-1",
+        "NCCL_IB_EXTENDED_IPV4_GIDS": "1",
+        "NCCL_DEBUG": "INFO",
+        "NCCL_DEBUG_SUBSYS": "INIT,NET,GRAPH",
+        "NCCL_IB_ROUTE_DIAGNOSTICS": "1"
+      },
+      "rows": [
+        {
+          "op": "all_reduce",
+          "token_rows": 1,
+          "max_rank_median_us": 51.749998703598976,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_reduce",
+          "token_rows": 6,
+          "max_rank_median_us": 66.38899818062782,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_reduce",
+          "token_rows": 24,
+          "max_rank_median_us": 95.94300016760826,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_reduce",
+          "token_rows": 96,
+          "max_rank_median_us": 178.41699719429016,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 1,
+          "max_rank_median_us": 29.570000246167183,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 6,
+          "max_rank_median_us": 37.92949952185154,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 24,
+          "max_rank_median_us": 57.337500154972076,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 96,
+          "max_rank_median_us": 91.84450283646584,
+          "correct": true,
+          "pattern_rounds": 4
+        }
+      ]
+    },
+    {
+      "trial": "ring-graph-20261030",
+      "execution": "cuda_graph",
+      "environment": {
+        "NCCL_SOCKET_IFNAME": "tailscale0",
+        "NCCL_IB_SUBNET_AWARE_ROUTING": "1",
+        "NCCL_MAX_NCHANNELS": "4",
+        "NCCL_ALGO": "Ring",
+        "NCCL_NVLS_ENABLE": "0",
+        "NCCL_IB_PRESERVE_PCI_DOMAIN": "1",
+        "NCCL_IGNORE_CPU_AFFINITY": "1",
+        "NCCL_SWITCHLESS_RING_ONLY": "1",
+        "NCCL_RUNTIME_CONNECT": "1",
+        "NCCL_CUMEM_ENABLE": "1",
+        "NCCL_NET": "IB",
+        "NCCL_VERSION": "2.28.3-1",
+        "NCCL_IB_EXTENDED_IPV4_GIDS": "1",
+        "NCCL_DEBUG": "INFO",
+        "NCCL_DEBUG_SUBSYS": "INIT,NET,GRAPH",
+        "NCCL_IB_ROUTE_DIAGNOSTICS": "1"
+      },
+      "rows": [
+        {
+          "op": "all_reduce",
+          "token_rows": 1,
+          "max_rank_median_us": 42.419999837875366,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_reduce",
+          "token_rows": 6,
+          "max_rank_median_us": 59.898000210523605,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_reduce",
+          "token_rows": 24,
+          "max_rank_median_us": 93.69000047445297,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_reduce",
+          "token_rows": 96,
+          "max_rank_median_us": 164.24600034952164,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 1,
+          "max_rank_median_us": 31.0499994084239,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 6,
+          "max_rank_median_us": 38.31150010228157,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 24,
+          "max_rank_median_us": 57.21000023186207,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 96,
+          "max_rank_median_us": 92.32550114393234,
+          "correct": true,
+          "pattern_rounds": 4
+        }
+      ]
+    },
+    {
+      "trial": "tree-eager-20261030",
+      "execution": "eager",
+      "environment": {
+        "NCCL_SOCKET_IFNAME": "tailscale0",
+        "NCCL_IB_SUBNET_AWARE_ROUTING": "1",
+        "NCCL_MAX_NCHANNELS": "4",
+        "NCCL_ALGO": "Ring;allreduce:Tree",
+        "NCCL_NVLS_ENABLE": "0",
+        "NCCL_IB_PRESERVE_PCI_DOMAIN": "1",
+        "NCCL_IGNORE_CPU_AFFINITY": "1",
+        "NCCL_SWITCHLESS_RING_ONLY": "1",
+        "NCCL_RUNTIME_CONNECT": "1",
+        "NCCL_CUMEM_ENABLE": "1",
+        "NCCL_NET": "IB",
+        "NCCL_VERSION": "2.28.3-1",
+        "NCCL_IB_EXTENDED_IPV4_GIDS": "1",
+        "NCCL_DEBUG": "INFO",
+        "NCCL_DEBUG_SUBSYS": "INIT,NET,GRAPH",
+        "NCCL_IB_ROUTE_DIAGNOSTICS": "1"
+      },
+      "rows": [
+        {
+          "op": "all_reduce",
+          "token_rows": 1,
+          "max_rank_median_us": 48.9445012062788,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_reduce",
+          "token_rows": 6,
+          "max_rank_median_us": 67.44449958205223,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_reduce",
+          "token_rows": 24,
+          "max_rank_median_us": 105.6160032749176,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_reduce",
+          "token_rows": 96,
+          "max_rank_median_us": 208.92900228500366,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 1,
+          "max_rank_median_us": 24.534499272704124,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 6,
+          "max_rank_median_us": 32.181499525904655,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 24,
+          "max_rank_median_us": 50.81999860703945,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 96,
+          "max_rank_median_us": 87.10400015115738,
+          "correct": true,
+          "pattern_rounds": 4
+        }
+      ]
+    },
+    {
+      "trial": "tree-graph-20261030",
+      "execution": "cuda_graph",
+      "environment": {
+        "NCCL_SOCKET_IFNAME": "tailscale0",
+        "NCCL_IB_SUBNET_AWARE_ROUTING": "1",
+        "NCCL_MAX_NCHANNELS": "4",
+        "NCCL_ALGO": "Ring;allreduce:Tree",
+        "NCCL_NVLS_ENABLE": "0",
+        "NCCL_IB_PRESERVE_PCI_DOMAIN": "1",
+        "NCCL_IGNORE_CPU_AFFINITY": "1",
+        "NCCL_SWITCHLESS_RING_ONLY": "1",
+        "NCCL_RUNTIME_CONNECT": "1",
+        "NCCL_CUMEM_ENABLE": "1",
+        "NCCL_NET": "IB",
+        "NCCL_VERSION": "2.28.3-1",
+        "NCCL_IB_EXTENDED_IPV4_GIDS": "1",
+        "NCCL_DEBUG": "INFO",
+        "NCCL_DEBUG_SUBSYS": "INIT,NET,GRAPH",
+        "NCCL_IB_ROUTE_DIAGNOSTICS": "1"
+      },
+      "rows": [
+        {
+          "op": "all_reduce",
+          "token_rows": 1,
+          "max_rank_median_us": 53.975000977516174,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_reduce",
+          "token_rows": 6,
+          "max_rank_median_us": 72.11700081825256,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_reduce",
+          "token_rows": 24,
+          "max_rank_median_us": 124.9534972012043,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_reduce",
+          "token_rows": 96,
+          "max_rank_median_us": 208.77649635076523,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 1,
+          "max_rank_median_us": 31.775500625371933,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 6,
+          "max_rank_median_us": 39.251500740647316,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 24,
+          "max_rank_median_us": 58.511000126600266,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 96,
+          "max_rank_median_us": 93.45649927854538,
+          "correct": true,
+          "pattern_rounds": 4
+        }
+      ]
+    },
+    {
+      "trial": "ring-eager-20261030",
+      "execution": "eager",
+      "environment": {
+        "NCCL_SOCKET_IFNAME": "tailscale0",
+        "NCCL_IB_SUBNET_AWARE_ROUTING": "1",
+        "NCCL_MAX_NCHANNELS": "4",
+        "NCCL_ALGO": "Ring",
+        "NCCL_NVLS_ENABLE": "0",
+        "NCCL_IB_PRESERVE_PCI_DOMAIN": "1",
+        "NCCL_IGNORE_CPU_AFFINITY": "1",
+        "NCCL_SWITCHLESS_RING_ONLY": "1",
+        "NCCL_RUNTIME_CONNECT": "1",
+        "NCCL_CUMEM_ENABLE": "1",
+        "NCCL_NET": "IB",
+        "NCCL_VERSION": "2.28.3-1",
+        "NCCL_IB_EXTENDED_IPV4_GIDS": "1",
+        "NCCL_DEBUG": "INFO",
+        "NCCL_DEBUG_SUBSYS": "INIT,NET,GRAPH",
+        "NCCL_IB_ROUTE_DIAGNOSTICS": "1"
+      },
+      "rows": [
+        {
+          "op": "all_reduce",
+          "token_rows": 1,
+          "max_rank_median_us": 39.47199881076813,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_reduce",
+          "token_rows": 6,
+          "max_rank_median_us": 55.35399913787842,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_reduce",
+          "token_rows": 24,
+          "max_rank_median_us": 86.10749989748001,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_reduce",
+          "token_rows": 96,
+          "max_rank_median_us": 172.08199948072433,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 1,
+          "max_rank_median_us": 24.653499945998192,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 6,
+          "max_rank_median_us": 32.62550011277199,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 24,
+          "max_rank_median_us": 52.84750089049339,
+          "correct": true,
+          "pattern_rounds": 4
+        },
+        {
+          "op": "all_gather",
+          "token_rows": 96,
+          "max_rank_median_us": 87.46200054883957,
+          "correct": true,
+          "pattern_rounds": 4
+        }
+      ]
+    }
+  ]
+}

@@ -77,6 +77,7 @@ try:
         api("pause_generation", {"mode": "in_place"})
         event("generation_paused")
     dist.barrier()
+    event("gpu_phase_start")
     deadline = time.monotonic() + 45
     while True:
         utilization = subprocess.check_output(

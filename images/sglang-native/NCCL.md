@@ -180,7 +180,7 @@ is established by that comparison. The small separate-session C1 gain
 The bounded trial restores qualified image d; the source/image stay available
 as research artifacts, not an accepted production improvement.
 
-## Neighbour-only Tree candidate (not yet GPU qualified)
+## Neighbour-only Tree candidate: correct, no measured speedup
 
 The current switchless patch explicitly skips Tree and PAT transport setup.
 The standard four-node double tree has a degree-three internal vertex, which
@@ -225,3 +225,39 @@ From this directory, run the host proof against a patched source tree with:
 The nonconstant-pattern oracle also passed CPU checks over every rank addition
 order and reconstructs all 491,520 element indices from its four rounds. None
 of these host tests claims real four-rank GPU correctness or a latency gain.
+
+
+### Real four-rank component outcome, 2026-10-30 16:47-16:54 UTC
+
+Six finite trials ran in private child mount namespaces against one actual
+NCCL inode per rank. All 192 rank/operation/shape cases passed four nonconstant
+pattern rounds (768 pattern checks), including eager and CUDA Graph execution.
+The first candidate was correct but its block-ordered tree types lost the
+second tree when NCCL applied the existing max-four-channel cap. The corrected
+helper canonicalizes ring direction and alternates tree types by final channel
+index. The CPU proof now checks adjacent complementary pairs, including the
+retained prefix, and the real rank-zero log confirms alternating root/leaf roles.
+Its incremental ARM64 rebuild exited zero in 2.871 seconds (61,425,048 bytes).
+
+For the corrected binary, only NCCL_ALGO differs. Maximum rank median,
+microseconds, CUDA Graph; AllGather remains Ring in both arms:
+
+| Operation / rows | Ring | Tree AllReduce |
+| --- | ---: | ---: |
+| AllReduce / 1 | 44.321 | 51.750 |
+| AllReduce / 6 | 60.338 | 66.389 |
+| AllReduce / 24 | 89.624 | 95.943 |
+| AllReduce / 96 | 161.361 | 178.417 |
+| AllGather / 1 | 30.181 | 29.570 |
+| AllGather / 6 | 38.201 | 37.929 |
+| AllGather / 24 | 56.636 | 57.338 |
+| AllGather / 96 | 93.523 | 91.845 |
+
+Tree is about 7-17% slower on AllReduce in this component comparison. The
+unchanged AllGather controls are close. Do not promote Tree or infer an
+end-to-end gain. The currently serving image/carrier/environment are unchanged;
+each trial resumed native generation after a 1.18-2.43-second in-place pause.
+All children exited zero. Raw results and all-rank route logs are archived
+privately and read back into the owning Workspace. The public aggregate is
+benchmarks/nccl-neighbour-tree-20261030.json. This is a failed performance
+candidate with successful numerical validation, not completion of the goal.

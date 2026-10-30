@@ -105,8 +105,9 @@ int main() {
           assert(depth<=2);
         }
       }
-      for(int c=0;c<channels;c++) for(int rank=0;rank<4;rank++) {
-        const auto& a=results[rank][c]; const auto& b=results[rank][c+channels];
+      // Any retained prefix with at least two channels keeps both tree types.
+      for(int c=0;c+1<2*channels;c+=2) for(int rank=0;rank<4;rank++) {
+        const auto& a=results[rank][c]; const auto& b=results[rank][c+1];
         assert(!(a.down[0]>=0 && b.down[0]>=0));
       }
       // The disabled feature must still use the actual upstream double tree.

@@ -1,6 +1,6 @@
 --- a/src/graph/connect.cc
 +++ b/src/graph/connect.cc
-@@ -135,9 +135,44 @@
+@@ -135,9 +135,48 @@
    return ncclSuccess;
  }
  
@@ -21,13 +21,17 @@
 +      seen |= 1 << r;
 +    }
 +    if (next[order[3]] != 0) return ncclInternalError;
++    // Canonicalize direction, so adjacent channels keep complementary trees
++    // even if NCCL truncates the duplicated channel array.
++    if (order[1] > order[3]) std::swap(order[1], order[3]);
 +    int position = 0;
 +    while (order[position] != comm->rank) position++;
 +    for (int t = 0; t < 2; t++) {
++      const int type = (c + t * comm->nChannels) % 2;
 +      struct ncclTree* tree = &comm->channels[c + t * comm->nChannels].tree;
-+      tree->up = parent[t][position] < 0 ? -1 : order[parent[t][position]];
-+      tree->down[0] = child0[t][position] < 0 ? -1 : order[child0[t][position]];
-+      tree->down[1] = child1[t][position] < 0 ? -1 : order[child1[t][position]];
++      tree->up = parent[type][position] < 0 ? -1 : order[parent[type][position]];
++      tree->down[0] = child0[type][position] < 0 ? -1 : order[child0[type][position]];
++      tree->down[1] = child1[type][position] < 0 ? -1 : order[child1[type][position]];
 +      tree->down[2] = -1;
 +      tree->depth = 2;
 +      INFO(NCCL_GRAPH, "Switchless tree %d: %d -> %d -> %d/%d",
@@ -46,7 +50,7 @@
  
    // Compute tree depth. Not an exact value but a good approximation in most
    // cases
-@@ -442,7 +477,7 @@
+@@ -442,7 +481,7 @@
  
    // Connect rings and trees. This should also duplicate the channels.
    NCCLCHECKGOTO(connectRings(comm, ringRecv, ringSend, ringPrev, ringNext), ret, fail);
