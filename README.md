@@ -174,7 +174,9 @@ digests and verification status for every tag are recorded in
 
 | Tag | Dockerfile | Serves |
 | --- | --- | --- |
-| `deepseek-v41-flash-20260911` | `Dockerfile.deepseek-v41-flash` | DeepSeek-V4.1-Flash (newest) |
+| `sglang-cfe3cfb-production-20261030c` | [native source](images/sglang-native/README.md) | official DeepSeek-V4.1-Flash-1017, newest qualification |
+| `nccl-2.29.7-mesh-19924dcc` | exact qualified companion OCI | NCCL/Mesh library carrier for the same profile |
+| `deepseek-v41-flash-20260911` | `Dockerfile.deepseek-v41-flash` | September DeepSeek-V4.1-Flash profile |
 | `glm53-intmix-nvfp4-dflash2-<sha>` | `Dockerfile.vllm-glm53-intmix-nvfp4-dflash2` | formal GLM-5.3 IntMix NVFP4 DFlash2 experiments |
 | `glm53-intmix-nvfp4-dcp4-<sha>` | `Dockerfile.vllm-glm53-intmix-nvfp4` | formal GLM-5.3 IntMix NVFP4 experiments |
 | `glm53-intmix-router-<sha>` | `Dockerfile.vllm-glm53-intmix` | formal GLM-5.3 INT4/INT8 router candidate |

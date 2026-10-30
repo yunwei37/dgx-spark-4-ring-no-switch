@@ -1,5 +1,22 @@
 # Runtime image
 
+## 2026-10-30 — official 1017 SGLang qualification
+
+The SGLang runtime and NCCL/Mesh companion are published under
+`ghcr.io/yunwei37/dgx-spark-4-ring-no-switch` as
+`sglang-cfe3cfb-production-20261030c` and `nccl-2.29.7-mesh-19924dcc`.
+Both are linux/arm64. Their exact digest/config identifiers, release assets,
+successful Actions run, anonymous readback and native pulls are recorded in
+the [qualification report](deepseek41-1017-sglang.md#image-identity-and-reproduction).
+
+These are the measured OCI artifacts, not a later rebuild. The serving profile
+passed the eight-case business probe, OMP tools and a real 1,039,058-input-token
+retrieval. After switching deployment references to these published names,
+all four ranks became Ready with zero restarts and real public gateway
+generation returned HTTP 200. The recorded 67.49 overall / 86.18 code C1 and
+194.4 C16 results remain below the target; publication is not a speedup claim.
+
+
 All images are `linux/arm64`, built from digest-pinned bases, and published
 to `ghcr.io/yunwei37/dgx-spark-4-ring-no-switch` by the `workflow_dispatch`
 workflows under `.github/workflows/` (the repository push token has no
