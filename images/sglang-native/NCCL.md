@@ -179,3 +179,49 @@ is established by that comparison. The small separate-session C1 gain
 (1.7%) and lower C16 block result do not justify retaining the extension.
 The bounded trial restores qualified image d; the source/image stay available
 as research artifacts, not an accepted production improvement.
+
+## Neighbour-only Tree candidate (not yet GPU qualified)
+
+The current switchless patch explicitly skips Tree and PAT transport setup.
+The standard four-node double tree has a degree-three internal vertex, which
+cannot be embedded in a degree-two physical ring without a non-neighbour path.
+The source candidate builds two complementary spanning paths from NCCL's
+actual ring-next map before the device communicator is copied, including
+runtime-connect mode. Each root has maximum depth two; internal-node sets are
+disjoint and all edges join existing ring neighbours. Existing upstream Tree
+device kernels, arithmetic and IB transport are reused. No OS route, hairpin,
+firewall or new tuning flag is added.
+
+The existing switchless gate selects this topology only for four nodes with
+one rank per node. Other sizes retain the previous Tree skip, and gate-off
+retains upstream topology. A host-only test compiles the actual helper,
+upstream double-tree code and transport entrypoint: 96 permutation/channel
+combinations and 384 rank cases check neighbour-only edges, reciprocity,
+connectivity, depth, complementary internal nodes, invalid-cycle rejection
+and unchanged gate-off behavior. This is not GPU or performance acceptance.
+
+For a finite comparison, upstream's existing per-function algorithm syntax
+allows Ring for other collectives and Tree for AllReduce:
+NCCL_ALGO=Ring;allreduce:Tree
+([NVIDIA documentation](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/env.html#nccl-algo)).
+A global Tree-only selection would leave AllGather without a supported algorithm.
+No serving configuration has been changed to this candidate.
+
+Before any new routing is trusted, the existing collective harness now checks
+four base-31 index-digit patterns with different rank coefficients. Every
+individual value and partial sum is an exactly representable BF16 integer.
+This detects stale rounds and within-rank permutations that constant inputs
+could miss. Real eager/CUDA-graph checks and latency A/B remain required.
+
+The ARM64 candidate linked successfully in 5.134 s (61,423,968-byte library).
+A fresh extraction of pinned NCCL plus the same routing/CTS/listener/tree patch
+chain reproduced the CPU proof. The upstream routing patch writes generic.cc
+with CRLF; the build normalizes only that file's line endings before the local
+patch. Without that necessary preparation the patch demonstrably fails.
+From this directory, run the host proof against a patched source tree with:
+
+    NCCL_SOURCE_DIR=/path/to/patched/nccl python3 test_nccl_ring_tree.py
+
+The nonconstant-pattern oracle also passed CPU checks over every rank addition
+order and reconstructs all 491,520 element indices from its four rounds. None
+of these host tests claims real four-rank GPU correctness or a latency gain.

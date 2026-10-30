@@ -13,6 +13,9 @@ cd "$build"
 patch -p1 < routing.patch
 patch -p1 < "$here/nccl-cts-acquire.patch"
 patch -p1 < "$here/nccl-listener-physical-devices.patch"
+# The upstream routing patch writes this source with CRLF.
+sed -i 's/\r$//' src/transport/generic.cc
+patch -p1 < "$here/nccl-switchless-tree.patch"
 make -j"$(nproc)" src.build NVCC_GENCODE="-gencode=arch=compute_121,code=sm_121" NCCL_GIT_BRANCH=v2.30.7-1 NCCL_GIT_COMMIT_HASH=73cf112295c33aee2b895f329f592f2a9b4b0f97
 mkdir -p "$out/lib"
 install -m 755 build/lib/libnccl.so.2.30.7 "$out/lib/"

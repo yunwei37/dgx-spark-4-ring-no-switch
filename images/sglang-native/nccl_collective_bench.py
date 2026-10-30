@@ -103,7 +103,11 @@ try:
         for operation in ("all_reduce", "all_gather"):
             for tokens in (1, 6, 24, 96):
                 count = hidden * tokens // (4 if operation == "all_gather" else 1)
-                source = torch.full((count,), args.rank + 1, dtype=torch.bfloat16, device="cuda")
+                index = torch.arange(count, dtype=torch.int32, device="cuda")
+                def pattern(seed, rank):
+                    digit = (index // (31 ** seed)) % 31 - 15 + seed + 1
+                    return (digit * (rank + 1)).to(torch.bfloat16)
+                source = pattern(0, args.rank)
                 output = torch.empty(count * (4 if operation == "all_gather" else 1),
                                      dtype=torch.bfloat16, device="cuda")
                 stream.wait_stream(torch.cuda.current_stream())
@@ -134,16 +138,27 @@ try:
                     end.record(stream)
                     end.synchronize()
                     samples.append(begin.elapsed_time(end) * 1000 / 32)
-                expected = (torch.full_like(output, 10) if operation == "all_reduce" else
-                            torch.arange(1, 5, dtype=output.dtype, device="cuda")
-                            .repeat_interleave(count))
-                if not torch.equal(output, expected):
-                    raise RuntimeError(f"{operation} numerical mismatch at {tokens} token rows")
+                # Four base-31 digit rounds distinguish every index in the largest
+                # current tensor. All values and every partial sum are exact BF16
+                # integers; the oracle is independent of reduction order.
+                for seed in range(4):
+                    source.copy_(pattern(seed, args.rank))
+                    if graph is None:
+                        collective()
+                    else:
+                        graph.replay()
+                    stream.synchronize()
+                    expected = (((index // (31 ** seed)) % 31 - 15 + seed + 1) * 10
+                                ).to(output.dtype) if operation == "all_reduce" else torch.cat(
+                                    [pattern(seed, rank) for rank in range(4)])
+                    if not torch.equal(output, expected):
+                        raise RuntimeError(
+                            f"{operation} numerical mismatch at {tokens} rows, pattern {seed}")
                 rows.append({"operation": operation, "token_rows": tokens,
                              "input_bytes": source.numel() * source.element_size(),
                              "blocks": 8, "iterations_per_block": 32,
                              "us_per_collective": samples, "median_us": statistics.median(samples),
-                             "correct": True})
+                             "correctness_pattern_rounds": 4, "correct": True})
     fabric_after = fabric_counters()
     result = {"execution": "cuda_graph" if args.cuda_graph else "eager", "mapped_nccl": mapped_nccl, "nccl_environment": {k: v for k, v in os.environ.items() if k.startswith("NCCL_")},
               "fabric_delta_bytes": {k: v - fabric_before[k] for k, v in fabric_after.items()},

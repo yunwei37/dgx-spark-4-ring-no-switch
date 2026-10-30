@@ -1,0 +1,69 @@
+--- a/src/graph/connect.cc
++++ b/src/graph/connect.cc
+@@ -135,9 +135,44 @@
+   return ncclSuccess;
+ }
+ 
++// Four one-GPU nodes: complementary spanning paths use only physical-ring
++// neighbours. Build before devCommSetup, including NCCL_RUNTIME_CONNECT=1.
++extern int64_t ncclParamSwitchlessRingOnly();
++static ncclResult_t connectSwitchlessTrees(struct ncclComm* comm, int* ringNext) {
++  static const int parent[2][4] = {{-1, 0, 1, 0}, {3, 2, -1, 2}};
++  static const int child0[2][4] = {{1, 2, -1, -1}, {-1, -1, 3, 0}};
++  static const int child1[2][4] = {{3, -1, -1, -1}, {-1, -1, 1, -1}};
++  for (int c = 0; c < comm->nChannels; c++) {
++    const int* next = ringNext + c * comm->nRanks;
++    int order[4] = {0, -1, -1, -1}, seen = 1;
++    for (int i = 1; i < 4; i++) {
++      int r = next[order[i - 1]];
++      if (r < 0 || r >= 4 || (seen & (1 << r))) return ncclInternalError;
++      order[i] = r;
++      seen |= 1 << r;
++    }
++    if (next[order[3]] != 0) return ncclInternalError;
++    int position = 0;
++    while (order[position] != comm->rank) position++;
++    for (int t = 0; t < 2; t++) {
++      struct ncclTree* tree = &comm->channels[c + t * comm->nChannels].tree;
++      tree->up = parent[t][position] < 0 ? -1 : order[parent[t][position]];
++      tree->down[0] = child0[t][position] < 0 ? -1 : order[child0[t][position]];
++      tree->down[1] = child1[t][position] < 0 ? -1 : order[child1[t][position]];
++      tree->down[2] = -1;
++      tree->depth = 2;
++      INFO(NCCL_GRAPH, "Switchless tree %d: %d -> %d -> %d/%d",
++           c + t * comm->nChannels, tree->up, comm->rank, tree->down[0], tree->down[1]);
++    }
++  }
++  return ncclSuccess;
++}
++
+ static ncclResult_t connectTrees(struct ncclComm* comm, int* treeToParent, int* treeToChild0, int* treeToChild1,
+-                                 int* treePatterns) {
++                                 int* treePatterns, int* ringNext) {
+   const int nChannels = comm->nChannels, nNodes = comm->nNodes, node = comm->node;
++  if (ncclParamSwitchlessRingOnly() && comm->nRanks == 4 && nNodes == 4)
++    return connectSwitchlessTrees(comm, ringNext);
+ 
+   // Compute tree depth. Not an exact value but a good approximation in most
+   // cases
+@@ -442,7 +477,7 @@
+ 
+   // Connect rings and trees. This should also duplicate the channels.
+   NCCLCHECKGOTO(connectRings(comm, ringRecv, ringSend, ringPrev, ringNext), ret, fail);
+-  NCCLCHECKGOTO(connectTrees(comm, treeToParent, treeToChild0, treeToChild1, treePatterns), ret, fail);
++  NCCLCHECKGOTO(connectTrees(comm, treeToParent, treeToChild0, treeToChild1, treePatterns, ringNext), ret, fail);
+ 
+   // Duplicate ringPrev/ringNext for ncclBuildRing
+   memcpy(ringPrev + nChannels * nranks, ringPrev, nChannels * nranks * sizeof(int));
+--- a/src/transport/generic.cc
++++ b/src/transport/generic.cc
+@@ -49,7 +49,8 @@
+ 
+ ncclResult_t ncclTransportTreeConnect(struct ncclComm* comm) {
+   ncclResult_t ret = ncclSuccess;
+-  if (ncclParamSwitchlessRingOnly()) {
++  if (ncclParamSwitchlessRingOnly() &&
++      !(comm && comm->nRanks == 4 && comm->nNodes == 4)) {
+     INFO(NCCL_INIT, "Tree transport setup disabled by NCCL_SWITCHLESS_RING_ONLY");
+     return ncclSuccess;
+   }
