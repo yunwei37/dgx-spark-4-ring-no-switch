@@ -51,3 +51,25 @@
 +            if values.get(name):
 +                values[name] = "<redacted>"
 +        return values
+--- a/python/sglang/srt/managers/scheduler_components/batch_result_processor.py
++++ b/python/sglang/srt/managers/scheduler_components/batch_result_processor.py
+@@ -536,7 +536,8 @@
+                 ]
+             if logits_output.next_token_token_ids_logprobs_val:
+                 logits_output.next_token_token_ids_logprobs_val = [
+-                    v.tolist() for v in logits_output.next_token_token_ids_logprobs_val
++                    v.tolist() if torch.is_tensor(v) else v
++                    for v in logits_output.next_token_token_ids_logprobs_val
+                 ]
+ 
+     def _apply_prefill_logprobs(
+@@ -1110,7 +1111,8 @@
+ 
+             if logits_output.next_token_token_ids_logprobs_val:
+                 logits_output.next_token_token_ids_logprobs_val = [
+-                    v.tolist() for v in logits_output.next_token_token_ids_logprobs_val
++                    v.tolist() if torch.is_tensor(v) else v
++                    for v in logits_output.next_token_token_ids_logprobs_val
+                 ]
+         return next_token_ids, next_token_logprobs
+ 

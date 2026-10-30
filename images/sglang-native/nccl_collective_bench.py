@@ -16,6 +16,7 @@ parser.add_argument("--master-port", type=int, required=True)
 parser.add_argument("--library", required=True)
 parser.add_argument("--label", choices=["mesh", "native", "native-pci", "native-pci-min4"], required=True)
 parser.add_argument("--output", required=True)
+parser.add_argument("--cuda-graph", action="store_true", help="Capture each 32-operation block on a side stream")
 args = parser.parse_args()
 os.environ["SGLANG_NCCL_SO_PATH"] = args.library
 os.environ["NCCL_DEBUG"] = "INFO"
@@ -96,7 +97,8 @@ try:
     hidden = config.get("text_config", config)["hidden_size"]
     event("communicator_ready", version=comm.nccl_version, hidden=hidden)
     rows = []
-    with comm.change_state(enable=True):
+    measurement_stream = torch.cuda.Stream() if args.cuda_graph else torch.cuda.current_stream()
+    with comm.change_state(enable=True), torch.cuda.stream(measurement_stream):
         stream = comm._resolve_stream()
         for operation in ("all_reduce", "all_gather"):
             for tokens in (1, 6, 24, 96):
@@ -113,12 +115,22 @@ try:
                 for _ in range(8):
                     collective()
                 stream.synchronize()
+                graph = None
+                if args.cuda_graph:
+                    graph = torch.cuda.CUDAGraph()
+                    with torch.cuda.graph(graph, stream=stream):
+                        for _ in range(32):
+                            collective()
+                    stream.synchronize()
                 samples = []
                 for _ in range(8):
                     begin, end = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
                     begin.record(stream)
-                    for _ in range(32):
-                        collective()
+                    if graph is None:
+                        for _ in range(32):
+                            collective()
+                    else:
+                        graph.replay()
                     end.record(stream)
                     end.synchronize()
                     samples.append(begin.elapsed_time(end) * 1000 / 32)
@@ -133,7 +145,7 @@ try:
                              "us_per_collective": samples, "median_us": statistics.median(samples),
                              "correct": True})
     fabric_after = fabric_counters()
-    result = {"mapped_nccl": mapped_nccl, "nccl_environment": {k: v for k, v in os.environ.items() if k.startswith("NCCL_")},
+    result = {"execution": "cuda_graph" if args.cuda_graph else "eager", "mapped_nccl": mapped_nccl, "nccl_environment": {k: v for k, v in os.environ.items() if k.startswith("NCCL_")},
               "fabric_delta_bytes": {k: v - fabric_before[k] for k, v in fabric_after.items()},
               "rank": args.rank, "label": args.label, "library": args.library,
               "nccl_version": comm.nccl_version, "rows": rows}

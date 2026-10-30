@@ -90,12 +90,16 @@ jobs:
             skopeo inspect --format '{{.Digest}}' "docker://$image:$tag" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
-          gh release download "$QUALIFIED_RELEASE" -R "$GITHUB_REPOSITORY" --dir "$assets"             --pattern sglang-native-production-overlay.oci.tar             --pattern nccl-mesh-runtime-20261030.oci.tar
+          gh release download "$QUALIFIED_RELEASE" -R "$GITHUB_REPOSITORY" --dir "$assets" --pattern sglang-native-production-overlay.oci.tar
           skopeo copy --preserve-digests             docker://lmsysorg/sglang@sha256:b4a4745fab5393dc0aca573fe754b86477f57691c9e971390b21102d3d94ebf9             "oci:$layout:base"
-          tar -xf "$assets/sglang-native-production-overlay.oci.tar" -C "$layout"
+          tar --no-same-owner -xf "$assets/sglang-native-production-overlay.oci.tar" -C "$layout"
+          runtime_tag=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["manifests"][0]["annotations"]["org.opencontainers.image.ref.name"])' "$layout/index.json")
           authfile="${DOCKER_CONFIG:-$HOME/.docker}/config.json"
           image=ghcr.io/yunwei37/dgx-spark-4-ring-no-switch
-          skopeo copy --preserve-digests --dest-authfile "$authfile"             "oci:$layout:cfe3cfb-production-20261030c"             "docker://$image:sglang-cfe3cfb-production-20261030c"
-          skopeo copy --preserve-digests --dest-authfile "$authfile"             "oci-archive:$assets/nccl-mesh-runtime-20261030.oci.tar"             "docker://$image:nccl-2.29.7-mesh-19924dcc"
-          skopeo inspect --format '{{.Digest}}'             "docker://$image:sglang-cfe3cfb-production-20261030c" >> "$GITHUB_STEP_SUMMARY"
+          skopeo copy --preserve-digests --dest-authfile "$authfile"             "oci:$layout:$runtime_tag"             "docker://$image:sglang-$runtime_tag"
+          if gh release view "$QUALIFIED_RELEASE" -R "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -qx nccl-mesh-runtime-20261030.oci.tar; then
+            gh release download "$QUALIFIED_RELEASE" -R "$GITHUB_REPOSITORY" --dir "$assets" --pattern nccl-mesh-runtime-20261030.oci.tar
+            skopeo copy --preserve-digests --dest-authfile "$authfile"             "oci-archive:$assets/nccl-mesh-runtime-20261030.oci.tar"             "docker://$image:nccl-2.29.7-mesh-19924dcc"
+          fi
+          skopeo inspect --format '{{.Digest}}'             "docker://$image:sglang-$runtime_tag" >> "$GITHUB_STEP_SUMMARY"
           skopeo inspect --format '{{.Digest}}'             "docker://$image:nccl-2.29.7-mesh-19924dcc" >> "$GITHUB_STEP_SUMMARY"

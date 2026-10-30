@@ -22,5 +22,3 @@ index 281061a65..7bc0d0cee 100644
    nreqs = slots[0].nreqs;
    // Wait until all data has arrived
    for (int r = 1; r < nreqs; r++) {
--- 
-2.50.1

@@ -149,6 +149,44 @@ class NativeMMLUTest(unittest.TestCase):
         self.assertEqual(greedy, 923)
         self.assertEqual(self.response["meta_info"]["input_token_logprobs"], [])
 
+    def test_actual_results_accept_eager_lists_and_delayed_tensors(self):
+        namespace = {"torch": torch, "LogprobStage": Stage}
+        producer = ENGINE / "layers/logprob_processor.py"
+        extract(producer, "get_token_ids_logprobs_raw", namespace)
+        gather = extract(producer, "get_token_ids_logprobs", namespace)
+        processor = ENGINE / "managers/scheduler_components/batch_result_processor.py"
+        logprobs = torch.log_softmax(torch.arange(15, dtype=torch.float32).reshape(3, 5), dim=-1)
+        candidates = [[1, 3], None, [0]]
+        expected = [logprobs[0, [1, 3]].tolist(), [], logprobs[2, [0]].tolist()]
+        for phase in ("move_logprobs_to_cpu", "_normalize_decode_outputs"):
+            normalize = extract(processor, phase, {"torch": torch})
+            for delayed in (False, True):
+                with self.subTest(phase=phase, delayed=delayed):
+                    vals, idxs = gather(logprobs, candidates, no_copy_to_cpu=delayed)
+                    output = SimpleNamespace(
+                        input_token_logprobs=None,
+                        next_token_logprobs=logprobs[:, 4],
+                        next_token_top_logprobs_val=None,
+                        next_token_token_ids_logprobs_val=vals,
+                        next_token_token_ids_logprobs_idx=idxs,
+                    )
+                    batch = SimpleNamespace(
+                        spec_algorithm=SimpleNamespace(is_none=lambda: True),
+                        return_logprob=True,
+                    )
+                    if phase == "move_logprobs_to_cpu":
+                        normalize(SimpleNamespace(), batch=batch, logits_output=output)
+                        self.assertEqual(output.next_token_logprobs, logprobs[:, 4].tolist())
+                    else:
+                        tokens, scores = normalize(
+                            SimpleNamespace(), batch=batch, result=None, logits_output=output,
+                            next_token_ids=torch.tensor([4, 4, 4]),
+                        )
+                        self.assertEqual(tokens, [[4], [4], [4]])
+                        self.assertEqual(scores, logprobs[:, 4].tolist())
+                    self.assertEqual(output.next_token_token_ids_logprobs_val, expected)
+                    self.assertEqual(output.next_token_token_ids_logprobs_idx, [[1, 3], [], [0]])
+
     def test_no_answer_mask_chat_template_or_prompt_logprobs(self):
         p = native.payload([0, 10, 11])
         self.assertEqual(p["input_ids"], [0, 10, 11])
