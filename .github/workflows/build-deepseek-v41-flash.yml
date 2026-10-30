@@ -84,7 +84,9 @@ jobs:
             archive=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["archive"])' "$assets/nccl-transport.json")
             authfile="${DOCKER_CONFIG:-$HOME/.docker}/config.json"
             image=ghcr.io/yunwei37/dgx-spark-4-ring-no-switch
-            skopeo copy --preserve-digests --dest-authfile "$authfile" "oci-archive:$assets/$archive" "docker://$image:$tag"
+            mkdir -p "$layout"
+            tar --no-same-owner -xf "$assets/$archive" -C "$layout"
+            skopeo copy --preserve-digests --dest-authfile "$authfile" "oci:$layout:$tag" "docker://$image:$tag"
             skopeo inspect --format '{{.Digest}}' "docker://$image:$tag" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
