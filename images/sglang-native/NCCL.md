@@ -133,8 +133,11 @@ All 73 decode measurements, four sentinels and twelve long-context probes were
 valid in both arms, with zero request failures. Native C16's bin interval was
 191.28-235.30, so its point estimate exceeds 211 without establishing a lower
 bound above that target. C1 ALL/code still miss 89.3/112.2. Four pilot choices
-changed; full 14,042-context quality evaluation is running, and pilot differences
-must not be dismissed as unchanged quality. Native near-1M retrieval recovered
+changed. The full frozen 14,042-context evaluation subsequently completed:
+native 12,073 correct (85.9778%) versus reference 12,077 (86.0063%), with 387
+changed choices. There were 157 reference-only and 153 native-only correct
+answers; exact McNemar p=0.86474. This test did not find a significant accuracy
+difference, and does not establish identical outputs or universal quality. Native near-1M retrieval recovered
 all three needles with 1,039,058 input tokens and 13 output tokens in 196.342 s.
 
 A subsequent 32-step CPU/GPU trace captured mixed consumer/evaluation traffic;
@@ -155,3 +158,11 @@ communicators and RoCEnante unchanged, and preserves original calls/results.
 No new tuning flag, cache, controller or network path is introduced. CPU
 contracts pass; real CUDA-graph operation, identical outputs and matched
 performance remain required before deployment or an improvement claim.
+
+The CPU-qualified prefetch image is published as
+ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:sglang-cfe3cfb-production-20261030e
+(manifest 467fa04d7642504a3475143779ddf43f97afbddcdbcfc12ad3170ff7befb1615).
+[Owned publisher run](https://github.com/yunwei37/dgx-spark-4-ring-no-switch/actions/runs/41075016730)
+succeeded. All four serving hosts preloaded it; the additional image layer is
+71,680 bytes and changes only the two adapter modules and provenance above
+corrective image d. Publication and preload do not establish GPU acceptance.
