@@ -135,8 +135,18 @@ Image config:
 
 Publication target:
 `ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:sglang-cfe3cfb-production-20261030c`.
-Publication is pending until the registry receipt is added. Existing local
-images do not prove registry availability.
+Publication completed through [Actions run 41022059900](https://github.com/yunwei37/dgx-spark-4-ring-no-switch/actions/runs/41022059900).
+Anonymous registry readback reports the exact manifest and config above.
+Native containerd pulls of both published references completed on all four
+serving nodes using their identical cached content.
+
+The companion image is
+`ghcr.io/yunwei37/dgx-spark-4-ring-no-switch:nccl-2.29.7-mesh-19924dcc@sha256:ee6e0bb0ea8e36a10e3d9ed85745427deb1109e5b2e5ab27f32b0b7c15ed309e`.
+
+The [release assets](https://github.com/yunwei37/dgx-spark-4-ring-no-switch/releases/tag/sglang-native-1017-20261030)
+retain the exact overlay, companion OCI archive, generated profile and build
+provenance. Neither image was rebuilt during publication. Registry readback
+and deployment health are separate from the still-unmet throughput goal.
 
 The public upstream base is
 `lmsysorg/sglang@sha256:b4a4745fab5393dc0aca573fe754b86477f57691c9e971390b21102d3d94ebf9`.

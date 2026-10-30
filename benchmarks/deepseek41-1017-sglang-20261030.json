@@ -175,5 +175,13 @@
     "total": 114,
     "full_sglang": "not measured"
   },
-  "uncensored": false
+  "uncensored": false,
+  "publication": {
+    "repository": "yunwei37/dgx-spark-4-ring-no-switch",
+    "actions_run": 41022059900,
+    "status": "published and anonymous readback passed",
+    "sglang_digest": "sha256:234754c5b53aa21c29d96afe2c0e9361d81509c34fc0707eef7a1b40f3797579",
+    "nccl_digest": "sha256:ee6e0bb0ea8e36a10e3d9ed85745427deb1109e5b2e5ab27f32b0b7c15ed309e",
+    "recompiled": false
+  }
 }
