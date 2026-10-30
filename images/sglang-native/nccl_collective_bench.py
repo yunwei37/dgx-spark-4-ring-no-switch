@@ -56,7 +56,13 @@ def event(phase, **fields):
     print(json.dumps({"phase": phase, "rank": args.rank, "pid": os.getpid(),
                       "time": time.time(), **fields}), flush=True)
 
-event("cpu_ready", library=args.library, label=args.label)
+mapped_nccl = sorted({line.split()[-1] for line in Path("/proc/self/maps").read_text().splitlines()
+                      if "/libnccl.so" in line})
+selected_identity = (Path(args.library).stat().st_dev, Path(args.library).stat().st_ino)
+mapped_identities = {(Path(path).stat().st_dev, Path(path).stat().st_ino) for path in mapped_nccl}
+if mapped_identities != {selected_identity}:
+    raise RuntimeError(f"Benchmark requires one NCCL runtime: {mapped_nccl}")
+event("cpu_ready", library=args.library, label=args.label, mapped_nccl=mapped_nccl)
 dist.init_process_group("gloo", init_method=f"tcp://{os.environ['MASTER_ADDR']}:{args.master_port}",
                         rank=args.rank, world_size=4, timeout=timedelta(seconds=90))
 paused = False
@@ -127,7 +133,7 @@ try:
                              "us_per_collective": samples, "median_us": statistics.median(samples),
                              "correct": True})
     fabric_after = fabric_counters()
-    result = {"nccl_environment": {k: v for k, v in os.environ.items() if k.startswith("NCCL_")},
+    result = {"mapped_nccl": mapped_nccl, "nccl_environment": {k: v for k, v in os.environ.items() if k.startswith("NCCL_")},
               "fabric_delta_bytes": {k: v - fabric_before[k] for k, v in fabric_after.items()},
               "rank": args.rank, "label": args.label, "library": args.library,
               "nccl_version": comm.nccl_version, "rows": rows}
