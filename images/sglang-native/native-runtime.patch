@@ -1,0 +1,53 @@
+--- a/python/sglang/srt/server_args.py
++++ b/python/sglang/srt/server_args.py
+@@ -296 +296 @@
+-        """How this record was created, verbatim.
++        """How this record was created, with authentication values redacted.
+@@ -304 +304 @@
+-        The launcher stores the arguments it parsed; the in-process `Engine`
++        The launcher stores the arguments it parsed internally; the in-process `Engine`
+@@ -309 +309,32 @@
+-        return getattr(self, "_launch_command", None)
++        command = getattr(self, "_launch_command", None)
++        if not command:
++            return command
++        # This is a diagnostic surface, also archived by benchmark clients.
++        # Keep the runtime's actual authentication fields untouched.
++        if command.startswith("Engine("):
++            import ast
++
++            try:
++                tree = ast.parse(command, mode="eval")
++            except SyntaxError:
++                return "Engine(<redacted arguments>)"
++            for keyword in tree.body.keywords:
++                if keyword.arg in ("api_key", "admin_api_key"):
++                    keyword.value = ast.Constant(value="<redacted>")
++            return ast.unparse(tree)
++        import shlex
++
++        try:
++            argv = shlex.split(command)
++        except ValueError:
++            return "<redacted launch command>"
++        hide_next = False
++        for i, arg in enumerate(argv):
++            if hide_next:
++                argv[i] = "<redacted>"
++                hide_next = False
++            elif arg in ("--api-key", "--admin-api-key"):
++                hide_next = True
++            elif arg.startswith(("--api-key=", "--admin-api-key=")):
++                argv[i] = arg.split("=", 1)[0] + "=<redacted>"
++        return shlex.join(argv)
+@@ -312 +343 @@
+-        """This configuration as a plain dict of resolved field values.
++        """Resolved diagnostic values, with authentication values redacted.
+@@ -322 +353 @@
+-        return {
++        values = {
+@@ -325,0 +357,4 @@
++        for name in ("api_key", "admin_api_key"):
++            if values.get(name):
++                values[name] = "<redacted>"
++        return values

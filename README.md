@@ -18,6 +18,7 @@ and `not measured` stay distinct from success.
 
 | Tested | Checkpoint | Layout | Context boundary | Stable decode | Result |
 | --- | --- | --- | --- | ---: | --- |
+| 2026-10-30 | Official DeepSeek-V4.1-Flash-1017, native FP8/FP4, SGLang | TP4/EP1, NCCL/Mesh ring | 1,039,058-input retrieval passed | 67.49 overall / 86.18 code C1 geometric mean; 194.4 C16 aggregate | business + OMP passed; 64K cold prefill 5378 tok/s; decode target pending ([report](docs/deepseek41-1017-sglang.md)) |
 | 2026-09-11 | `deepseek-ai/DeepSeek-V4.1-Flash` + DSpark k=5, gmu 0.83 | TP=4 | 993,435-token needle correct at 1,048,576 max model length (2,058,026-token KV pool) | 50.14 tok/s C1 mean, 68.06 code; 144.71 tok/s at 8 requests | passed and deployed; 87–92% production prefix-cache hit rate ([record](docs/deepseek-v41-flash.md)) |
 | 2026-09-11 | same, gmu 0.88 | TP=4 | 3,819,333-token KV pool | not measured | unsafe: the 8,192-token autotune warmup exhausted host memory |
 | 2026-09-11 | same + vLLM filesystem prefix-cache tier | TP=4 | not reached | not measured | unsupported: the offload scheduler rejects V4.1's compressor-ring KV group; the per-node NVMe tier replaces it |
@@ -30,12 +31,12 @@ and `not measured` stay distinct from success.
 | 2026-08-27 | same checkpoint, MTP | TP=4 | 262,144 native window | 48.81 tok/s short cached natural output | exact mid-context retrieval passed; separate decode workload, restored |
 | 2026-08-29 | `Qwen/Qwen3.8-Flash-Next` BF16 | TP=4/EP=4 | 32,768 cold input passed; 32,769 failed | 25.87 tok/s short request | long-context correctness failure, not a full-window success |
 
-Formal **GLM-5.3 (not Flash)** remains the first open priority: the bounded
-8K pass above is a functional baseline, not the requested 1,048,576-token
-result, and formal NVFP4 weights have never completed a load. Prefer two
-nodes whenever the complete checkpoint, context, correctness and memory
-reserve fit — node count is not a success criterion. See the
-[evidence summary](docs/benchmarks.md#recorded-matrix-and-node-count).
+The current qualification target is the official October 17 DeepSeek refresh.
+The native SGLang profile passes real near-1M retrieval, tools, vision and OMP;
+the decode-throughput target and full SGLang/derivative quality comparisons
+remain incomplete. The current service is **not** an uncensored model.
+See the [complete measurement boundary and failure history](docs/deepseek41-1017-sglang.md).
+Older formal GLM-5.3 and Qwen investigations remain historical evidence below.
 
 ### Retained safety boundaries
 
@@ -77,7 +78,14 @@ dispatchers, timers, firewalls, DHCP overrides, or Tailscale configuration.
   (read-only) and a writable compilation-cache directory on every node;
 - NCCL socket interface/subnet selection appropriate for the current ring.
 
-### Newest profile — DeepSeek-V4.1-Flash, TP=4
+### Newest profile — DeepSeek-V4.1-Flash-1017, SGLang TP4/EP1
+
+[Build inputs and generated profile](images/sglang-native/README.md) reproduce
+the pinned v2.6.2 compute/Engram profile with its documented NCCL ring fallback.
+[The report](docs/deepseek41-1017-sglang.md) distinguishes the measured image,
+registry publication, real client acceptance and remaining performance gap.
+
+### Historical September profile — DeepSeek-V4.1-Flash, vLLM TP4
 
 Driven by [`profiles/deepseek-v41-flash-tp4.sh`](profiles/deepseek-v41-flash-tp4.sh),
 one rank per node in physical ring order. The full measurement record and

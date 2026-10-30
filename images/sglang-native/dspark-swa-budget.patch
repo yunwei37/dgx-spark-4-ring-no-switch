@@ -1,0 +1,10 @@
+--- a/python/sglang/srt/model_executor/model_runner_components/spec_aux_hidden_state.py
++++ b/python/sglang/srt/model_executor/model_runner_components/spec_aux_hidden_state.py
+@@ -203,0 +204,7 @@
++            if draft_model_config.is_deepseek_v4_arch:
++                # Bundled checkpoints retain target depth; count draft stages.
++                draft_num_layers = (
++                    len(dspark_draft_config.target_layer_ids)
++                    if dspark_draft_config.target_layer_ids is not None
++                    else int(draft_model_config.num_nextn_predict_layers or 1)
++                )

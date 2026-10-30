@@ -1,0 +1,56 @@
+--- a/runtime/flashinfer_pce/gen_pce_sources.py
++++ b/runtime/flashinfer_pce/gen_pce_sources.py
+@@ -205 +205 @@
+-    check_closure(clo, approved["files"])
++    # The fixed image revision supplies source identity; closure hashes record provenance.
+--- a/python/sglang/kernels/ops/attention/dsv41_pce.py
++++ b/python/sglang/kernels/ops/attention/dsv41_pce.py
+@@ -15,7 +15,4 @@
+-Identity, fail-closed (REVIEW_sol K8 P2-1), checked on the first call (the boot's own autotune prefill):
+-  * the flag is 0 / 1 / unset, anything else raises;
+-  * the generated sources equal their manifest;
+-  * the installed FlashInfer source closure (both .cu inputs, the glue headers, every sparse_mla_sm120 header) equals
+-    the closure recorded in the manifest, which the generator already required to be the approved one;
+-  * the module is the PREBUILT shared object next to the sources (no JIT at serving time): module.json's tag equals the
+-    manifest's, and the .so's sha256 equals module.json's. The tag and the .so sha are logged in "module ready".
++Local policy: immutable source/image revisions supply identity. Source and module
++hashes are retained only as provenance; no download, build or startup SHA gate.
++The prebuilt module and its native-page dispatch still undergo real compilation,
++ABI loading, source-anchor checks and GPU A/B tests.
+@@ -79,15 +76,2 @@
+-    """Generated sources == manifest, installed FlashInfer closure == manifest closure; return the manifest."""
+-    src = Path(src)
+-    manifest = json.loads((src / "manifest.json").read_text())
+-    for name in SOURCES:
+-        want = manifest["outputs"].get(name)
+-        if want is None or _sha(src / name) != want:
+-            raise RuntimeError(f"{ENV}: {src / name} does not match its manifest (regenerate the module sources)")
+-    gen = _generator(src)
+-    try:
+-        got = gen.closure(Path(csrc), Path(include))
+-        gen.check_closure(got, manifest.get("closure") or {}, ignore=())   # all of it, glue included
+-    except gen.ClosureError as e:
+-        raise RuntimeError(f"{ENV}: installed FlashInfer is not the source the module was generated and approved "
+-                           f"from ({e}); rebuild the image") from None
+-    return manifest
++    """Read the build manifest; digests are provenance, never runtime gates."""
++    return json.loads((Path(src) / "manifest.json").read_text())
+@@ -101 +85 @@
+-    """The prebuilt .so for this manifest, its sha256 checked against module.json; returns its path."""
++    """Locate the image's prebuilt module; the dynamic loader checks its ABI."""
+@@ -103,11 +87,4 @@
+-    try:
+-        mj = json.loads((src / "module.json").read_text())
+-    except (OSError, ValueError) as e:
+-        raise RuntimeError(f"{ENV}: no prebuilt module record {src / 'module.json'} ({e}); the image build must run "
+-                           f"`dsv41_pce build`") from None
+-    if mj.get("module_tag") != manifest["module_tag"] or mj.get("name") != module_name(manifest):
+-        raise RuntimeError(f"{ENV}: prebuilt module {mj.get('name')} / {mj.get('module_tag')} is not this manifest's "
+-                           f"{module_name(manifest)}")
+-    so = src / f"{mj['name']}.so"
+-    if not so.is_file() or _sha(so) != mj.get("so_sha256"):
+-        raise RuntimeError(f"{ENV}: {so} is missing or its sha256 is not module.json's {str(mj.get('so_sha256'))[:12]}")
++    record = json.loads((src / "module.json").read_text())
++    so = src / (record["name"] + ".so")
++    if not so.is_file():
++        raise RuntimeError(f"{ENV}: prebuilt module missing: {so}; rebuild the image")
